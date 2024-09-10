@@ -1,0 +1,3 @@
+
+:url-hl7-fhir: https://fhir.org/
+:link-hl7-fhir: {url-hl7-fhir}[HL7 FHIR]

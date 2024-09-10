@@ -1,0 +1,24 @@
+@startuml
+skinparam componentStyle rectangle
+
+skinparam component {
+    BackgroundColor<<external>> Yellow
+    BorderColor<<external>> Red
+    BackgroundColor<<p12>> #AEC0DE
+}
+
+[smartcard-cli-brick] #66FFA2
+
+node "Smartcard-Brick" #FFD1E5 {
+    [SmartcardArchive] #FE76B0
+    [Smartcard] #FE76B0
+    [SmartcardCertificate] #FE76B0
+    [X509Certificate] <<p12>>
+}
+
+[smartcard-cli-brick] -left-> [Smartcard-Brick]
+[SmartcardArchive] *-right-> [Smartcard]
+[Smartcard] *-right-> [SmartcardCertificate]
+[SmartcardCertificate] -down-> [X509Certificate]
+
+@enduml

@@ -1,0 +1,38 @@
+@startuml
+skinparam componentStyle rectangle
+
+skinparam component {
+    BackgroundColor<<internal>> #AEC0DE
+    BackgroundColor<<planned>> #AEC0DE
+    BorderColor<<planned>> #FF2200
+}
+
+component Konnektor {
+    [konnektor-ws-api-brick] <<internal>>
+    [konnektor-client-brick]
+    [softkon-service-brick] <<internal>>
+    [remotekon-service-brick] <<internal>>
+}
+note right of [konnektor-ws-api-brick] : Konnektor SOAP API
+
+component CardTerminal {
+    [card-terminal-api-brick]
+    [ct-robot-client-brick] <<planned>>
+    [cats-client-brick] <<internal>>
+}
+
+actor User
+User -left-> [konnektor-client-brick] : uses
+User -right-> [card-terminal-api-brick] : uses
+
+[konnektor-client-brick] -up-> [konnektor-ws-api-brick] : requires
+[konnektor-client-brick] -right-> [card-terminal-api-brick] : manages
+
+[softkon-service-brick] -up-> [konnektor-client-brick] : provides service
+[remotekon-service-brick] -up-> [konnektor-client-brick] : provides service
+
+[cats-client-brick] -up-> [card-terminal-api-brick] : implements
+[ct-robot-client-brick] -up-> [card-terminal-api-brick] : implements
+
+
+@enduml

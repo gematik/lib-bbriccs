@@ -1,0 +1,21 @@
+name: "Konnektor"
+context:
+  mandantId: "Mandant1"
+  clientSystemId: "CS1"
+  workplaceId: "AP1"
+  userId: "user1"
+service:
+  type: "Remote-Kon"
+  address: "https://localhost:443"
+  tls:
+    keyStore: "keystore.p12"
+    keyStorePassword: "123456"
+    trustStore: "truststore.p12"
+    trustStorePassword: "123456"
+  basicAuth:
+    username: "user1"
+    password: "password1"
+cardTerminals:
+  - type: "CATS"
+    ctId: "00:00:00:00:00:00"
+    url: "https://localhost:443/cats"

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>de.gematik.bbriccs</groupId>
+        <artifactId>bbriccs-parent</artifactId>
+        <version>0.1.7</version>
+    </parent>
+
+    <artifactId>utility-bricks</artifactId>
+    <name>Generische Hilfs-Bricks</name>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>fhir-test-examples-brick</module>
+        <module>unit-test-utility-brick</module>
+        <module>resource-loader-brick</module>
+        <module>crypto-brick</module>
+        <module>ca-supplier-brick</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>de.gematik.bbriccs</groupId>
+                <artifactId>resource-loader-brick</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.gematik.bbriccs</groupId>
+                <artifactId>unit-test-utility-brick</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>de.gematik.bbriccs</groupId>
+                <artifactId>fhir-test-examples-brick</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>de.gematik.bbriccs</groupId>
+                <artifactId>ca-supplier-brick</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>

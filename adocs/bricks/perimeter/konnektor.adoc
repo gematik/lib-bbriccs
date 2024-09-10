@@ -1,0 +1,11 @@
+include::../attributes-sections.adoc[]
+
+== Konnektor
+
+Der Konnektor-Client ist über mehrere Module aufgebaut... TODO
+
+[plantuml, "{pumldir}/konnektor-overview", svg]
+.Konnektor-Overview
+----
+include::{pumldir}/konnektor-overview.puml[]
+----
