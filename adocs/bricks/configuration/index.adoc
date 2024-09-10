@@ -1,0 +1,8 @@
+include::../attributes-sections.adoc[]
+
+
+== Configuration-Bricks
+TODO: Beschreibung what are Configuration-Bricks
+
+
+

@@ -1,0 +1,67 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>de.gematik.bbriccs</groupId>
+        <artifactId>restful-bricks</artifactId>
+        <version>0.1.7</version>
+    </parent>
+
+    <artifactId>smartcard-idp-plugin-brick</artifactId>
+    <name>Smartcard-IDP HTTP-Header-Plugin Brick</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>de.gematik.bbriccs</groupId>
+            <artifactId>fd-fhir-client-brick</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.gematik.idp</groupId>
+            <artifactId>idp-client</artifactId>
+            <version>28.0.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>de.gematik.bbriccs</groupId>
+            <artifactId>smartcards-api-brick</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.gematik.bbriccs</groupId>
+            <artifactId>smartcards-brick</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-remote-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <configuration>
+                            <resourceBundles>
+                                <resourceBundle>de.gematik.bbriccs:smartcards-brick:${project.version}</resourceBundle>
+                            </resourceBundles>
+                            <attachToMain>false</attachToMain>
+                            <attachToTest>true</attachToTest>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

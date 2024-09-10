@@ -1,0 +1,7 @@
+
+:author: gematik GmbH
+:orgname: {author}
+
+:bbriccs-wordmark: pass:c,q[B^2^ric^2^s]
+:bbriccs-name: Bbriccs
+:app-name: {bbriccs-name}

@@ -1,0 +1,35 @@
+<SupplyRequest xmlns="http://hl7.org/fhir">
+    <id value="6169e78d-25bb-4e27-a3bf-917af9e4113f"/>
+    <meta>
+        <profile value="https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_PracticeSupply|1.1.0"/>
+    </meta>
+    <extension url="https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_PracticeSupply_Payor">
+        <extension url="IK">
+            <valueIdentifier>
+                <system value="http://fhir.de/sid/arge-ik/iknr"/>
+                <value value="107310373"/>
+            </valueIdentifier>
+        </extension>
+        <extension url="Name">
+            <valueString value="AOK Rheinland‐Pfalz/Saarland"/>
+        </extension>
+        <extension url="Kostentraegertyp">
+            <valueCoding>
+                <system value="http://fhir.de/CodeSystem/versicherungsart-de-basis"/>
+                <code value="GKV"/>
+            </valueCoding>
+        </extension>
+    </extension>
+    <itemReference>
+        <reference value="Medication/0e52a451-771f-48e3-bbe3-d2f2f7b93532"/>
+    </itemReference>
+    <quantity>
+        <value value="3"/>
+        <system value="http://unitsofmeasure.org"/>
+        <code value="{Package}"/>
+    </quantity>
+    <authoredOn value="2024-01-30"/>
+    <requester>
+        <reference value="Practitioner/b443b071-159b-4a6d-95cf-039eade3d681"/>
+    </requester>
+</SupplyRequest>
