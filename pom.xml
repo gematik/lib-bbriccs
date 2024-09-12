@@ -7,7 +7,7 @@
 
     <groupId>de.gematik.bbriccs</groupId>
     <artifactId>bbriccs-parent</artifactId>
-    <version>0.1.7</version>
+    <version>0.1.8</version>
     <name>Bbriccs Parent</name>
     <packaging>pom</packaging>
 
@@ -105,35 +105,6 @@
                             <autoReleaseAfterClose>true</autoReleaseAfterClose>
                             <stagingProgressTimeoutMinutes>20</stagingProgressTimeoutMinutes>
                         </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <version>3.3.1</version>
-                        <executions>
-                            <execution>
-                                <id>attach-sources</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.7.0</version>
-                        <configuration>
-                            <doclint>none</doclint>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
                     </plugin>
                 </plugins>
             </build>
@@ -384,6 +355,22 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.10.0</version>
+                <configuration>
+                    <doclint>none</doclint>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.3.0</version>
                 <configuration>
@@ -464,14 +451,14 @@
                             <include>**/src/main/kotlin/**/*.kt</include>
                             <include>**/src/test/kotlin/**/*.kt</include>
                         </includes>
-                        <licenseHeader>
-                            <file>COPYRIGHT_HEADER</file>
-                        </licenseHeader>
                         <ktlint>
                             <editorConfigOverride>
                                 <indent_size>2</indent_size>
                             </editorConfigOverride>
                         </ktlint>
+                        <licenseHeader>
+                            <file>COPYRIGHT_HEADER</file>
+                        </licenseHeader>
                     </kotlin>
                 </configuration>
                 <executions>
@@ -491,7 +478,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.6.3</version>
+                <version>3.10.0</version>
                 <reportSets>
                     <reportSet>
                         <id>non-aggregate</id>
