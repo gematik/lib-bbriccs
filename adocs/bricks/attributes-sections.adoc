@@ -1,2 +1,0 @@
-include::../attributes-settings.adoc[]
-:pumldir: ../../{pumldir}

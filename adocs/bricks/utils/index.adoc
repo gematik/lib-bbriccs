@@ -1,8 +1,0 @@
-include::../attributes-sections.adoc[]
-
-
-== Utility-Bricks
-TODO: Beschreibung what are Utility-Bricks
-
-
-

@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.23">
+<meta name="application-name" content="Bbriccs">
+<meta name="description" content="Bbriccs provides reusable and independent building bricks for flexible and maintainable TestSuites with Clean Code Principles.">
+<meta name="author" content="gematik GmbH">
+<meta name="copyright" content="2024 by gematik GmbH, Berlin">
+<title>Bbriccs</title>
+<style>
+/*
+ * ${GEMATIK_COPYRIGHT_STATEMENT}
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code&display=swap');
+
+/* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
+
+@import url(https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor@2.0/data/stylesheets/asciidoctor-default.css); /* Default asciidoc style framework - important */
+
+/* CUSTOMISATIONS */
+/* Change the values in root for quick customisation. If you want even more fine grain... venture further. */
+
+:root {
+    --maincolor: #FFFFFF;
+    --primarycolor: #000E52;
+    --secondarycolor: #000E52;
+    --tertiarycolor: #225494;
+}
+
+body {
+    font-family: "Verdana", sans-serif;
+    font-size: 11pt;
+    text-align: justify;
+}
+
+/* Text styles */
+h1 {
+    color: var(--primarycolor);
+    font-weight: bold;
+    text-align: center;
+}
+
+#header {
+    padding: 20rem 0;
+    background-position: top;
+    background-repeat: no-repeat;
+    background-image: url("media/title_white.plain.svg");
+    height: 80rem;
+}
+
+/* TODO Anne to be kept locally */
+#header h1 {
+    background-image: url("media/tiger-mono-picto-plain.svg");
+    background-size: 150px;
+    background-repeat: no-repeat;
+    background-position: 120px bottom;
+    padding-left: 10rem;
+    line-height: 350%;
+    font-size: 327%;
+}
+
+#header .details {
+    text-align: center;
+    display: block;
+    padding-left: 120px;
+    border: 0;
+    margin-top: -40px;
+}
+/* end of to be kept locally */
+
+h2 {
+    color: var(--secondarycolor);
+    font-weight: bold;
+}
+
+h3, h4, h5, h6 {
+    color: var(--tertiarycolor);
+    font-weight: bold;
+}
+
+h3 {
+    margin-top: 5rem;
+}
+
+/* code blocks */
+.listingblock > .content > pre.CodeRay, code, pre {
+    font-family: "Fira Code";
+    font-size: 82%;
+}
+
+.listingblock > .content > pre.CodeRay {
+    background: #fafafa !important;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+}
+
+
+/* captions for all kinds of blocks
+.admonitionblock td.content > .title, .audioblock > .title, .exampleblock > .title, .imageblock > .title, .listingblock > .title, .literalblock > .title, .stemblock > .title, .openblock > .title, .paragraph > .title, .quoteblock > .title, table.tableblock > .title, .verseblock > .title, .videoblock > .title, .dlist > .title, .olist > .title, .ulist > .title, .qlist > .title, .hdlist > .title
+*/
+.title {
+    font-family: "Verdana" !important;
+    font-style: italic !important;
+    color: #000000 !important;
+}
+
+/* links */
+a {
+    color: #00766e;
+}
+
+#toctitle {
+    color: var(--primarycolor);
+}
+
+#toc, #toc a {
+    color: var(--secondarycolor);
+    line-height: 175%;
+}
+
+/* Table styles */
+th {
+    font-family: "Verdana", sans-serif
+}
+
+/* Responsiveness fixes */
+video {
+    max-width: 100%;
+}
+
+@media all and (max-width: 600px) {
+    table {
+        width: 55vw;
+        font-size: 3vw;
+    }
+}
+
+
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+/*! Stylesheet for CodeRay to loosely match GitHub themes | MIT License */
+pre.CodeRay{background:#f7f7f8}
+.CodeRay .line-numbers{border-right:1px solid;opacity:.35;padding:0 .5em 0 0;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+.CodeRay span.line-numbers{display:inline-block;margin-right:.75em}
+.CodeRay .line-numbers strong{color:#000}
+table.CodeRay{border-collapse:separate;border:0;margin-bottom:0;background:none}
+table.CodeRay td{vertical-align:top;line-height:inherit}
+table.CodeRay td.line-numbers{text-align:right}
+table.CodeRay td.code{padding:0 0 0 .75em}
+.CodeRay .debug{color:#fff!important;background:navy!important}
+.CodeRay .annotation{color:#007}
+.CodeRay .attribute-name{color:navy}
+.CodeRay .attribute-value{color:#700}
+.CodeRay .binary{color:#509}
+.CodeRay .comment{color:#998;font-style:italic}
+.CodeRay .char{color:#04d}
+.CodeRay .char .content{color:#04d}
+.CodeRay .char .delimiter{color:#039}
+.CodeRay .class{color:#458;font-weight:bold}
+.CodeRay .complex{color:#a08}
+.CodeRay .constant,.CodeRay .predefined-constant{color:teal}
+.CodeRay .color{color:#099}
+.CodeRay .class-variable{color:#369}
+.CodeRay .decorator{color:#b0b}
+.CodeRay .definition{color:#099}
+.CodeRay .delimiter{color:#000}
+.CodeRay .doc{color:#970}
+.CodeRay .doctype{color:#34b}
+.CodeRay .doc-string{color:#d42}
+.CodeRay .escape{color:#666}
+.CodeRay .entity{color:#800}
+.CodeRay .error{color:#808}
+.CodeRay .exception{color:inherit}
+.CodeRay .filename{color:#099}
+.CodeRay .function{color:#900;font-weight:bold}
+.CodeRay .global-variable{color:teal}
+.CodeRay .hex{color:#058}
+.CodeRay .integer,.CodeRay .float{color:#099}
+.CodeRay .include{color:#555}
+.CodeRay .inline{color:#000}
+.CodeRay .inline .inline{background:#ccc}
+.CodeRay .inline .inline .inline{background:#bbb}
+.CodeRay .inline .inline-delimiter{color:#d14}
+.CodeRay .inline-delimiter{color:#d14}
+.CodeRay .important{color:#555;font-weight:bold}
+.CodeRay .interpreted{color:#b2b}
+.CodeRay .instance-variable{color:teal}
+.CodeRay .label{color:#970}
+.CodeRay .local-variable{color:#963}
+.CodeRay .octal{color:#40e}
+.CodeRay .predefined{color:#369}
+.CodeRay .preprocessor{color:#579}
+.CodeRay .pseudo-class{color:#555}
+.CodeRay .directive{font-weight:bold}
+.CodeRay .type{font-weight:bold}
+.CodeRay .predefined-type{color:inherit}
+.CodeRay .reserved,.CodeRay .keyword{color:#000;font-weight:bold}
+.CodeRay .key{color:#808}
+.CodeRay .key .delimiter{color:#606}
+.CodeRay .key .char{color:#80f}
+.CodeRay .value{color:#088}
+.CodeRay .regexp .delimiter{color:#808}
+.CodeRay .regexp .content{color:#808}
+.CodeRay .regexp .modifier{color:#808}
+.CodeRay .regexp .char{color:#d14}
+.CodeRay .regexp .function{color:#404;font-weight:bold}
+.CodeRay .string{color:#d20}
+.CodeRay .string .string .string{background:#ffd0d0}
+.CodeRay .string .content{color:#d14}
+.CodeRay .string .char{color:#d14}
+.CodeRay .string .delimiter{color:#d14}
+.CodeRay .shell{color:#d14}
+.CodeRay .shell .delimiter{color:#d14}
+.CodeRay .symbol{color:#990073}
+.CodeRay .symbol .content{color:#a60}
+.CodeRay .symbol .delimiter{color:#630}
+.CodeRay .tag{color:teal}
+.CodeRay .tag-special{color:#d70}
+.CodeRay .variable{color:#036}
+.CodeRay .insert{background:#afa}
+.CodeRay .delete{background:#faa}
+.CodeRay .change{color:#aaf;background:#007}
+.CodeRay .head{color:#f8f;background:#505}
+.CodeRay .insert .insert{color:#080}
+.CodeRay .delete .delete{color:#800}
+.CodeRay .change .change{color:#66f}
+.CodeRay .head .head{color:#f4f}
+</style>
+<!-- Generate a nice TOC -->
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tocify/1.9.0/javascripts/jquery.tocify.min.js"></script>
+<!-- We do not need the tocify CSS because the asciidoc CSS already provides most of what we neeed -->
+
+<style>
+    .tocify-header {
+        font-style: italic;
+    }
+
+    .tocify-subheader {
+        font-style: normal;
+        font-size: 90%;
+    }
+
+    .tocify ul {
+        margin: 0;
+    }
+
+    .tocify-focus {
+        color: #7a2518;
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .tocify-focus > a {
+        color: #7a2518;
+    }
+</style>
+
+<script type="text/javascript">
+    $(function () {
+        // Add a new container for the tocify toc into the existing toc so we can re-use its
+        // styling
+        $("#toc").append("<div id='generated-toc'></div>");
+        $("#generated-toc").tocify({
+            extendPage: true,
+            context: "#content",
+            highlightOnScroll: true,
+            hideEffect: "slideUp",
+            // Use the IDs that asciidoc already provides so that TOC links and intra-document
+            // links are the same. Anything else might confuse users when they create bookmarks.
+            hashGenerator: function(text, element) {
+                return $(element).attr("id");
+            },
+            // Smooth scrolling doesn't work properly if we use the asciidoc IDs
+            smoothScroll: false,
+            // Set to 'none' to use the tocify classes
+            theme: "none",
+            // Handle book (may contain h1) and article (only h2 deeper)
+            selectors: $( "#content" ).has( "h1" ).size() > 0 ? "h1,h2,h3,h4,h5" : "h2,h3,h4,h5",
+            ignoreSelector: ".discrete"
+        });
+
+        // Switch between static asciidoc toc and dynamic tocify toc based on browser size
+        // This is set to match the media selectors in the asciidoc CSS
+        // Without this, we keep the dynamic toc even if it is moved from the side to preamble
+        // position which will cause odd scrolling behavior
+        var handleTocOnResize = function() {
+            if ($(document).width() < 768) {
+                $("#generated-toc").hide();
+                $(".sectlevel0").show();
+                $(".sectlevel1").show();
+            }
+            else {
+                $("#generated-toc").show();
+                $(".sectlevel0").hide();
+                $(".sectlevel1").hide();
+            }
+        }
+
+        $(window).resize(handleTocOnResize);
+        handleTocOnResize();
+    });
+</script>
+</head>
+<body class="book toc2 toc-left">
+<div id="header">
+<h1>B<sup>2</sup>ric<sup>2</sup>s</h1>
+<div class="details">
+<span id="author" class="author">gematik GmbH</span><br>
+<span id="revnumber">version 0.1.8,</span>
+<span id="revdate">2024-09-12</span>
+</div>
+<div id="toc" class="toc2">
+<div id="toctitle">Inhaltsverzeichnis</div>
+<ul class="sectlevel1">
+<li><a href="#_einleitung"> 1. Einleitung</a>
+<ul class="sectlevel2">
+<li><a href="#_acronym">1.1. Acronym</a></li>
+<li><a href="#_motivation">1.2. Motivation</a></li>
+</ul>
+</li>
+<li><a href="#_bricks_module"> 2. Bricks-Module</a>
+<ul class="sectlevel2">
+<li><a href="#_configuration_bricks">2.1. Configuration-Bricks</a></li>
+<li><a href="#_fhir_bricks">2.2. FHIR-Bricks</a>
+<ul class="sectlevel3">
+<li><a href="#_fhir_validator">2.2.1. FHIR-Validator</a></li>
+</ul>
+</li>
+<li><a href="#_perimeter_bricks">2.3. Perimeter-Bricks</a>
+<ul class="sectlevel3">
+<li><a href="#_smartcards_brick">2.3.1. Smartcards-Brick</a></li>
+<li><a href="#_konnektor">2.3.2. Konnektor</a></li>
+</ul>
+</li>
+<li><a href="#_restful_bricks">2.4. RESTful-Bricks</a></li>
+<li><a href="#_cli_bricks">2.5. CLI-Bricks</a></li>
+<li><a href="#_utility_bricks">2.6. Utility-Bricks</a></li>
+</ul>
+</li>
+<li><a href="#_release_notes">Appendix A: Release Notes</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_einleitung"> 1. Einleitung</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>B<sup>2</sup>ric<sup>2</sup>s (<code>briks</code>) offers reusable building bricks for flexible and maintainable test suites based on clean code principles.</p>
+</div>
+<div class="sect2">
+<h3 id="_acronym">1.1. Acronym</h3>
+<div class="paragraph">
+<p>While B<sup>2</sup>ric<sup>2</sup>s is merely the word mark and is rather unwieldy in everyday use,
+the following uses are recommended depending on the situation:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Pronunciation: simply <code>briks</code> based on the idea clamping blocks</p>
+</li>
+<li>
+<p>Spelling: in the simplest case just <code>bricks</code> or <code>bbriccs</code> as a mnemonic for the word mark</p>
+</li>
+<li>
+<p>Code: the spelling <code>bbriccs</code> is only to be used for package names and namespaces, while <code>brick</code> (or <code>bricks</code> for plural) shall be used for variable, class or module names</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_motivation">1.2. Motivation</h3>
+<div class="paragraph">
+<p>Within gematik GmbH, many of the products developed have a very similar technology stack.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/common_tech_stack.png" alt="common tech stack">
+</div>
+</div>
+<div class="paragraph">
+<p>B<sup>2</sup>ric<sup>2</sup>s provides a modular construction kit for the implementation of test suites and test tools, which simplifies the reuse of test code and the creation of test suites.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/composable_testsuites_01.png" alt="composable testsuites 01">
+</div>
+</div>
+<div class="paragraph">
+<p>Thanks to the modular design, test suites can be assembled from existing modules and adapted to the respective requirements.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/composable_testsuites_02.png" alt="composable testsuites 02">
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_bricks_module"> 2. Bricks-Module</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Nach dem Baukaustenprinzip ist B<sup>2</sup>ric<sup>2</sup>s in mehrere separate Teile gruppiert&#8230;&#8203;</p>
+</div>
+<div class="sect2">
+<h3 id="_configuration_bricks">2.1. Configuration-Bricks</h3>
+<div class="paragraph">
+<p>TODO: Beschreibung what are Configuration-Bricks</p>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+<div class="sect2">
+<h3 id="_fhir_bricks">2.2. FHIR-Bricks</h3>
+<div class="paragraph">
+<p>Mit <a href="https://fhir.org/">HL7 FHIR</a></p>
+</div>
+<div class="paragraph">
+<p>TODO: Beschreibung what is FHIR-Bricks</p>
+</div>
+<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9oDKyjEmp0GlFihLkMAAv3WXYf4sWXkg9nGb8DhRn8hZZVQE8M2-7SSNcgRLC877-pPcPrP-xOBYaFVED7LrhUALGEQcfOy-l0KTWw1KGVbIuV2OH4W4B0jgm363ZUMl9YgXNS1STqfNPTClJS9EUAR6tmDo5wvnGAUqJbw-OOH6-GnP8r6V0ZXoI3C4ceQyl38L5Y7tGpEbbVB94r_fBAYiYnxtJTomrRN-TwfGRbHdUtQhrh9Lx-GF_Bq_c4DgTBMsR2Br6cwl5nT7r1lbRD63Ox70ZgIwF5nfLehY_xjpVfoMZ8XnYYNH1-hYmCvJRwmPSyg44yA3fpThWiuONZJMnSJtTFC3CvBR6B_zPons0uRCdgDFxwYYhER7FO74CiEWib1zgrSGFRNUowoexb4ZA4NVuGIuvn03Wzgm9s8zxJJezAfg4wGWipE6CsvKLs59Xye_XcC4BVeJVmgd-cu5nK0" /></div></div>
+<div class="sect3">
+<h4 id="_fhir_validator">2.2.1. FHIR-Validator</h4>
+<div class="paragraph">
+<p>Was ist der FHIR-Validator und wie funktionieren die Implementierungen&#8230;&#8203; TODO</p>
+</div>
+<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9oLayzBmp0SnU_vAm9UfjWTF0uP0tNWOIehUX4FiNbjmz9lIfBEJV5_Drt3Vh0DjvwQxtkV97sFZfmNrZULPipD5DN2YeeNrZJr8vMmoWlAm6-sn5faCr4WzKiDFWuJC0VFARoue255w_F6SZ84nXHvs3m8_4re9LjbN2hBVnWFJm5_Pu9ZuNkN0zuASRbIvns1NjOEoGzuwgsY8bZZPihG5AxHdL-vrVY0_TCO3K7ibp6MQU4SVx4cLnfoVIkkgbgZ2fpRlMe49k4KTJRrPEXiPeeS5lHzCd3VLDNo13UBvN69Ve4gn3VhM-JpM4QtsIRPYP6DHflPJcGF2sz5rXxKOUZMKJqG_dFTxYRqRJSPngvUgOx9f10sArFuVvexKi5Lef7xPBZVwJ4YaUQBDi3wYzX-zCdxXOMybiALa1-Hsyk8ZK0o_4P__g4qC000" /></div></div>
+<div style="page-break-after: always;"></div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_perimeter_bricks">2.3. Perimeter-Bricks</h3>
+<div class="paragraph">
+<p>Was sind die TI-Perimeter-Bricks&#8230;&#8203; TODO</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="./images/intro_perimeter_bricks.png" alt="intro perimeter bricks">
+</div>
+</div>
+<div class="sect3">
+<h4 id="_smartcards_brick">2.3.1. Smartcards-Brick</h4>
+<div class="paragraph">
+<p>Smartcards mittles <code>smartcard-brick</code>&#8230;&#8203;. TODO</p>
+</div>
+<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9nraj5gWp0KXk_FKuHwDmZOGXs38bMh3x3UR9HUPCcf3SP4ZkcwCVRkixGKwpIN-Rzp-7uuwzOBygVQG5jfsmWIDPEkRfn5wxV-so0Zb5xOqY2CCUm7MFTI8QkItCcgp1b7gnL-UIGhJ1opTpJ6dQ-O8uNq7tb5DRwccI-wE4ZoBDpay0kmQ-jEM0fIN1hDFqZBQi-2A2gAP05WdK8sszwPz9BFM50Kctc-lCdkxdb2ygW_iLjGvCzH6WxYgVyCoUk3bi8FHz-MuSj3UgimhSuD7ZoFUzklqdiOqNpYfClZ8zu7nuc-44oquCgTxMLgs01WZLPr5_87FRkuW000" /></div></div>
+<div class="sect4">
+<h5 id="_smartcards">Smartcards</h5>
+<div class="paragraph">
+<p>Die Smartcards sind folgendermaßen aufgebaut:</p>
+</div>
+<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9nzKy5kmZ0ClUShSjmEN7P44m8wD13RE9ITfv2Q4f4uLUAoTOX_NrfAQUcsN9m-FziljZls91pbHZE_LvW99mnFdSsp1Ux0AH8eWJym9ZQUd934fHRUyzY4A2bSme-CXwEaz3ZaCJc5QOL8SAIsIWe2F-GlojDZ4nHTVQEAd09DSbgfnD_Tr-JmCMAdNk45UbAK4rmLm1S19YrDnqlEDMWmWjH-aPHvM-g2SuOor2ZnO5fWIznTv8gCR5nu0bCc-EK1fSQpj5cwxslXZPZb0LrBnQcEccz44zL_7BkqMqx_Om7cvbfpNMHGrvqzBoixdqug6xz67zFcjboNwjdDI5UV2Ev9aAXpI6kCnJTXeDF2e45taLGTeC_pkSDRpBfKeFeEex7uf-CT5LqsfsASToMi0m1rehILGYigEc1cmshho2RTqjBcIAvepO5TXpNGiAN1gDlAjj-fTDSXDCqAVHo7yOG_wGTJzXs2" /></div></div>
+</div>
+<div class="sect4">
+<h5 id="_smartcard_archiv">Smartcard-Archiv</h5>
+<div class="paragraph">
+<p>Das <code>SmartcardArchive</code> ist ein Archiv, in dem die Smartcards verwaltet werden.</p>
+</div>
+<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9nrKK5Emp0GlFiL-u56WYD2KQ5GzS0jBrWxcyGqzaRUfH92_1t7JI5IX4_Mp7XcThqNnQGVOJH22X43oOIE6femeNA2o96CSIEAG1Eorc5gvIcvmLy8lWpa8y7P0xg17k3DYpusmJtNXHaihecJnIjE_NcDl_RdsdnlOexeSeNF9SLnx7mllncBw53W5-NYiAsugpU6PfF0k-JxGRFs7IzOUQwEVinpHrO2oweSWBlj0agnW15x4i3OWfkdaWBhG7apjmU6CZlR_MzwQrU6JOIQFLS6Cpn7Z8ojG3NTtKENIru9Yq8jS2ofowR-8lVvbl_u1sYffva0" /></div></div>
+<div class="paragraph">
+<p>Bevor man das <code>SmartcardArchive</code> nutzen kann, muss dieses zunächst mit den gewünschten Smartcards initialisiert werden.
+Hierfür hat man die Möglichkeit eigene Smartcards aus dem Dateisystem zu laden:</p>
+</div>
+<div id="sca_file" class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="type">var</span> smartcardsImage = <span class="keyword">new</span> <span class="predefined-type">File</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">your/path/to/smartcards.json</span><span class="delimiter">&quot;</span></span>);
+<span class="type">var</span> sca = SmartcardArchive.from(smartcardsImage);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Alternativ ist es auch möglich, die Smartcard Images als Java-Resources (<code>resources/smartcards/smartcards.json</code>) zu speichern und diese dann folgendermaßen in das <code>SmartcardArchive</code> zu laden:</p>
+</div>
+<div id="sca_resources" class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="type">var</span> sca = SmartcardArchive.fromResources();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Anschließend können die Smartcards aus dem <code>SmartcardArchive</code> anhand unterschiedlicher Kriterien geladen werden:</p>
+</div>
+<div id="sca_load_explicit_smartcards" class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="type">var</span> egk0 = sca.getEgk(<span class="integer">0</span>);
+<span class="type">var</span> egk1 = sca.getEgkByICCSN(<span class="string"><span class="delimiter">&quot;</span><span class="content">80276883110000113311</span><span class="delimiter">&quot;</span></span>);
+<span class="type">var</span> egk2 = sca.getEgkByKvnr(<span class="string"><span class="delimiter">&quot;</span><span class="content">X110407071</span><span class="delimiter">&quot;</span></span>);
+
+<span class="type">var</span> hba0 = sca.getHba(<span class="integer">0</span>);
+<span class="type">var</span> hba1 = sca.getHbaByICCSN(<span class="string"><span class="delimiter">&quot;</span><span class="content">80276001011699901501</span><span class="delimiter">&quot;</span></span>);
+
+<span class="type">var</span> smcb0 = sca.getSmcB(<span class="integer">0</span>);
+<span class="type">var</span> smcb1 = sca.getSmcBByICCSN(<span class="string"><span class="delimiter">&quot;</span><span class="content">80276001011699900861</span><span class="delimiter">&quot;</span></span>);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Das <code>SmartcardArchive</code> bietet darüber hinaus auch die Möglichkeit eine Smartcard anhand des konkreten Typs und der ICCSN zu laden:</p>
+</div>
+<div id="sca_load_typed_smartcards" class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">Egk egk1       = sca.getByICCSN(Egk.class, <span class="string"><span class="delimiter">&quot;</span><span class="content">80276883110000113311</span><span class="delimiter">&quot;</span></span>);
+Smartcard egk2 = sca.getSmartcardByICCSN(SmartcardType.EGK, <span class="string"><span class="delimiter">&quot;</span><span class="content">80276883110000113311</span><span class="delimiter">&quot;</span></span>);
+
+Hba hba1       = sca.getByICCSN(Hba.class, <span class="string"><span class="delimiter">&quot;</span><span class="content">80276001011699901501</span><span class="delimiter">&quot;</span></span>);
+Smartcard hba2 = sca.getSmartcardByICCSN(SmartcardType.HBA, <span class="string"><span class="delimiter">&quot;</span><span class="content">80276001011699901501</span><span class="delimiter">&quot;</span></span>);
+
+SmcB smcb0     = sca.getByICCSN(SmcB.class, <span class="string"><span class="delimiter">&quot;</span><span class="content">80276001011699900861</span><span class="delimiter">&quot;</span></span>);
+Smartcard hba2 = sca.getSmartcardByICCSN(SmartcardType.SMC_B, <span class="string"><span class="delimiter">&quot;</span><span class="content">80276001011699900861</span><span class="delimiter">&quot;</span></span>);</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Hinweis"></i>
+</td>
+<td class="content">
+Bei dem Aufruf über <code>getSmartcardByICCSN</code> wird die Smartcard als Basis-Klasse <code>Smartcard</code> zurückgegeben, weil hier der konkrete Typ der Smartcard syntaktisch nicht bekannt ist. Es sollen, wenn immer möglich, die konkreten und typisierten Methoden verwendet werden umd die Typsicherheit zu bewahren.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Das <code>SmartcardArchive</code> kann natürlich aber nur Smartcards laden und herausgeben, die konfiguriert sind.
+Das bedeutet, dass die folgenden beiden Aufrufe zur Laufzeit zu Fehlern führen:</p>
+</div>
+<div id="sca_load_unknown_smartcards" class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="comment">// exeeding index</span>
+assertThrows(<span class="exception">IndexOutOfBoundsException</span>.class, () -&gt; sca.getEgk(<span class="integer">100</span>));
+
+<span class="comment">// unknown ICCSN</span>
+assertThrows(SmartcardNotFoundException.class, () -&gt; sca.getEgkByICCSN(<span class="string"><span class="delimiter">&quot;</span><span class="content">123</span><span class="delimiter">&quot;</span></span>));</code></pre>
+</div>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warnung"></i>
+</td>
+<td class="content">
+Grundsätzlich wird dringend davon abgeraten, das Laden der Smartcards über den Index als Standardmethode zu verwenden.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Beide Fehlerfälle können zur Laufzeit in etwa folgendermaßen behandelt werden:</p>
+</div>
+<div id="sca_load_unknown_smartcards_safely" class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="comment">// gives you the amount of known EGK smartcards</span>
+<span class="type">int</span> idx = <span class="integer">100</span>;
+<span class="type">int</span> amountEgks = sca.getConfigsFor(SmartcardType.EGK).size();
+<span class="keyword">if</span> (amountEgks &lt;= idx) {
+    <span class="comment">// do something about it</span>
+}
+
+<span class="comment">// gives you an empty optional because ICCSN &quot;123&quot; is unknown</span>
+Optional&lt;Smartcard&gt; opt = sca.getByICCSN(<span class="string"><span class="delimiter">&quot;</span><span class="content">123</span><span class="delimiter">&quot;</span></span>);
+<span class="keyword">if</span> (opt.isEmpty()) {
+    <span class="comment">// do something about it</span>
+}</code></pre>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_konnektor">2.3.2. Konnektor</h4>
+<div class="paragraph">
+<p>Der Konnektor-Client ist über mehrere Module aufgebaut&#8230;&#8203; TODO</p>
+</div>
+<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9oLb4zF0Z4GnU_z54qyDo4S3I4WGc8yI8AUZ8VI7TPc-y_fBCOOlhi5T-EoK9Kzx67crzVtPYSxYIIHQcjOhBGB4gNbojlW7JXQqOS1Zg18kj80EyVmJyRJSoDLLQAlNJ7pnkDef1q1Ecd6OturdSy6j_FpN33IEIZwcCS2y1HPB8R3mO3j6FinSEzJjoAFZPNdgYs8zoXaq6ADMbKll6kgJogZarP3VZUZtr02H0JSQWLv5GJh2Vv2TymbYgCkNudxJTxcTIVHwc6wvDFbNJVlJ6Bn26XrqcqZgrGJr1GxOasN1Fgrf-EKl3FPLeNY2NCKWKcrj_MKWhBzYmi36nBZx2XJcZf2RE13-3sTyzlYBAidwd1yNNzu26-rngIHb_YF3IkTB0zECdjmOgIVEw3VwW8YRmwo_A9ShiNEVQn6vfTKsWO3DXr9uybinKKYZ4t05UdtyGMe_du5" /></div></div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_restful_bricks">2.4. RESTful-Bricks</h3>
+<div class="paragraph">
+<p>Was sind die RESTful-Bricks?</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="./images/intro_restful_bricks.png" alt="intro restful bricks">
+</div>
+</div>
+<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9oLL5rB8p4KVS-l2FhYmeuexBuiKjIsW_icLHUaz25ERgUX-HYJJ5La_xjtqanDdPc2XLAukVUSSyyzzD9vPdsj975heIjccQA5KPNHeFsTVvD0BHIUwL82wUkXxuJYvzfO3dPifB4N5ykLiDcJ5SNQZKPq1Znf2PXVMoRChTekLgnBQshD8nYyUh2QIMnx12dDIvSlQMd8_XEY3GTwbD_ydT7PzEx-Y1xd-UHy-ZkgdIzv5XGKKk0EMo6B-1JgE5_4ClsYDcdRC2auyyBeeTwTbaO67HkbQYsAC8AY9hycupnlHLbmlbN4Ah6dQiFgFh7fIAmZ8zcTBF60tigw5DeXxHX9fsUHzkG7lG66PbBcqBxd6Y6tXLjhDW9_jrHEOL0APdacU9LL0UoJCs7yT_NGuKhVUyKGCkTmMe92QzQdoD1yusQDgvydnixUwz6CcnUTPQCX8-aVMZjmW-FpOmly9mzHN4XO-WQgcuOTIkTb7o6e6Gq69S8Cgh6YN0K5lITPu60d4ZIhguFh2rL9K5X6-TtaV6UybxtrB0d0WWp1nGN3XaaWSE10q5g9WvuSdDqxpyxVuTYHIz0S_ne_0Euultq0" /></div></div>
+<div style="page-break-after: always;"></div>
+</div>
+<div class="sect2">
+<h3 id="_cli_bricks">2.5. CLI-Bricks</h3>
+<div class="paragraph">
+<p>TODO: Beschreibung what are CLI-Bricks</p>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+<div class="sect2">
+<h3 id="_utility_bricks">2.6. Utility-Bricks</h3>
+<div class="paragraph">
+<p>TODO: Beschreibung what are Utility-Bricks</p>
+</div>
+<div style="page-break-after: always;"></div>
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_release_notes">Appendix A: Release Notes</h2>
+<div class="sectionbody">
+<h3 id="_release_0_1_8" class="discrete">Release 0.1.8</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>initial implementation of the core framework</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Version 0.1.8<br>
+</div>
+</div>
+</body>
+</html>
