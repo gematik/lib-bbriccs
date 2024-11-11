@@ -49,6 +49,7 @@ de.gematik.bbriccs.konnektor.requests.options
 de.gematik.bbriccs.konnektor.utils
 de.gematik.bbriccs.konnektor.vsdm
 de.gematik.bbriccs.rest
+de.gematik.bbriccs.rest.exceptions
 de.gematik.bbriccs.rest.fd
 de.gematik.bbriccs.rest.fd.exceptions
 de.gematik.bbriccs.rest.fd.plugins
@@ -65,4 +66,5 @@ de.gematik.bbriccs.smartcards.cfg
 de.gematik.bbriccs.smartcards.cli
 de.gematik.bbriccs.smartcards.cli.cmd
 de.gematik.bbriccs.smartcards.exceptions
+de.gematik.bbriccs.toggle
 de.gematik.bbriccs.utils

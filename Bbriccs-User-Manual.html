@@ -312,8 +312,8 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 <h1>B<sup>2</sup>ric<sup>2</sup>s</h1>
 <div class="details">
 <span id="author" class="author">gematik GmbH</span><br>
-<span id="revnumber">version 0.1.9,</span>
-<span id="revdate">2024-09-12</span>
+<span id="revnumber">version 0.1.10,</span>
+<span id="revdate">2024-11-11</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Inhaltsverzeichnis</div>
@@ -326,24 +326,19 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 </li>
 <li><a href="#_bricks_module"> 2. Bricks-Module</a>
 <ul class="sectlevel2">
-<li><a href="#_configuration_bricks">2.1. Configuration-Bricks</a></li>
-<li><a href="#_fhir_bricks">2.2. FHIR-Bricks</a>
+<li><a href="#_configuration_bricks">2.1. Configuration-Bricks</a>
 <ul class="sectlevel3">
-<li><a href="#_fhir_validator">2.2.1. FHIR-Validator</a></li>
-</ul>
-</li>
-<li><a href="#_perimeter_bricks">2.3. Perimeter-Bricks</a>
-<ul class="sectlevel3">
-<li><a href="#_smartcards_brick">2.3.1. Smartcards-Brick</a></li>
-<li><a href="#_konnektor">2.3.2. Konnektor</a></li>
-</ul>
-</li>
-<li><a href="#_restful_bricks">2.4. RESTful-Bricks</a></li>
-<li><a href="#_cli_bricks">2.5. CLI-Bricks</a></li>
-<li><a href="#_utility_bricks">2.6. Utility-Bricks</a></li>
+<li><a href="#_feature_toggle">2.1.1. Feature-Toggle</a></li>
+<li><a href="#_fhir_bricks">2.1.2. FHIR-Bricks</a></li>
+<li><a href="#_perimeter_bricks">2.1.3. Perimeter-Bricks</a></li>
+<li><a href="#_restful_bricks">2.1.4. RESTful-Bricks</a></li>
+<li><a href="#_cli_bricks">2.1.5. CLI-Bricks</a></li>
+<li><a href="#_utility_bricks">2.1.6. Utility-Bricks</a></li>
 </ul>
 </li>
 <li><a href="#_release_notes">Appendix A: Release Notes</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -414,10 +409,244 @@ the following uses are recommended depending on the situation:</p>
 <div class="paragraph">
 <p>TODO: Beschreibung what are Configuration-Bricks</p>
 </div>
+<div class="sect3">
+<h4 id="_feature_toggle">2.1.1. Feature-Toggle</h4>
+<div class="paragraph">
+<p>Ein Feature-Toggle-Modul ermöglicht es Entwicklern, bestimmte Funktionen oder Codeabschnitte in einer Anwendung ein- oder auszuschalten. Dies ist besonders nützlich für die schrittweise Einführung neuer Features. Besonders bei Testsuiten haben wir oftmals den Fall, dass bestimmte Features unterschiedliche Stages durchlaufen und in unterschiedlichen Umgebungen aktiviert oder deaktiviert werden müssen.</p>
+</div>
+<div class="paragraph">
+<p>Das <code>feature-toggle-brick</code> bietet eine flexible Lösung, indem es ermöglicht, Funktionen über die System-Properties und Umgebungsvariablen zu aktivieren oder zu deaktivieren.</p>
+</div>
+<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9njaSjgmq0CHVVp5KEwQIc1V809UO1tXL9tqwLiAyPaB1cDtDQa_VVA3zoKPbOQwUXUZMON5KIx9hXuhga5WSONtBHCI9ff7z0B5WfK1NIt67zntiu1YdCbt55vvC2I9FYfA0HXk_Ll609_J1XBYV8VUS7IVJjN18ZHhx8-AZOh3z77CHnD7YlKP-4MHVlxXpc1z6xnRskAe9tWaUbKLvs0raoZqCaAXMNznM1NarcVeC2buvKhU-A4wW3DWWVcW41NvVow_DJF_Pc2BY9t-tsQRZQsi6dyPBrU1d1EkVNAFcTLRdnP3mksCPtv_W67-vSbSbt2MtPkXrJQ3_u0KZ6TAW00" /></div></div>
+<div class="paragraph">
+<p>Um die Wartbarkeit im Code zu erhöhen, bietet das <code>feature-toggle-brick</code> eine Abstraktion mit einer einfachen API an Feature-Toggles aus dem System auszulesen ohne dabei direkt auf System-Properties oder Umgebungsvariablen. Dadurch lässt sich die Abhängigkeit zum jeweiligen "Key" (sei es ein System-Property oder eine Umgebungsvariable) auf ein Minimum reduzieren. Dabei wird nicht nur die Abstraktion von System-Properties/Umgebungsvariablen fokussiert, sondern auch ein Konzept angeboten, um die Feature-Toggles sowohl über System-Properties als auch über Umgebungsvariablen gleichzeitig zu konfigurieren.</p>
+</div>
+<div class="sect4">
+<h5 id="_feature_toggles_setzen">Feature-Toggles setzen</h5>
+<div class="paragraph">
+<p>Ein entscheidender Vorteil des <code>feature-toggle-brick</code> ist es, dass Feature-Toggle sowohl über System-Properties als auch über Umgebungsvariablen gesetzt werden können. Dabei wird die Konfiguration über System-Properties bevorzugt, falls diese nicht gesetzt sind, wird auf die Umgebungsvariablen zurückgegriffen und im aller letzten Fall (wenn weder System-Properties noch Umgebungsvariablen gesetzt sind) wird der Default-Wert verwendet.</p>
+</div>
+<div class="paragraph">
+<p>Angenommen wir haben die Applikation <code>MyApplication</code> die ein Boolean-Toggle benötigt:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="type">class</span> <span class="class">MyApplication</span> {
+  <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args){
+    val featureConf = <span class="keyword">new</span> FeatureConfiguration();
+    <span class="type">boolean</span> isFeatureActive = featureConf.getBooleanToggle(<span class="string"><span class="delimiter">&quot;</span><span class="content">myFeature.isActive</span><span class="delimiter">&quot;</span></span>);
+    <span class="comment">// Alternative mit meinem eigenen Default-Wert: false ist der Default-Wert für den Default-Wert</span>
+    <span class="comment">// boolean isFeatureActive = featureConf.getBooleanToggle(&quot;hello.boolean&quot;, false);</span>
+
+    <span class="keyword">if</span>(isFeatureActive){
+      <span class="predefined-type">System</span>.out.println(<span class="string"><span class="delimiter">&quot;</span><span class="content">Feature is active</span><span class="delimiter">&quot;</span></span>);
+    } <span class="keyword">else</span> {
+      <span class="predefined-type">System</span>.out.println(<span class="string"><span class="delimiter">&quot;</span><span class="content">Feature is NOT active</span><span class="delimiter">&quot;</span></span>);
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Nun können wir das Feature-Toggle über System-Properties oder Umgebungsvariablen setzen und die Applikation starten:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="shell"># verwendet den Default-Wert weil kein Feature-Toggle gesetzt ist
+java MyApplication
+&gt;&gt; Feature is NOT active
+
+# setze das Feature-Toggle über System-Properties
+java -DmyFeature.isActive=true MyApplication
+&gt;&gt; Feature is active
+
+# setze das Feature-Toggle über Umgebungsvariablen
+export MYFEATURE_ISACTIVE=YES
+java MyApplication
+&gt;&gt; Feature is active
+
+# Umgebungsvariable weiterhin gesetzt
+# das Feature-Toggle wird über System-Properties überschrieben
+echo $MYFEATURE_ISACTIVE
+java -DmyFeature.isActive=false MyApplication
+&gt;&gt; Feature is NOT active</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Mit diesem kleinen Demonstrator werden bereits die Grundlagen des <code>feature-toggle-brick</code> demonstriert:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Feature-Toggles können über System-Properties und Umgebungsvariablen gesetzt werden</p>
+</li>
+<li>
+<p>Die Konfiguration über System-Properties hat Vorrang vor der Konfiguration über Umgebungsvariablen</p>
+</li>
+<li>
+<p>Der Default-Wert wird verwendet, wenn weder System-Properties noch Umgebungsvariablen gesetzt sind. Damit werden unerwartete Fehler vermieden und wir können die Applikation immer in einem definierten Zustand ohne zusätzliche Konfigurationen starten.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Dann wäre da noch die Nomenklatur der Toggles selbst. Das <code>feature-toggle-brick</code> sorgt dafür, dass die Feature-Toggles stets aus einer einheitlichen Bildungsregel abgeleitet werden und immer einem festen Schema folgen.</p>
+</div>
+<div class="paragraph">
+<p>Dabei gelten die folgenden Ableitungsregeln für die System-Properties und Umgebungsvariablen:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>das Feature-Toggle <code>myFeature.isActive</code> wird als System-Property mit <code>-DmyFeature.isActive=true</code> gesetzt und hat damit exakt den gleichen Namen</p>
+</li>
+<li>
+<p>das Feature-Toggle <code>myFeature.isActive</code> wird als Umgebungsvariable mit <code>MYFEATURE_ISACTIVE=YES</code> und wird dabei über <code>key.toUpperCase().replace(".", "_")</code> gebildet.</p>
+</li>
+<li>
+<p>über die API der <code>FeatureConfiguration</code> wird ein Feature-Toggle (wenn über einen String abgefragt) immer über den Namen (z.B. <code>myFeature.isActive</code>) abgefragt.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_benutzerdefinierte_feature_toggles">Benutzerdefinierte Feature-Toggles</h5>
+<div class="paragraph">
+<p>Im letzten Beispiel haben wir gesehen, wie man ein Feature-Toggle über seinen Namen abfragen kann. Dabei wird der Name des Feature-Toggles als String übergeben und die <code>FeatureConfiguration</code> kümmert sich um die Auflösung und das konkrete Mapping zum jeweiligen Datentypen des Feature-Toggles. So sind z.B. auch weitere gängige Datentypen wie <code>Integer</code>, <code>Double</code>, <code>String</code> oder auch allgemein für Enumerationen bereits implementiert.</p>
+</div>
+<div class="paragraph">
+<p>Damit können wir zwar schon die konsistente Nomenklatur der Feature-Toggles gewährleisten, haben aber weiterhin das Problem, dass Feature-Toggles tendenziell(wenn über String abgefragt), extrem schlecht wartbar sind. Diese Art der Abfrage ist daher nur empfehlenswert, wenn ein Feature-Toggle nur an einer einzigen Stelle abgefragt wird. Für komplexere Feature-Toggles, oder solche die an vielen Stellen verwendet werden müssen, bietet das <code>feature-toggle-brick</code> auch die Möglichkeit, benutzerdefinierte Feature-Toggles zu erstellen. Damit kann der tatsächliche Name eines Toggles in einer einzigen Stelle gekapselt werden, wodurch die Wartbarkeit und Lesbarkeit des Codes deutlich erhöht wird.</p>
+</div>
+<div class="paragraph">
+<p>Angenommen wir haben ein Feature-Toggle mir mehreren Zuständen mit dem Namen <code>myFeature.state</code> welches zusätzlich an vielen Stellen benötigt wird. Der Zustand dafür kann über eine Enumeration <code>MyFeatureState</code> abgebildet werden und folgendermaßen abgefragt werden:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="type">class</span> <span class="class">MyApplication</span> {
+  <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args){
+    val featureConf = <span class="keyword">new</span> FeatureConfiguration();
+    MyFeatureStateToggle isFeatureActive = featureConf.getEnumToggle(<span class="string"><span class="delimiter">&quot;</span><span class="content">myFeature.state</span><span class="delimiter">&quot;</span></span>, MyFeatureStateToggle.class, MyFeatureStateToggle.STATE_ONE);
+    <span class="predefined-type">System</span>.out.println(<span class="string"><span class="delimiter">&quot;</span><span class="content">Feature state is: </span><span class="delimiter">&quot;</span></span> + isFeatureActive.getState());
+  }
+
+  <span class="type">enum</span> MyFeatureStateToggle {
+    STATE_ONE(<span class="string"><span class="delimiter">&quot;</span><span class="content">first</span><span class="delimiter">&quot;</span></span>),
+    STATE_TWO(<span class="string"><span class="delimiter">&quot;</span><span class="content">second</span><span class="delimiter">&quot;</span></span>),
+    STATE_THREE(<span class="string"><span class="delimiter">&quot;</span><span class="content">third</span><span class="delimiter">&quot;</span></span>);
+
+    <span class="directive">private</span> <span class="directive">final</span> <span class="predefined-type">String</span> state;
+
+    MyFeatureStateToggle(<span class="predefined-type">String</span> state){
+      <span class="local-variable">this</span>.state = state;
+    }
+
+    <span class="directive">public</span> <span class="predefined-type">String</span> getState(){
+      <span class="keyword">return</span> state;
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Dann können wir das Feature-Toggle bereits so auch im einfachsten Fall direkt nutzen:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="shell">java -DmyFeature.state=STATE_THREE MyApplication
+&gt;&gt; Feature state is: third</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Allerdings besteht hier weiterhin das Problem der Wartbarkeit mit der "String-Adressierung". Diese lässt sich durch die Verwendung eines benutzerdefinierten Feature-Toggles lösen und darüber hinaus lässt sich das Feature-Toggle auch mit zusätzlicher Funktionalität versehen:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="type">class</span> <span class="class">MyApplication</span> {
+  <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args){
+    val featureConf = <span class="keyword">new</span> FeatureConfiguration();
+    MyFeatureState isFeatureActive = featureConf.getToggle(<span class="keyword">new</span> MyFeatureStateToggle());
+    <span class="predefined-type">System</span>.out.println(<span class="string"><span class="delimiter">&quot;</span><span class="content">Feature state is: </span><span class="delimiter">&quot;</span></span> + isFeatureActive.getState());
+  }
+
+  <span class="directive">public</span> <span class="directive">static</span> <span class="type">class</span> <span class="class">MyFeatureStateToggle</span> <span class="directive">implements</span> FeatureToggle&lt;MyFeatureState&gt; {
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="predefined-type">String</span> getKey() {
+      <span class="keyword">return</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">myFeature.state</span><span class="delimiter">&quot;</span></span>;
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> Function&lt;<span class="predefined-type">String</span>, MyFeatureState&gt; getConverter() {
+      <span class="keyword">return</span> <span class="local-variable">this</span>::mapState;
+    }
+
+    <span class="directive">public</span> MyFeatureState mapState(<span class="predefined-type">String</span> value) {
+      <span class="keyword">if</span> (StringUtils.isNumeric(value)) {
+        val index = <span class="predefined-type">Integer</span>.parseInt(value) % MyFeatureState.values().length;
+        <span class="keyword">return</span> MyFeatureState.values()[index];
+      } <span class="keyword">else</span> {
+        <span class="keyword">return</span> <span class="predefined-type">Arrays</span>.stream(MyFeatureState.values())
+            .filter(e -&gt; e.getState().equalsIgnoreCase(value) || e.name().equalsIgnoreCase(value))
+            .findFirst()
+            .orElse(getDefaultValue());
+      }
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> MyFeatureState getDefaultValue() {
+      <span class="keyword">return</span> MyFeatureState.STATE_ONE;
+    }
+  }
+
+  <span class="type">enum</span> MyFeatureState {
+    STATE_ONE(<span class="string"><span class="delimiter">&quot;</span><span class="content">first</span><span class="delimiter">&quot;</span></span>),
+    STATE_TWO(<span class="string"><span class="delimiter">&quot;</span><span class="content">second</span><span class="delimiter">&quot;</span></span>),
+    STATE_THREE(<span class="string"><span class="delimiter">&quot;</span><span class="content">third</span><span class="delimiter">&quot;</span></span>);
+
+    <span class="directive">private</span> <span class="directive">final</span> <span class="predefined-type">String</span> state;
+
+    MyFeatureState(<span class="predefined-type">String</span> state){
+      <span class="local-variable">this</span>.state = state;
+    }
+
+    <span class="directive">public</span> <span class="predefined-type">String</span> getState(){
+      <span class="keyword">return</span> state;
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Mit dieser Implementierung ist das gesamte FeatureToggle in einer einzigen Klasse gekapselt und kann an beliebiger Stelle abgefragt werden. Dabei wird die Nomenklatur der Feature-Toggles beibehalten und die Wartbarkeit des Codes deutlich erhöht. Darüber hinaus kann das Feature-Toggle auch mit zusätzlicher Funktionalität versehen werden, wie z.B. die Umwandlung von numerischen Werten in Enumerationen oder auch die Verwendung von sprechenden Werten (anstatt der Enumerationsnamen):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="shell"># mapping über den Enumerationsnamen
+java -DmyFeature.state=STATE_THREE MyApplication
+&gt;&gt; Feature state is: third
+
+# mapping über den State-Wert der Enumeration
+java -DmyFeature.state=second MyApplication
+&gt;&gt; Feature state is: second
+
+# mapping über den Enumerationsindex
+java -DmyFeature.state=2 MyApplication
+&gt;&gt; Feature state is: third
+
+# mapping über einen rollenden Enumerationsindex (Überlauf mit modulo)
+java -DmyFeature.state=42 MyApplication
+&gt;&gt; Feature state is: first</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Mit diesem Konzept lassen sich sowohl einfache als auch extrem komplexe und vor allem wiederverwendbare Feature-Toggles bauen.
+&lt;&lt;&lt;
+:leveloffset: -1</p>
+</div>
 <div style="page-break-after: always;"></div>
 </div>
-<div class="sect2">
-<h3 id="_fhir_bricks">2.2. FHIR-Bricks</h3>
+</div>
+<div class="sect3">
+<h4 id="_fhir_bricks">2.1.2. FHIR-Bricks</h4>
 <div class="paragraph">
 <p>Mit <a href="https://fhir.org/">HL7 FHIR</a></p>
 </div>
@@ -425,8 +654,8 @@ the following uses are recommended depending on the situation:</p>
 <p>TODO: Beschreibung what is FHIR-Bricks</p>
 </div>
 <div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9oDKyjEmp0GlFihLkMAAv3WXYf4sWXkg9nGb8DhRn8hZZVQE8M2-7SSNcgRLC877-pPcPrP-xOBYaFVED7LrhUALGEQcfOy-l0KTWw1KGVbIuV2OH4W4B0jgm363ZUMl9YgXNS1STqfNPTClJS9EUAR6tmDo5wvnGAUqJbw-OOH6-GnP8r6V0ZXoI3C4ceQyl38L5Y7tGpEbbVB94r_fBAYiYnxtJTomrRN-TwfGRbHdUtQhrh9Lx-GF_Bq_c4DgTBMsR2Br6cwl5nT7r1lbRD63Ox70ZgIwF5nfLehY_xjpVfoMZ8XnYYNH1-hYmCvJRwmPSyg44yA3fpThWiuONZJMnSJtTFC3CvBR6B_zPons0uRCdgDFxwYYhER7FO74CiEWib1zgrSGFRNUowoexb4ZA4NVuGIuvn03Wzgm9s8zxJJezAfg4wGWipE6CsvKLs59Xye_XcC4BVeJVmgd-cu5nK0" /></div></div>
-<div class="sect3">
-<h4 id="_fhir_validator">2.2.1. FHIR-Validator</h4>
+<div class="sect4">
+<h5 id="_fhir_validator">FHIR-Validator</h5>
 <div class="paragraph">
 <p>Was ist der FHIR-Validator und wie funktionieren die Implementierungen&#8230;&#8203; TODO</p>
 </div>
@@ -435,8 +664,8 @@ the following uses are recommended depending on the situation:</p>
 <div style="page-break-after: always;"></div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_perimeter_bricks">2.3. Perimeter-Bricks</h3>
+<div class="sect3">
+<h4 id="_perimeter_bricks">2.1.3. Perimeter-Bricks</h4>
 <div class="paragraph">
 <p>Was sind die TI-Perimeter-Bricks&#8230;&#8203; TODO</p>
 </div>
@@ -445,21 +674,21 @@ the following uses are recommended depending on the situation:</p>
 <img src="./images/intro_perimeter_bricks.png" alt="intro perimeter bricks">
 </div>
 </div>
-<div class="sect3">
-<h4 id="_smartcards_brick">2.3.1. Smartcards-Brick</h4>
+<div class="sect4">
+<h5 id="_smartcards_brick">Smartcards-Brick</h5>
 <div class="paragraph">
-<p>Smartcards mittles <code>smartcard-brick</code>&#8230;&#8203;. TODO</p>
+<p>Smartcards mittels <code>smartcard-brick</code>&#8230;&#8203;. TODO</p>
 </div>
 <div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9nraj5gWp0KXk_FKuHwDmZOGXs38bMh3x3UR9HUPCcf3SP4ZkcwCVRkixGKwpIN-Rzp-7uuwzOBygVQG5jfsmWIDPEkRfn5wxV-so0Zb5xOqY2CCUm7MFTI8QkItCcgp1b7gnL-UIGhJ1opTpJ6dQ-O8uNq7tb5DRwccI-wE4ZoBDpay0kmQ-jEM0fIN1hDFqZBQi-2A2gAP05WdK8sszwPz9BFM50Kctc-lCdkxdb2ygW_iLjGvCzH6WxYgVyCoUk3bi8FHz-MuSj3UgimhSuD7ZoFUzklqdiOqNpYfClZ8zu7nuc-44oquCgTxMLgs01WZLPr5_87FRkuW000" /></div></div>
-<div class="sect4">
-<h5 id="_smartcards">Smartcards</h5>
+<div class="sect5">
+<h6 id="_smartcards">Smartcards</h6>
 <div class="paragraph">
 <p>Die Smartcards sind folgendermaßen aufgebaut:</p>
 </div>
 <div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9nzKy5kmZ0ClUShSjmEN7P44m8wD13RE9ITfv2Q4f4uLUAoTOX_NrfAQUcsN9m-FziljZls91pbHZE_LvW99mnFdSsp1Ux0AH8eWJym9ZQUd934fHRUyzY4A2bSme-CXwEaz3ZaCJc5QOL8SAIsIWe2F-GlojDZ4nHTVQEAd09DSbgfnD_Tr-JmCMAdNk45UbAK4rmLm1S19YrDnqlEDMWmWjH-aPHvM-g2SuOor2ZnO5fWIznTv8gCR5nu0bCc-EK1fSQpj5cwxslXZPZb0LrBnQcEccz44zL_7BkqMqx_Om7cvbfpNMHGrvqzBoixdqug6xz67zFcjboNwjdDI5UV2Ev9aAXpI6kCnJTXeDF2e45taLGTeC_pkSDRpBfKeFeEex7uf-CT5LqsfsASToMi0m1rehILGYigEc1cmshho2RTqjBcIAvepO5TXpNGiAN1gDlAjj-fTDSXDCqAVHo7yOG_wGTJzXs2" /></div></div>
 </div>
-<div class="sect4">
-<h5 id="_smartcard_archiv">Smartcard-Archiv</h5>
+<div class="sect5">
+<h6 id="_smartcard_archiv">Smartcard-Archiv</h6>
 <div class="paragraph">
 <p>Das <code>SmartcardArchive</code> ist ein Archiv, in dem die Smartcards verwaltet werden.</p>
 </div>
@@ -572,8 +801,8 @@ Optional&lt;Smartcard&gt; opt = sca.getByICCSN(<span class="string"><span class=
 <div style="page-break-after: always;"></div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_konnektor">2.3.2. Konnektor</h4>
+<div class="sect4">
+<h5 id="_konnektor">Konnektor</h5>
 <div class="paragraph">
 <p>Der Konnektor-Client ist über mehrere Module aufgebaut&#8230;&#8203; TODO</p>
 </div>
@@ -581,8 +810,8 @@ Optional&lt;Smartcard&gt; opt = sca.getByICCSN(<span class="string"><span class=
 <div style="page-break-after: always;"></div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_restful_bricks">2.4. RESTful-Bricks</h3>
+<div class="sect3">
+<h4 id="_restful_bricks">2.1.4. RESTful-Bricks</h4>
 <div class="paragraph">
 <p>Was sind die RESTful-Bricks?</p>
 </div>
@@ -594,15 +823,15 @@ Optional&lt;Smartcard&gt; opt = sca.getByICCSN(<span class="string"><span class=
 <div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9oLL5rB8p4KVS-l2FhYmeuexBuiKjIsW_icLHUaz25ERgUX-HYJJ5La_xjtqanDdPc2XLAukVUSSyyzzD9vPdsj975heIjccQA5KPNHeFsTVvD0BHIUwL82wUkXxuJYvzfO3dPifB4N5ykLiDcJ5SNQZKPq1Znf2PXVMoRChTekLgnBQshD8nYyUh2QIMnx12dDIvSlQMd8_XEY3GTwbD_ydT7PzEx-Y1xd-UHy-ZkgdIzv5XGKKk0EMo6B-1JgE5_4ClsYDcdRC2auyyBeeTwTbaO67HkbQYsAC8AY9hycupnlHLbmlbN4Ah6dQiFgFh7fIAmZ8zcTBF60tigw5DeXxHX9fsUHzkG7lG66PbBcqBxd6Y6tXLjhDW9_jrHEOL0APdacU9LL0UoJCs7yT_NGuKhVUyKGCkTmMe92QzQdoD1yusQDgvydnixUwz6CcnUTPQCX8-aVMZjmW-FpOmly9mzHN4XO-WQgcuOTIkTb7o6e6Gq69S8Cgh6YN0K5lITPu60d4ZIhguFh2rL9K5X6-TtaV6UybxtrB0d0WWp1nGN3XaaWSE10q5g9WvuSdDqxpyxVuTYHIz0S_ne_0Euultq0" /></div></div>
 <div style="page-break-after: always;"></div>
 </div>
-<div class="sect2">
-<h3 id="_cli_bricks">2.5. CLI-Bricks</h3>
+<div class="sect3">
+<h4 id="_cli_bricks">2.1.5. CLI-Bricks</h4>
 <div class="paragraph">
 <p>TODO: Beschreibung what are CLI-Bricks</p>
 </div>
 <div style="page-break-after: always;"></div>
 </div>
-<div class="sect2">
-<h3 id="_utility_bricks">2.6. Utility-Bricks</h3>
+<div class="sect3">
+<h4 id="_utility_bricks">2.1.6. Utility-Bricks</h4>
 <div class="paragraph">
 <p>TODO: Beschreibung what are Utility-Bricks</p>
 </div>
@@ -610,11 +839,34 @@ Optional&lt;Smartcard&gt; opt = sca.getByICCSN(<span class="string"><span class=
 <div style="page-break-after: always;"></div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_release_notes">Appendix A: Release Notes</h3>
+<h4 id="_release_0_1_10" class="discrete">Release 0.1.10</h4>
+<h5 id="_fhir_bricks_2" class="discrete">FHIR-Bricks</h5>
+<div class="ulist">
+<ul>
+<li>
+<p>Extend <code>fhir-de-basisprofil-r4-brick</code> with <code>ASK</code> and <code>ATC</code> codings</p>
+</li>
+</ul>
 </div>
-<div class="sect1">
-<h2 id="_release_notes">Appendix A: Release Notes</h2>
-<div class="sectionbody">
-<h3 id="_release_0_1_8" class="discrete">Release 0.1.8</h3>
+<h5 id="_restful_bricks_2" class="discrete">RESTful-Bricks</h5>
+<div class="ulist">
+<ul>
+<li>
+<p>Implement the <code>raw-http-brick</code> for encoding and decoding raw HTTP messages</p>
+</li>
+</ul>
+</div>
+<h5 id="_configuration_bricks_2" class="discrete">Configuration-Bricks</h5>
+<div class="ulist">
+<ul>
+<li>
+<p>Implement the <code>feature-toggle-brick</code> for reusable feature toggles</p>
+</li>
+</ul>
+</div>
+<h4 id="_release_0_1_8" class="discrete">Release 0.1.8</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -625,9 +877,10 @@ Optional&lt;Smartcard&gt; opt = sca.getByICCSN(<span class="string"><span class=
 </div>
 </div>
 </div>
+</div>
 <div id="footer">
 <div id="footer-text">
-Version 0.1.9<br>
+Version 0.1.10<br>
 </div>
 </div>
 </body>
