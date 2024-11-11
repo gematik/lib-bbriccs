@@ -23,9 +23,7 @@ import de.gematik.bbriccs.utils.ResourceLoader;
 import java.io.File;
 import java.util.stream.Stream;
 import lombok.val;
-import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Consent;
-import org.hl7.fhir.r4.model.ResourceType;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -36,14 +34,7 @@ class ConsentMutatorProviderTest extends FhirFuzzingMutatorTest {
   @MethodSource
   void shouldNotThrowAnything(File f) {
     val content = ResourceLoader.readString(f);
-    val bundle = fhirCodec.decode(Bundle.class, content);
-    val consent =
-        bundle.getEntry().stream()
-            .map(Bundle.BundleEntryComponent::getResource)
-            .filter(resource -> resource.getResourceType().equals(ResourceType.Consent))
-            .map(resource -> (Consent) resource)
-            .findFirst()
-            .orElseThrow();
+    val consent = fhirCodec.decode(Consent.class, content);
     val mutatorProvider = new ConsentMutatorProvider();
 
     mutatorProvider
@@ -59,7 +50,7 @@ class ConsentMutatorProviderTest extends FhirFuzzingMutatorTest {
 
   static Stream<Arguments> shouldNotThrowAnything() {
     return ResourceLoader.getResourceFilesInDirectory(
-            "examples/fhir/valid/erp/erx/1.1.1/acceptbundle", true)
+            "examples/fhir/valid/erp/erx/1.2.0/consent", true)
         .stream()
         .map(Arguments::of);
   }

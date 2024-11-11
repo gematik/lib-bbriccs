@@ -19,6 +19,7 @@ package de.gematik.bbriccs.fhir.validation;
 import static java.text.MessageFormat.format;
 import static org.junit.jupiter.api.Assertions.*;
 
+import de.gematik.bbriccs.fhir.validation.utils.FhirValidatingTest;
 import de.gematik.bbriccs.utils.ResourceLoader;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
@@ -29,14 +30,18 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 @Slf4j
-class NonProfiledValidatorTest {
+class NonProfiledValidatorTest extends FhirValidatingTest {
+
+  @Override
+  protected void initialize() {
+    this.fhirValidator = new NonProfiledValidator();
+  }
 
   @ParameterizedTest(name = "[{index}] Should not throw on invalid File ''{0}''")
   @MethodSource
   void shouldValidateInvalidResources(String file, String content) {
     log.trace(format("Validate invalid file: {0}", file));
-    val validator = new NonProfiledValidator();
-    assertFalse(validator.isValid(content));
+    assertFalse(this.fhirValidator.isValid(content));
   }
 
   static Stream<Arguments> shouldValidateInvalidResources() {
@@ -48,14 +53,13 @@ class NonProfiledValidatorTest {
   @MethodSource
   void shouldValidateValidResources(String file, String content) {
     log.debug(format("Validate valid file: {0}", file));
-    val validator = new NonProfiledValidator();
-
-    assertTrue(validator.isValid(content));
+    assertTrue(this.fhirValidator.isValid(content));
   }
 
   static Stream<Arguments> shouldValidateValidResources() {
     val files = ResourceLoader.getResourceFilesInDirectory("examples/fhir/valid", true);
-    return files.stream().map(f -> Arguments.arguments(f.getName(), ResourceLoader.readString(f)));
+    return files.stream()
+        .map(f -> Arguments.arguments(f.getAbsolutePath(), ResourceLoader.readString(f)));
   }
 
   @Test

@@ -57,6 +57,7 @@ public class OperationOutcomeBuilder
     return self();
   }
 
+  @Override
   public OperationOutcome build() {
     val oo = new OperationOutcome();
 

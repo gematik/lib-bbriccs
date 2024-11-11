@@ -30,6 +30,8 @@ public enum DeBasisProfilCodeSystem implements WithCodeSystem {
   IDENTIFIER_TYPE_DE_BASIS("http://fhir.de/CodeSystem/identifier-type-de-basis"),
   NORMGROESSE("http://fhir.de/CodeSystem/normgroesse"),
   PZN("http://fhir.de/CodeSystem/ifa/pzn"),
+  ATC("http://fhir.de/CodeSystem/bfarm/atc"),
+  ASK("http://fhir.de/CodeSystem/ask"),
   ;
 
   private final String canonicalUrl;

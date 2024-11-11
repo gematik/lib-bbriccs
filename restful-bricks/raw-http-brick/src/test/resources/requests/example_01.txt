@@ -1,0 +1,6 @@
+GET /index.html HTTP/1.1
+Host: www.example.re
+User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.0; en-US; rv:1.1)
+Accept: text/html
+Accept-Language: en-US, en; q=0.5
+Accept-Encoding: gzip, deflate

@@ -4,9 +4,16 @@
     <parent>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>restful-bricks</artifactId>
-        <version>0.1.9</version>
+        <version>0.1.10</version>
     </parent>
 
     <artifactId>rest-client-api-brick</artifactId>
     <name>REST-Client-Interface Brick</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+    </dependencies>
 </project>

@@ -24,6 +24,6 @@ public class ProfileSettingsDto {
   private String id;
   private String note;
   private List<ProfileDto> profiles;
-  private List<String> omitValueSets;
+  private List<String> ignoreCodeSystems = List.of();
   private List<String> errorFilter;
 }

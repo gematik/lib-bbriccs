@@ -38,7 +38,7 @@
     - name: "de.gematik.erezept-patientenrechnung.r4"
       version: "1.0.0"
       canonicalClaims: ["https://gematik.de/fhir", "http://gematik.de/fhir"]
-  omitValueSets: []
+  ignoreCodeSystems: []
   errorFilter:
     - "^Profile reference 'http://hl7.org/fhir/StructureDefinition/Binary\\|4.0.1' has not been checked because it is unknown"
     - "^Relative URLs must be of the format \\[ResourceName\\]/\\[id\\].*"

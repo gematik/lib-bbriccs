@@ -115,10 +115,7 @@ class ValidatorFhirTest extends FhirValidatingTest {
     val validator = new ProfiledValidator("test_validator", List.of());
 
     val vr = validator.validate(content);
-
-    if (!vr.isSuccessful()) {
-      vr.getMessages().forEach(svm -> System.out.println("--> " + svm.getMessage()));
-    }
+    printValidationResult(vr);
 
     assertTrue(vr.isSuccessful());
     assertNotNull(validator.getContext());

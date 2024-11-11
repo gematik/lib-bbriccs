@@ -1,0 +1,27 @@
+@startuml
+skinparam componentStyle rectangle
+
+skinparam component {
+    BackgroundColor<<external>> Yellow
+    BorderColor<<external>> Red
+}
+
+class "System" as system {
+  +getProperty()
+  +getenv()
+}
+
+class "FeatureConfiguration" as featconf {}
+
+
+interface "FeatureToggle" as ft {}
+class "BooleanToggle" as bt {}
+class "MyFeatureStateToggle" #AAFF00
+
+system <-- featconf
+
+top to bottom direction
+ft <-- featconf
+ft <|-- bt
+ft <|-- MyFeatureStateToggle
+@enduml

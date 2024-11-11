@@ -25,6 +25,8 @@ import org.apache.commons.lang3.StringUtils;
 
 interface HttpBEntity {
 
+  HttpVersion version();
+
   List<HttpHeader> headers();
 
   byte[] body();

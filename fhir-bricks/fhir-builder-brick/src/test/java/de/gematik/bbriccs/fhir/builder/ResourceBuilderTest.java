@@ -111,6 +111,7 @@ class ResourceBuilderTest {
     private String name;
     private final List<String> bricks = new ArrayList<>(2);
 
+    @Override
     public Task build() {
       return this.createResource(Task::new, TestStructDef.TEST_STRUCT_DEF);
     }

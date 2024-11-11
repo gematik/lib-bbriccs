@@ -25,7 +25,8 @@ import lombok.Getter;
 public enum TestProfileStructureDefinitionEnum
     implements ProfileStructureDefinition<TestBasisVersion> {
   TYPE_ONE("https://gematik.de/StructureDefinition/test/Type-One"),
-  TYPE_TWO("https://gematik.de/StructureDefinition/test/Type-Two");
+  TYPE_TWO("https://gematik.de/StructureDefinition/test/Type-Two"),
+  TYPE_THREE("https://gematik.de/StructureDefinition/test/Type-Three");
 
   private final String canonicalUrl;
 }

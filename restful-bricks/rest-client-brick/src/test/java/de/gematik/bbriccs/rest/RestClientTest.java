@@ -109,6 +109,7 @@ class RestClientTest {
     val client =
         RestClient.forUrl(url)
             .usingApiKey("invalid-api-key")
+            .usingAuthorizationKey("auth-header") // just for coverage
             .asUserAgent("Bbriccs-Agent")
             .withHeader("X-user", "abc") // just for coverage
             .withHeaders(List.of()) // just for coverage

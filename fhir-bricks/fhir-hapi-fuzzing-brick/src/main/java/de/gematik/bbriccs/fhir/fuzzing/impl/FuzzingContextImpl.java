@@ -58,7 +58,7 @@ public class FuzzingContextImpl implements FuzzingContext {
 
     if (rClassFuzzers.isEmpty()) {
       throw new FuzzerException(
-          format("Unable to start Fuzzing because not Fuzzer found for {0}", resource.getClass()));
+          format("Unable to start Fuzzing because no Fuzzer found for {0}", resource.getClass()));
     }
 
     return rClassFuzzers.stream()
@@ -235,11 +235,14 @@ public class FuzzingContextImpl implements FuzzingContext {
                 .map(x -> (FhirTypeMutatorProvider<T>) x)
                 .toList());
 
-    // find also matching fuzzers for the superClass
-    val superClass = (Class<? extends Type>) tClass.getSuperclass();
+    // find also matching fuzzers for the hierarchy of super classes
+    val superClasses = this.getTypeHierarchy(tClass);
     val superMatches =
-        typeFuzzer.computeIfAbsent(superClass, k -> new LinkedList<>()).stream()
-            .map(x -> (FhirTypeMutatorProvider<T>) x)
+        superClasses.stream()
+            .flatMap(
+                superClass ->
+                    typeFuzzer.computeIfAbsent(superClass, k -> new LinkedList<>()).stream()
+                        .map(x -> (FhirTypeMutatorProvider<T>) x))
             .toList();
     typeFuzzers.addAll(superMatches);
 
@@ -273,13 +276,16 @@ public class FuzzingContextImpl implements FuzzingContext {
                 .map(x -> (FhirResourceMutatorProvider<R>) x)
                 .toList());
 
-    // find also matching fuzzers for the superClass
-    val superClass = (Class<? extends Resource>) rClass.getSuperclass();
-    val superMatches =
-        resourceFuzzer.computeIfAbsent(superClass, k -> new LinkedList<>()).stream()
-            .map(x -> (FhirResourceMutatorProvider<R>) x)
+    // find also matching fuzzers for the hierarchy of super classes
+    val resourceHierarchy = this.getResourceHierarchy(rClass);
+    val hierarchyFuzzers =
+        resourceHierarchy.stream()
+            .flatMap(
+                superClass ->
+                    resourceFuzzer.computeIfAbsent(superClass, k -> new LinkedList<>()).stream()
+                        .map(x -> (FhirResourceMutatorProvider<R>) x))
             .toList();
-    resourceFuzzers.addAll(superMatches);
+    resourceFuzzers.addAll(hierarchyFuzzers);
 
     if (resourceFuzzers.isEmpty()) {
       log.warn("No Fuzzers found for requested Resource {}", rClass.getSimpleName());
@@ -304,5 +310,29 @@ public class FuzzingContextImpl implements FuzzingContext {
     }
 
     return fuzzers;
+  }
+
+  @SuppressWarnings("unchecked")
+  private <S extends Resource> List<Class<S>> getResourceHierarchy(Class<S> rClass) {
+    val classHierarchy = new LinkedList<Class<S>>();
+    var superClass = (Class<? extends Resource>) rClass.getSuperclass();
+    while (superClass != Resource.class) {
+      classHierarchy.add((Class<S>) superClass);
+      superClass = (Class<? extends Resource>) superClass.getSuperclass();
+    }
+
+    return classHierarchy;
+  }
+
+  @SuppressWarnings("unchecked")
+  private <S extends Type> List<Class<S>> getTypeHierarchy(Class<S> tClass) {
+    val classHierarchy = new LinkedList<Class<S>>();
+    var superType = (Class<? extends Type>) tClass.getSuperclass();
+    while (superType != Type.class) {
+      classHierarchy.add((Class<S>) superType);
+      superType = (Class<? extends Type>) superType.getSuperclass();
+    }
+
+    return classHierarchy;
   }
 }

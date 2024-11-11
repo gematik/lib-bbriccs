@@ -50,7 +50,7 @@ class CommunicationMutatorProviderTest extends FhirFuzzingMutatorTest {
 
   static Stream<Arguments> shouldNotThrowAnything() {
     return ResourceLoader.getResourceFilesInDirectory(
-            "examples/fhir/valid/erp/erx/1.1.1/communication", true)
+            "examples/fhir/valid/erp/erx/1.2.0/communication", true)
         .stream()
         .map(Arguments::of);
   }

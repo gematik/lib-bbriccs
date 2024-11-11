@@ -93,12 +93,14 @@ class ProfileExtractorTest {
 
   @Test
   void shouldExtractJsonProfiles() {
-    val filePath = "examples/fhir/valid/erp/erx/1.1.1/task/erxtask_01.json";
+    val filePath =
+        "examples/fhir/valid/erp/erx/1.2.0/auditevent/9361863d-fec0-4ba9-8776-7905cf1b0cfa.json";
 
     val content = ResourceLoader.readFileFromResource(filePath);
     val profile = profileExtractor.extractProfile(content);
 
-    val expectedProfile = "https://gematik.de/fhir/StructureDefinition/ErxTask|1.1.1";
+    val expectedProfile =
+        "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_AuditEvent|1.2";
     assertTrue(profile.isPresent());
     assertEquals(expectedProfile, profile.orElseThrow());
   }
@@ -112,7 +114,7 @@ class ProfileExtractorTest {
   @ParameterizedTest
   @ValueSource(
       strings = {
-        "examples/fhir/valid/erp/erx/1.1.1/auditeventbundle/AuditEventBundle_01.json",
+        "examples/fhir/valid/erp/erx/1.2.0/chargeitembundle/abc825bc-bc30-45f8-b109-1b343fff5c45.json",
         "examples/fhir/valid/erp/erx/1.2.0/chargeitembundle/ea33a992-a214-11ed-a8fc-0242ac120002.xml"
       })
   void shouldNonProfiledDetectSearchSets(String resourcePath) {

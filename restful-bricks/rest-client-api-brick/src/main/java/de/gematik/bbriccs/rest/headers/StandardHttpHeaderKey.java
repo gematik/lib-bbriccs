@@ -16,6 +16,7 @@
 
 package de.gematik.bbriccs.rest.headers;
 
+import com.google.common.net.HttpHeaders;
 import de.gematik.bbriccs.rest.HttpHeaderKey;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -23,11 +24,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum StandardHttpHeaderKey implements HttpHeaderKey {
-  USER_AGENT("User-Agent"),
-  ACCEPT("Accept"),
-  ACCEPT_CHARSET("Accept-Charset"),
-  CONTENT_LENGTH("Content-Length"),
-  CONTENT_TYPE("Content-Type");
+  USER_AGENT(HttpHeaders.USER_AGENT),
+  ACCEPT(HttpHeaders.ACCEPT),
+  ACCEPT_CHARSET(HttpHeaders.ACCEPT_CHARSET),
+  CONTENT_LENGTH(HttpHeaders.CONTENT_LENGTH),
+  CONTENT_TYPE(HttpHeaders.CONTENT_TYPE),
+  DATE(HttpHeaders.DATE);
 
   private final String key;
 

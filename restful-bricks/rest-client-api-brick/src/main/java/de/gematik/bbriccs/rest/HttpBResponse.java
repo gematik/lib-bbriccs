@@ -26,10 +26,9 @@ import lombok.Generated;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public record HttpBResponse(String protocol, int statusCode, List<HttpHeader> headers, byte[] body)
+public record HttpBResponse(
+    HttpVersion version, int statusCode, List<HttpHeader> headers, byte[] body)
     implements HttpBEntity {
-
-  private static final String DEFAULT_PROTOCOL = "HTTP/1.1";
 
   public HttpBResponse {
     if (body == null) {
@@ -38,27 +37,27 @@ public record HttpBResponse(String protocol, int statusCode, List<HttpHeader> he
   }
 
   public HttpBResponse(int statusCode, List<HttpHeader> headers, byte[] body) {
-    this(DEFAULT_PROTOCOL, statusCode, headers, body);
+    this(HttpVersion.HTTP_1_1, statusCode, headers, body);
   }
 
   public HttpBResponse(int statusCode, List<HttpHeader> headers, String body) {
-    this(DEFAULT_PROTOCOL, statusCode, headers, body);
+    this(HttpVersion.HTTP_1_1, statusCode, headers, body);
   }
 
   public HttpBResponse(int statusCode, List<HttpHeader> headers) {
-    this(DEFAULT_PROTOCOL, statusCode, headers, new byte[0]);
+    this(HttpVersion.HTTP_1_1, statusCode, headers, new byte[0]);
   }
 
-  public HttpBResponse(String protocol, int statusCode, List<HttpHeader> headers, String body) {
+  public HttpBResponse(HttpVersion version, int statusCode, List<HttpHeader> headers, String body) {
     this(
-        protocol,
+        version,
         statusCode,
         headers,
         Optional.ofNullable(body).map(b -> b.getBytes(StandardCharsets.UTF_8)).orElse(new byte[0]));
   }
 
-  public HttpBResponse(String protocol, int statusCode, List<HttpHeader> headers) {
-    this(protocol, statusCode, headers, new byte[0]);
+  public HttpBResponse(HttpVersion version, int statusCode, List<HttpHeader> headers) {
+    this(version, statusCode, headers, new byte[0]);
   }
 
   @Override
@@ -68,7 +67,7 @@ public record HttpBResponse(String protocol, int statusCode, List<HttpHeader> he
     if (o == null || getClass() != o.getClass()) return false;
     HttpBResponse that = (HttpBResponse) o;
     return statusCode == that.statusCode
-        && Objects.equals(protocol, that.protocol)
+        && Objects.equals(version, that.version)
         && Objects.equals(headers, that.headers)
         && Arrays.equals(body, that.body);
   }
@@ -76,7 +75,7 @@ public record HttpBResponse(String protocol, int statusCode, List<HttpHeader> he
   @Override
   @Generated
   public int hashCode() {
-    int result = Objects.hash(protocol, statusCode, headers);
+    int result = Objects.hash(version, statusCode, headers);
     result = 31 * result + Arrays.hashCode(body);
     return result;
   }
@@ -86,7 +85,7 @@ public record HttpBResponse(String protocol, int statusCode, List<HttpHeader> he
   public String toString() {
     return "HttpResponse{"
         + "protocol='"
-        + protocol
+        + version
         + '\''
         + ", statusCode="
         + statusCode

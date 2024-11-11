@@ -19,6 +19,8 @@ package de.gematik.bbriccs.fhir.coding;
 import java.util.Arrays;
 import lombok.val;
 import org.hl7.fhir.r4.model.CanonicalType;
+import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Meta;
 
@@ -32,6 +34,16 @@ public interface WithSystem {
 
   default boolean matches(Identifier... identifier) {
     return Arrays.stream(identifier).anyMatch(id -> this.matches(id.getSystem()));
+  }
+
+  default boolean matches(Coding... coding) {
+    return Arrays.stream(coding).anyMatch(c -> this.matches(c.getSystem()));
+  }
+
+  default boolean matches(CodeableConcept... codeableConcepts) {
+    return Arrays.stream(codeableConcepts)
+        .flatMap(cc -> cc.getCoding().stream())
+        .anyMatch(this::matches);
   }
 
   default boolean matches(CanonicalType... canonicalType) {

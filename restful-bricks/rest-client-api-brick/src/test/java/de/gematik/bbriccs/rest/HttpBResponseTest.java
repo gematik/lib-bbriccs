@@ -55,7 +55,7 @@ class HttpBResponseTest {
   @Test
   void shouldNotThrowOnNullResponse02() {
     String nullBody = null;
-    val response = new HttpBResponse("HTTP/1.1", 200, List.of(), nullBody);
+    val response = new HttpBResponse(HttpVersion.HTTP_1_1, 200, List.of(), nullBody);
     assertNotNull(response.body());
     assertEquals(0, response.body().length);
     assertTrue(response.isEmptyBody());
@@ -66,7 +66,7 @@ class HttpBResponseTest {
   @Test
   void shouldNotThrowOnNullResponse03() {
     byte[] nullBody = null;
-    val response = new HttpBResponse("HTTP/1.1", 200, List.of(), nullBody);
+    val response = new HttpBResponse(HttpVersion.HTTP_1_1, 200, List.of(), nullBody);
     assertNotNull(response.body());
     assertEquals(0, response.body().length);
     assertTrue(response.isEmptyBody());
@@ -96,7 +96,7 @@ class HttpBResponseTest {
   @Test
   void shouldNotThrowOnEmptyBody02() {
     val emptyBody = new byte[0];
-    val response = new HttpBResponse("HTTP/2.0", 200, List.of(), emptyBody);
+    val response = new HttpBResponse(HttpVersion.HTTP_2, 200, List.of(), emptyBody);
     assertNotNull(response.body());
     assertTrue(response.isEmptyBody());
     assertEquals("", response.bodyAsString());
@@ -106,7 +106,7 @@ class HttpBResponseTest {
   void shouldDecodeBodyAsUtf8String() {
     val response =
         new HttpBResponse(
-            "HTTP/1.1", 200, List.of(), "HelloWorld".getBytes(StandardCharsets.UTF_8));
+            HttpVersion.HTTP_2, 200, List.of(), "HelloWorld".getBytes(StandardCharsets.UTF_8));
     assertNotNull(response.body());
     assertFalse(response.isEmptyBody());
     assertEquals("HelloWorld", response.bodyAsString());
@@ -116,7 +116,7 @@ class HttpBResponseTest {
   void shouldNotThrowOnMissingContentType() {
     val response =
         new HttpBResponse(
-            "HTTP/1.1", 200, List.of(), "HelloWorld".getBytes(StandardCharsets.UTF_8));
+            HttpVersion.HTTP_1_1, 200, List.of(), "HelloWorld".getBytes(StandardCharsets.UTF_8));
     assertEquals("", response.contentType());
   }
 
@@ -125,7 +125,7 @@ class HttpBResponseTest {
   void shouldNeverThrowOnMissingContentLength(HttpHeader contentLengthHeader) {
     val response =
         new HttpBResponse(
-            "HTTP/1.1",
+            HttpVersion.HTTP_1_1,
             200,
             List.of(contentLengthHeader),
             "HelloWorld".getBytes(StandardCharsets.UTF_8));
@@ -150,7 +150,7 @@ class HttpBResponseTest {
   void shouldThrowOnInvalidContentLengthValue(HttpHeader contentLengthHeader) {
     val response =
         new HttpBResponse(
-            "HTTP/1.1",
+            HttpVersion.HTTP_1_1,
             200,
             List.of(contentLengthHeader),
             "HelloWorld".getBytes(StandardCharsets.UTF_8));
@@ -170,7 +170,7 @@ class HttpBResponseTest {
   void shouldReturnZeroOnEmptyContentLength(String clValue) {
     val response =
         new HttpBResponse(
-            "HTTP/1.1",
+            HttpVersion.HTTP_1_1,
             200,
             List.of(StandardHttpHeaderKey.CONTENT_LENGTH.createHeader(clValue)),
             "HelloWorld".getBytes(StandardCharsets.UTF_8));
@@ -183,7 +183,9 @@ class HttpBResponseTest {
   void shouldReturnContentLengthFromHeader(int clValue) {
     val response =
         new HttpBResponse(
-            "HTTP/1.1", 200, List.of(new HttpHeader("Content-Length", String.valueOf(clValue))));
+            HttpVersion.HTTP_1_1,
+            200,
+            List.of(new HttpHeader("Content-Length", String.valueOf(clValue))));
     assertEquals(clValue, response.contentLength());
   }
 
@@ -191,7 +193,7 @@ class HttpBResponseTest {
   void shouldThrowOnInvalidContentLength() {
     val response =
         new HttpBResponse(
-            "HTTP/1.1",
+            HttpVersion.HTTP_1_1,
             200,
             List.of(new HttpHeader("Content-Length", "Not-A-Number")),
             "HelloWorld".getBytes(StandardCharsets.UTF_8));
@@ -201,7 +203,7 @@ class HttpBResponseTest {
   @Test
   void shouldAllowEmptyBody() {
     List<HttpHeader> headers = List.of();
-    val response = assertDoesNotThrow(() -> new HttpBResponse("HTTP/1.1", 200, headers));
+    val response = assertDoesNotThrow(() -> new HttpBResponse(HttpVersion.HTTP_1_1, 200, headers));
     assertTrue(response.isEmptyBody());
   }
 
@@ -209,7 +211,8 @@ class HttpBResponseTest {
   void shouldAllowBodyAsString() {
     val body = "Hello World";
     List<HttpHeader> headers = List.of();
-    val response = assertDoesNotThrow(() -> new HttpBResponse("HTTP/1.1", 200, headers, body));
+    val response =
+        assertDoesNotThrow(() -> new HttpBResponse(HttpVersion.HTTP_1_1, 200, headers, body));
     assertFalse(response.isEmptyBody());
   }
 }

@@ -50,7 +50,7 @@ class TaskMutatorProviderTest extends FhirFuzzingMutatorTest {
 
   static Stream<Arguments> shouldNotThrowAnything() {
     return ResourceLoader.getResourceFilesInDirectory(
-            "examples/fhir/valid/erp/erx/1.1.1/task", true)
+            "examples/fhir/valid/erp/erx/1.2.0/task", true)
         .stream()
         .map(Arguments::of);
   }

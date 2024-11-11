@@ -4,5 +4,10 @@ include::../attributes-sections.adoc[]
 == Configuration-Bricks
 TODO: Beschreibung what are Configuration-Bricks
 
+:leveloffset: +1
+include::feature-toggle.adoc[]
+<<<
+:leveloffset: -1
+
 
 

@@ -18,6 +18,7 @@ package de.gematik.bbriccs.fhir.de.value;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import de.gematik.bbriccs.fhir.de.DeBasisProfilCodeSystem;
 import lombok.val;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
@@ -64,5 +65,12 @@ class PZNTest {
     assertNotNull(codeable.getText());
     val coding = codeable.getCodingFirstRep();
     assertEquals("27580899", coding.getCode());
+  }
+
+  @Test
+  void shouldGeneratePznFromCoding() {
+    val coding = DeBasisProfilCodeSystem.PZN.asCoding("27580899");
+    val pzn = PZN.from(coding);
+    assertEquals("27580899", pzn.getValue());
   }
 }
