@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import de.gematik.bbriccs.fhir.conf.ProfileSettingsDto;
 import de.gematik.bbriccs.fhir.conf.exceptions.InvalidConfigurationException;
+import de.gematik.bbriccs.fhir.exceptions.UnsupportedEncodingException;
 import de.gematik.bbriccs.utils.PrivateConstructorsUtil;
 import de.gematik.bbriccs.utils.ResourceLoader;
 import java.util.LinkedList;
@@ -54,6 +55,34 @@ class ValidatorFhirFactoryTest {
     val ctx = FhirContext.forR4();
     assertThrows(
         InvalidConfigurationException.class, () -> ValidatorFhirFactory.createValidator(ctx, null));
+  }
+
+  @Test
+  void shouldThrowOnInvalidProfileFileExtensions() throws JsonProcessingException {
+    val profilesConfig = ResourceLoader.readFileFromResource("fhir/ihe-d_configuration_01.yaml");
+    val mapper =
+        new ObjectMapper(new YAMLFactory())
+            .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+    val configuredProfiles =
+        mapper.readValue(profilesConfig, new TypeReference<List<ProfileSettingsDto>>() {});
+    val ctx = FhirContext.forR4();
+    val uee =
+        assertThrows(
+            UnsupportedEncodingException.class,
+            () -> ValidatorFhirFactory.createValidator(ctx, configuredProfiles));
+    assertTrue(uee.getMessage().contains("invalid.txt"));
+  }
+
+  @Test
+  void shouldNotThrowIfInvalidIsOmitted() throws JsonProcessingException {
+    val profilesConfig = ResourceLoader.readFileFromResource("fhir/ihe-d_configuration_02.yaml");
+    val mapper =
+        new ObjectMapper(new YAMLFactory())
+            .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+    val configuredProfiles =
+        mapper.readValue(profilesConfig, new TypeReference<List<ProfileSettingsDto>>() {});
+    val ctx = FhirContext.forR4();
+    assertDoesNotThrow(() -> ValidatorFhirFactory.createValidator(ctx, configuredProfiles));
   }
 
   @Test

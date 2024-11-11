@@ -87,7 +87,10 @@ public class RestClient implements HttpBClient {
             .toList();
     val bResponse =
         new HttpBResponse(
-            "HTTP/1.1", httpResponse.getStatus(), responseHeaders, httpResponse.getBody());
+            HttpVersion.HTTP_1_1,
+            httpResponse.getStatus(),
+            responseHeaders,
+            httpResponse.getBody());
     this.restObserver.serveResponseObservers(bResponse);
     return bResponse;
   }
@@ -103,6 +106,10 @@ public class RestClient implements HttpBClient {
     private RestClientBuilder(String url) {
       this.url = url;
       this.headers = new LinkedList<>();
+    }
+
+    public RestClientBuilder usingAuthorizationKey(String apiKey) {
+      return this.withHeader(AuthHttpHeaderKey.X_AUTHORIZATION.createHeader(apiKey));
     }
 
     public RestClientBuilder usingApiKey(String apiKey) {

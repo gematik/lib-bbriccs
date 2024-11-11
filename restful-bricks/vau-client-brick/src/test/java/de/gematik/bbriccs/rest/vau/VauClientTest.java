@@ -148,7 +148,7 @@ class VauClientTest {
   void shouldHandleResponse() {
     val vau =
         VauClient.forUrl(url)
-            .withHttpCodec(new InnerHttp())
+            .withHttpCodec(RawHttpCodec.defaultCodec())
             .withHeaders(
                 List.of(
                     AuthHttpHeaderKey.X_API_KEY.createHeader("testApiKey"),
@@ -183,7 +183,6 @@ class VauClientTest {
   void shouldThrowOnMissingJwtToken() {
     val vau =
         VauClient.forUrl(url)
-            .withHttpCodec(new InnerHttp())
             .withHeaders(
                 List.of(
                     AuthHttpHeaderKey.X_API_KEY.createHeader("testApiKey"),

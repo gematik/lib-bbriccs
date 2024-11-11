@@ -6,7 +6,7 @@
     <parent>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>fhir-bricks</artifactId>
-        <version>0.1.9</version>
+        <version>0.1.10</version>
     </parent>
 
     <artifactId>fhir-codec-brick</artifactId>
@@ -20,6 +20,11 @@
         <dependency>
             <groupId>de.gematik.bbriccs</groupId>
             <artifactId>fhir-validation-brick</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.gematik.refv</groupId>
+            <artifactId>referencevalidator-lib</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

@@ -17,10 +17,15 @@
 package de.gematik.bbriccs.rest;
 
 import de.gematik.bbriccs.rest.headers.HttpHeader;
+import java.util.function.BiConsumer;
 
 public interface HttpHeaderKey {
 
   String getKey();
 
   HttpHeader createHeader(String value);
+
+  default void apply(String value, BiConsumer<String, String> headerConsumer) {
+    headerConsumer.accept(this.getKey(), value);
+  }
 }

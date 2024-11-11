@@ -1,0 +1,6 @@
+- id: "latest"
+  note: "exemplary profile containing xml and invalid files"
+  profiles:
+    - name: "de.ihe-d.terminology"
+      version: "3.0.0"
+      omitProfiles: "invalid.txt"

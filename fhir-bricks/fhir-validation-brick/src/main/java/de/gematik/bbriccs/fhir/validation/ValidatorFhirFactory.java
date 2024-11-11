@@ -25,9 +25,10 @@ import de.gematik.bbriccs.fhir.conf.ProfileDto;
 import de.gematik.bbriccs.fhir.conf.ProfileSettingsDto;
 import de.gematik.bbriccs.fhir.conf.ProfilesConfigurator;
 import de.gematik.bbriccs.fhir.conf.exceptions.InvalidConfigurationException;
+import de.gematik.bbriccs.fhir.exceptions.UnsupportedEncodingException;
+import de.gematik.bbriccs.fhir.validation.support.CodeSystemFilter;
 import de.gematik.bbriccs.fhir.validation.support.ErrorMessageFilter;
 import de.gematik.bbriccs.fhir.validation.support.ProfileValidationSupport;
-import de.gematik.bbriccs.fhir.validation.support.ValueSetFilter;
 import de.gematik.bbriccs.utils.ResourceLoader;
 import java.io.File;
 import java.util.*;
@@ -87,9 +88,10 @@ public class ValidatorFhirFactory {
 
     val supports = new ArrayList<IValidationSupport>(profileSettings.getProfiles().size() + 1);
 
-    Optional.ofNullable(profileSettings.getOmitValueSets())
-        .filter(omitValues -> !omitValues.isEmpty())
-        .ifPresent(omitValues -> supports.add(new ValueSetFilter(ctx, omitValues)));
+    Optional.ofNullable(profileSettings.getIgnoreCodeSystems())
+        .filter(ignoredCodeSystems -> !ignoredCodeSystems.isEmpty())
+        .ifPresent(
+            ignoredCodeSystems -> supports.add(new CodeSystemFilter(ctx, ignoredCodeSystems)));
 
     val profileSupports =
         profileSettings.getProfiles().stream().map(profile -> create(ctx, profile)).toList();
@@ -108,12 +110,14 @@ public class ValidatorFhirFactory {
     private final Map<String, ValueSet> valueSets = new HashMap<>();
 
     private final FhirContext ctx;
-    private final IParser parser;
+    private final IParser jsonParser;
+    private final IParser xmlParser;
     private final ProfileDto profile;
 
     private Builder(FhirContext ctx, ProfileDto profile) {
       this.ctx = ctx;
-      this.parser = ctx.newJsonParser();
+      this.jsonParser = ctx.newJsonParser();
+      this.xmlParser = ctx.newXmlParser();
       this.profile = profile;
     }
 
@@ -130,9 +134,21 @@ public class ValidatorFhirFactory {
         log.trace("Load Profile ({} MB) - {}", fileSizeMb, profileFile.getName());
       }
 
+      val parser = chooseParserFor(profileFile.getName());
       val input = ResourceLoader.readString(profileFile);
-      val resource = this.parser.parseResource(input);
+      val resource = parser.parseResource(input);
       this.addResource(resource);
+    }
+
+    private IParser chooseParserFor(String fileName) {
+      if (fileName.endsWith(".json")) {
+        return this.jsonParser;
+      } else if (fileName.endsWith(".xml")) {
+        return this.xmlParser;
+      } else {
+        throw new UnsupportedEncodingException(
+            format("Unsupported file extension for profile: {0}", fileName));
+      }
     }
 
     private <T extends IBaseResource> void addResource(T resource) {

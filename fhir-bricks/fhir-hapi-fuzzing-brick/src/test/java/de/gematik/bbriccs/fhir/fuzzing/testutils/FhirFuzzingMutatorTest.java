@@ -20,12 +20,7 @@ import de.gematik.bbriccs.fhir.codec.FhirCodec;
 import de.gematik.bbriccs.fhir.codec.utils.FhirTest;
 import de.gematik.bbriccs.fhir.fuzzing.FuzzingContext;
 import de.gematik.bbriccs.fhir.fuzzing.FuzzingEngine;
-import de.gematik.bbriccs.fhir.fuzzing.impl.FuzzingContextImpl;
 import de.gematik.bbriccs.fhir.fuzzing.impl.FuzzingEngineImpl;
-import de.gematik.bbriccs.fhir.fuzzing.impl.rnd.ProbabilityDiceImpl;
-import de.gematik.bbriccs.fhir.fuzzing.impl.rnd.RandomnessImpl;
-import java.security.SecureRandom;
-import lombok.val;
 
 public abstract class FhirFuzzingMutatorTest extends FhirTest {
 
@@ -38,13 +33,7 @@ public abstract class FhirFuzzingMutatorTest extends FhirTest {
   protected void initialize() {
     this.fhirCodec = staticFhirCodec;
 
-    val rnd = new SecureRandom();
-    val probability = 1.0;
-    val pdMutator = new ProbabilityDiceImpl(rnd, probability);
-    val pdChildResources = new ProbabilityDiceImpl(rnd, probability);
-    val randomness = new RandomnessImpl(rnd, pdMutator, pdChildResources);
-    this.ctx = new FuzzingContextImpl(randomness);
-
     this.fuzzer = FuzzingEngineImpl.builder(1.0).withDefaultFuzzers().build();
+    this.ctx = this.fuzzer.getContext();
   }
 }

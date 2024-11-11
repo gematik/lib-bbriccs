@@ -38,7 +38,7 @@
     - name: "de.gematik.erezept-patientenrechnung.r4"
       version: "1.0.0"
       canonicalClaims: [ "https://gematik.de/fhir", "http://gematik.de/fhir" ]
-  omitValueSets:
+  ignoreCodeSystems:
     - "http://fhir.de/CodeSystem/ifa/pzn"
     - "http://fhir.de/CodeSystem/ask"
   errorFilter:
@@ -77,7 +77,7 @@
     - name: "de.gematik.erezept-workflow.r4"
       version: "1.1.1"
       canonicalClaims: [ "https://gematik.de/fhir", "http://gematik.de/fhir" ]
-  omitValueSets:
+  ignoreCodeSystems:
     - "http://fhir.de/CodeSystem/ifa/pzn"
     - "http://fhir.de/CodeSystem/ask"
   errorFilter:

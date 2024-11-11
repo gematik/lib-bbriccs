@@ -25,6 +25,7 @@ import de.gematik.bbriccs.fhir.codec.FhirCodec;
 import de.gematik.bbriccs.fhir.codec.utils.FhirTestResourceUtil;
 import de.gematik.bbriccs.rest.HttpBResponse;
 import de.gematik.bbriccs.rest.HttpRequestMethod;
+import de.gematik.bbriccs.rest.HttpVersion;
 import de.gematik.bbriccs.rest.fd.exceptions.UnexpectedResponseResourceError;
 import de.gematik.bbriccs.rest.headers.HttpHeader;
 import de.gematik.bbriccs.rest.headers.StandardHttpHeaderKey;
@@ -47,7 +48,7 @@ class FdResponseCreatorTest {
   private static final List<HttpHeader> HEADERS_JSON =
       List.of(new HttpHeader("content-type", MediaType.FHIR_JSON.asString()));
 
-  private static final String PROTOCOL = "HTTP/1.1";
+  private static final HttpVersion DEFAULT_HTTP_VERSION = HttpVersion.HTTP_1_1;
 
   private static final String testToken =
       "eyJhbGciOiJCUDI1NlIxIiwidHlwIjoiYXQrSldUIiwia2lkIjoicHVrX2lkcF9zaWcifQ.eyJzdWIiOiJJWERkLTNyUVpLS0ZYVWR4R0dqNFBERG9WNk0wUThaai1xdzF2cjF1XzU4IiwicHJvZmVzc2lvbk9JRCI6IjEuMi4yNzYuMC43Ni40LjQ5Iiwib3JnYW5pemF0aW9uTmFtZSI6ImdlbWF0aWsgTXVzdGVya2Fzc2UxR0tWTk9ULVZBTElEIiwiaWROdW1tZXIiOiJYMTEwNTAyNDE0IiwiYW1yIjpbIm1mYSIsInNjIiwicGluIl0sImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTUwMTEvYXV0aC9yZWFsbXMvaWRwLy53ZWxsLWtub3duL29wZW5pZC1jb25maWd1cmF0aW9uIiwiZ2l2ZW5fbmFtZSI6IlJvYmluIEdyYWYiLCJjbGllbnRfaWQiOiJlcnAtdGVzdHN1aXRlLWZkIiwiYWNyIjoiZ2VtYXRpay1laGVhbHRoLWxvYS1oaWdoIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwLyIsImF6cCI6ImVycC10ZXN0c3VpdGUtZmQiLCJzY29wZSI6Im9wZW5pZCBlLXJlemVwdCIsImF1dGhfdGltZSI6MTY0MzgwNDczMywiZXhwIjoxNjQzODA1MDMzLCJmYW1pbHlfbmFtZSI6IlbDs3Jtd2lua2VsIiwiaWF0IjoxNjQzODA0NjEzLCJqdGkiOiI2Yjg3NmU0MWNmMGViNGJkIn0.MV5cDnL3JBZ4b6xr9SqiYDmZ7qtZFEWBd1vCrHzVniZeDhkyuSYc7xhf577h2S21CzNgrMp0M6JALNW9Qjnw_g";
@@ -68,7 +69,7 @@ class FdResponseCreatorTest {
   void deserializeResourceResponses(String filePath, Class<? extends Resource> resourceType) {
     val content = ResourceLoader.readFileFromResource(filePath);
 
-    val httpResponse = new HttpBResponse(PROTOCOL, 200, HEADERS_JSON, content);
+    val httpResponse = new HttpBResponse(DEFAULT_HTTP_VERSION, 200, HEADERS_JSON, content);
     val response =
         responseCreator
             .expecting(resourceType)
@@ -93,7 +94,8 @@ class FdResponseCreatorTest {
     val testOperationOutcome =
         encodeTestRessource(FhirTestResourceUtil.createOperationOutcome(), EncodingType.JSON);
 
-    val httpResponse = new HttpBResponse(PROTOCOL, 404, HEADERS_JSON, testOperationOutcome);
+    val httpResponse =
+        new HttpBResponse(DEFAULT_HTTP_VERSION, 404, HEADERS_JSON, testOperationOutcome);
     val response =
         responseCreator
             .expecting(OperationOutcome.class)
@@ -118,7 +120,8 @@ class FdResponseCreatorTest {
     val testOperationOutcome =
         encodeTestRessource(FhirTestResourceUtil.createOperationOutcome(), EncodingType.JSON);
 
-    val httpResponse = new HttpBResponse(PROTOCOL, 404, HEADERS_JSON, testOperationOutcome);
+    val httpResponse =
+        new HttpBResponse(DEFAULT_HTTP_VERSION, 404, HEADERS_JSON, testOperationOutcome);
     val response =
         responseCreator
             .expecting(OperationOutcome.class)
@@ -143,7 +146,7 @@ class FdResponseCreatorTest {
       String filePath, Class<? extends Resource> resourceType) {
     val content = ResourceLoader.readFileFromResource(filePath);
 
-    val httpResponse = new HttpBResponse(PROTOCOL, 201, HEADERS_JSON, content);
+    val httpResponse = new HttpBResponse(DEFAULT_HTTP_VERSION, 201, HEADERS_JSON, content);
     val response =
         responseCreator
             .expecting(OperationOutcome.class)
@@ -160,7 +163,8 @@ class FdResponseCreatorTest {
     val testOperationOutcome =
         encodeTestRessource(FhirTestResourceUtil.createOperationOutcome(), EncodingType.JSON);
 
-    val httpResponse = new HttpBResponse(PROTOCOL, 404, HEADERS_JSON, testOperationOutcome);
+    val httpResponse =
+        new HttpBResponse(DEFAULT_HTTP_VERSION, 404, HEADERS_JSON, testOperationOutcome);
     val response =
         responseCreator
             .expecting(AuditEvent.class)
@@ -179,7 +183,7 @@ class FdResponseCreatorTest {
     val expectation = Task.class;
     assertNotEquals(resourceType, expectation); // enusre methodsource does not provide a task
 
-    val httpResponse = new HttpBResponse(PROTOCOL, 204, HEADERS_JSON, content);
+    val httpResponse = new HttpBResponse(DEFAULT_HTTP_VERSION, 204, HEADERS_JSON, content);
     val response =
         responseCreator
             .expecting(expectation)
@@ -194,7 +198,8 @@ class FdResponseCreatorTest {
     val testOperationOutcome =
         encodeTestRessource(FhirTestResourceUtil.createOperationOutcome(), EncodingType.JSON);
 
-    val httpResponse = new HttpBResponse(PROTOCOL, 404, HEADERS_JSON, testOperationOutcome);
+    val httpResponse =
+        new HttpBResponse(DEFAULT_HTTP_VERSION, 404, HEADERS_JSON, testOperationOutcome);
     val response =
         responseCreator
             .expecting(AuditEvent.class)
@@ -210,7 +215,8 @@ class FdResponseCreatorTest {
   void shouldIdentifyConcreteResourceOfType() {
     val testOperationOutcome =
         encodeTestRessource(FhirTestResourceUtil.createOperationOutcome(), EncodingType.JSON);
-    val httpResponse = new HttpBResponse(PROTOCOL, 404, HEADERS_JSON, testOperationOutcome);
+    val httpResponse =
+        new HttpBResponse(DEFAULT_HTTP_VERSION, 404, HEADERS_JSON, testOperationOutcome);
     val response =
         responseCreator
             .expecting(AuditEvent.class)
@@ -227,7 +233,7 @@ class FdResponseCreatorTest {
   @Test
   void shouldValidateEmptyContentCorrectly() {
     val fdRequest = new TestFdRequest();
-    val httpResponse = new HttpBResponse(PROTOCOL, 204, HEADERS_JSON);
+    val httpResponse = new HttpBResponse(DEFAULT_HTTP_VERSION, 204, HEADERS_JSON);
     val response =
         responseCreator
             .takeExpectationFrom(fdRequest)
@@ -241,7 +247,8 @@ class FdResponseCreatorTest {
   void shouldValidateOperationOutcomeCorrectly() {
     val testOperationOutcome =
         encodeTestRessource(FhirTestResourceUtil.createOperationOutcome(), EncodingType.JSON);
-    val httpResponse = new HttpBResponse(PROTOCOL, 204, HEADERS_JSON, testOperationOutcome);
+    val httpResponse =
+        new HttpBResponse(DEFAULT_HTTP_VERSION, 204, HEADERS_JSON, testOperationOutcome);
     val response =
         responseCreator
             .expecting(AuditEvent.class)
@@ -256,7 +263,8 @@ class FdResponseCreatorTest {
     val testOperationOutcome =
         encodeTestRessource(FhirTestResourceUtil.createOperationOutcome(), EncodingType.JSON)
             .replace("issue", "issues");
-    val httpResponse = new HttpBResponse(PROTOCOL, 204, HEADERS_JSON, testOperationOutcome);
+    val httpResponse =
+        new HttpBResponse(DEFAULT_HTTP_VERSION, 204, HEADERS_JSON, testOperationOutcome);
     val response =
         responseCreator
             .expecting(AuditEvent.class)
@@ -276,7 +284,7 @@ class FdResponseCreatorTest {
             String.valueOf(testOperationOutcome.length())));
     headers.addAll(HEADERS_JSON);
 
-    val httpResponse = new HttpBResponse(PROTOCOL, 404, headers, testOperationOutcome);
+    val httpResponse = new HttpBResponse(DEFAULT_HTTP_VERSION, 404, headers, testOperationOutcome);
     val response =
         responseCreator
             .expecting(AuditEvent.class)
@@ -299,7 +307,7 @@ class FdResponseCreatorTest {
     val headers = new LinkedList<HttpHeader>();
     headers.add(StandardHttpHeaderKey.CONTENT_TYPE.createHeader(MediaType.FHIR_XML.asString()));
 
-    val httpResponse = new HttpBResponse(PROTOCOL, 404, headers, testOperationOutcome);
+    val httpResponse = new HttpBResponse(DEFAULT_HTTP_VERSION, 404, headers, testOperationOutcome);
     val response =
         responseCreator
             .expecting(AuditEvent.class)
@@ -319,7 +327,7 @@ class FdResponseCreatorTest {
   @ValueSource(strings = {"", " ", "\t", "\n", "\n\r", "\r", "\n\n\t"})
   @NullSource
   void shouldThrowOnMissingAnyResponseBody(String emptyBody) {
-    val httpResponse = new HttpBResponse(PROTOCOL, 500, HEADERS_JSON, emptyBody);
+    val httpResponse = new HttpBResponse(DEFAULT_HTTP_VERSION, 500, HEADERS_JSON, emptyBody);
     val response =
         responseCreator
             .expecting(AuditEvent.class)
@@ -339,7 +347,7 @@ class FdResponseCreatorTest {
   @ValueSource(strings = {"", " ", "\t", "\n"})
   @NullSource
   void shouldCreateEmptyResponsesOnEmptyPayloadBody(String payload) {
-    val httpResponse = new HttpBResponse(PROTOCOL, 500, HEADERS_JSON, payload);
+    val httpResponse = new HttpBResponse(DEFAULT_HTTP_VERSION, 500, HEADERS_JSON, payload);
     val response =
         responseCreator
             .expecting(AuditEvent.class)

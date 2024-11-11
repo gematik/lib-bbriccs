@@ -81,6 +81,10 @@ public class PZN extends SemanticValue<String, DeBasisProfilCodeSystem> implemen
     return asNamedCodeable(faker.medical().medicineName());
   }
 
+  public static PZN from(Coding coding) {
+    return from(coding.getCode());
+  }
+
   public static PZN from(String value) {
     return new PZN(value);
   }

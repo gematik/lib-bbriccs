@@ -4,7 +4,7 @@
     <parent>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>bbriccs-parent</artifactId>
-        <version>0.1.9</version>
+        <version>0.1.10</version>
     </parent>
 
     <artifactId>configuration-bricks</artifactId>
@@ -13,6 +13,7 @@
 
     <modules>
         <module>configuration-api-brick</module>
+      <module>feature-toggle-brick</module>
     </modules>
 
     <dependencyManagement>
@@ -20,6 +21,11 @@
             <dependency>
                 <groupId>de.gematik.bbriccs</groupId>
                 <artifactId>configuration-api-brick</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.gematik.bbriccs</groupId>
+                <artifactId>feature-toggle-brick</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

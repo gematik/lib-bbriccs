@@ -6,7 +6,7 @@
     <parent>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>fhir-bricks</artifactId>
-        <version>0.1.9</version>
+        <version>0.1.10</version>
     </parent>
 
     <artifactId>fhir-hapi-fuzzing-brick</artifactId>

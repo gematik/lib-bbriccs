@@ -23,6 +23,8 @@ import de.gematik.bbriccs.profiles.utils.TestCodeSystem;
 import de.gematik.bbriccs.profiles.utils.TestProfileStructureDefinitionEnum;
 import java.util.Arrays;
 import lombok.val;
+import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Meta;
 import org.junit.jupiter.api.Test;
@@ -68,5 +70,31 @@ class WithSystemTest {
     assertFalse(
         TestProfileStructureDefinitionEnum.TYPE_ONE.matches(
             TestCodeSystem.TYPE_A, TestCodeSystem.TYPE_B));
+  }
+
+  @Test
+  void shouldMatchCodeableConcepts() {
+    val coding =
+        new Coding(
+            TestProfileStructureDefinitionEnum.TYPE_ONE.getCanonicalUrl(), "ABC", "Test Code");
+    val codeableConcept = new CodeableConcept(coding);
+
+    assertTrue(TestProfileStructureDefinitionEnum.TYPE_ONE.matches(codeableConcept));
+  }
+
+  @Test
+  void shouldNotMatchCodeableConceptsOnDifferentSystems() {
+    val coding1 =
+        new Coding(
+            TestProfileStructureDefinitionEnum.TYPE_ONE.getCanonicalUrl(), "ABC", "Test Code 1");
+    val codeableConcept1 = new CodeableConcept(coding1);
+
+    val coding2 =
+        new Coding(
+            TestProfileStructureDefinitionEnum.TYPE_TWO.getCanonicalUrl(), "DEF", "Test Code 2");
+    val codeableConcept2 = new CodeableConcept(coding2);
+
+    assertFalse(
+        TestProfileStructureDefinitionEnum.TYPE_THREE.matches(codeableConcept1, codeableConcept2));
   }
 }

@@ -29,7 +29,7 @@ import org.hl7.fhir.r4.model.CanonicalType;
 import org.hl7.fhir.r4.model.Meta;
 import org.hl7.fhir.r4.model.Resource;
 
-public class ResourceBuilder<R extends Resource, B extends ResourceBuilder<R, B>> {
+public abstract class ResourceBuilder<R extends Resource, B extends ResourceBuilder<R, B>> {
 
   private String resourceId;
 
@@ -121,4 +121,6 @@ public class ResourceBuilder<R extends Resource, B extends ResourceBuilder<R, B>
       throw new BuilderException(prefixedErrorMsg);
     }
   }
+
+  public abstract R build();
 }

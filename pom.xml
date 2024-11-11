@@ -7,7 +7,7 @@
 
     <groupId>de.gematik.bbriccs</groupId>
     <artifactId>bbriccs-parent</artifactId>
-    <version>0.1.9</version>
+    <version>0.1.10</version>
     <name>Bbriccs Parent</name>
     <description>Bbriccs provides reusable and independent building bricks for flexible and maintainable TestSuites with Clean Code Principles</description>
     <packaging>pom</packaging>
@@ -43,7 +43,8 @@
         <version.lombok>1.18.30</version.lombok>
         <version.logback>1.5.6</version.logback>
         <version.slf4j-api>2.0.11</version.slf4j-api>
-        <version.hapi-fhir>7.2.1</version.hapi-fhir>
+        <version.guava>33.3.1-jre</version.guava>
+        <version.hapi-fhir>7.2.3</version.hapi-fhir>
         <version.ref-validator>2.0.2</version.ref-validator>
         <version.fasterxml>2.16.1</version.fasterxml>
         <version.apache-commons-lang3>3.14.0</version.apache-commons-lang3>
@@ -66,7 +67,9 @@
         <sonar.sources>src/main</sonar.sources>
         <sonar.exclusions>
             **/cli/cmd/*.java,
-            **/cli/*App.java
+            **/cli/*App.java,
+            **/gematik_schemes/**/*.xml,
+            **/gematik_schemes/**/*.xsd,
         </sonar.exclusions>
     </properties>
 
@@ -152,18 +155,11 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- bricks BOMs -->
+            <!-- bricks dependencies -->
             <dependency>
                 <groupId>de.gematik.bbriccs</groupId>
                 <artifactId>fhir-bricks</artifactId>
                 <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>de.gematik.bbriccs</groupId>
-                <artifactId>fhir-test-examples-brick</artifactId>
-                <version>${project.version}</version>
-                <scope>test</scope>
-                <type>jar</type>
             </dependency>
             <dependency>
                 <groupId>de.gematik.bbriccs</groupId>
@@ -187,6 +183,18 @@
             </dependency>
             <dependency>
                 <groupId>de.gematik.bbriccs</groupId>
+                <artifactId>fhir-test-examples-brick</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+                <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>de.gematik.bbriccs</groupId>
+                <artifactId>resource-loader-brick</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.gematik.bbriccs</groupId>
                 <artifactId>cli-tooling-bricks</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -206,6 +214,11 @@
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
                 <version>${version.logback}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${version.guava}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -517,14 +530,6 @@
                         </licenseHeader>
                     </kotlin>
                 </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>apply</goal>
-                        </goals>
-                        <phase>compile</phase>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

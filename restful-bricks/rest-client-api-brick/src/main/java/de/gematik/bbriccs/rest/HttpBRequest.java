@@ -26,7 +26,11 @@ import java.util.Optional;
 import lombok.Generated;
 
 public record HttpBRequest(
-    HttpRequestMethod method, String urlPath, List<HttpHeader> headers, byte[] body)
+    HttpVersion version,
+    HttpRequestMethod method,
+    String urlPath,
+    List<HttpHeader> headers,
+    byte[] body)
     implements HttpBEntity {
 
   public HttpBRequest {
@@ -35,33 +39,60 @@ public record HttpBRequest(
     }
   }
 
+  public HttpBRequest(HttpVersion version, HttpRequestMethod method, String urlPath) {
+    this(version, method, urlPath, List.of(), new byte[0]);
+  }
+
   public HttpBRequest(HttpRequestMethod method, String urlPath) {
-    this(method, urlPath, List.of(), new byte[0]);
+    this(HttpVersion.HTTP_1_1, method, urlPath);
   }
 
   public HttpBRequest(HttpRequestMethod method, String urlPath, String body) {
     this(method, urlPath, List.of(), body);
   }
 
+  public HttpBRequest(HttpVersion version, HttpRequestMethod method, String urlPath, byte[] body) {
+    this(version, method, urlPath, List.of(), body);
+  }
+
   public HttpBRequest(HttpRequestMethod method, String urlPath, byte[] body) {
-    this(method, urlPath, List.of(), body);
+    this(HttpVersion.HTTP_1_1, method, urlPath, body);
   }
 
   public HttpBRequest(HttpRequestMethod method, String urlPath, HttpHeader header, String body) {
     this(method, urlPath, List.of(header), body);
   }
 
+  public HttpBRequest(
+      HttpVersion version,
+      HttpRequestMethod method,
+      String urlPath,
+      HttpHeader header,
+      byte[] body) {
+    this(version, method, urlPath, List.of(header), body);
+  }
+
   public HttpBRequest(HttpRequestMethod method, String urlPath, HttpHeader header, byte[] body) {
-    this(method, urlPath, List.of(header), body);
+    this(HttpVersion.HTTP_1_1, method, urlPath, header, body);
   }
 
   public HttpBRequest(
-      HttpRequestMethod method, String urlPath, List<HttpHeader> headers, String body) {
+      HttpVersion version,
+      HttpRequestMethod method,
+      String urlPath,
+      List<HttpHeader> headers,
+      String body) {
     this(
+        version,
         method,
         urlPath,
         headers,
         Optional.ofNullable(body).map(b -> b.getBytes(StandardCharsets.UTF_8)).orElse(new byte[0]));
+  }
+
+  public HttpBRequest(
+      HttpRequestMethod method, String urlPath, List<HttpHeader> headers, String body) {
+    this(HttpVersion.HTTP_1_1, method, urlPath, headers, body);
   }
 
   public Optional<String> getBearerToken() {
@@ -79,6 +110,7 @@ public record HttpBRequest(
     if (o == null || getClass() != o.getClass()) return false;
     HttpBRequest that = (HttpBRequest) o;
     return method == that.method
+        && Objects.equals(version, that.version)
         && Objects.equals(urlPath, that.urlPath)
         && Objects.equals(headers, that.headers)
         && Arrays.equals(body, that.body);

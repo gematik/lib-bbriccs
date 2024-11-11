@@ -24,8 +24,6 @@ import java.io.File;
 import java.util.stream.Stream;
 import lombok.val;
 import org.hl7.fhir.r4.model.AuditEvent;
-import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.ResourceType;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -36,14 +34,7 @@ class AuditEventMutatorProviderTest extends FhirFuzzingMutatorTest {
   @MethodSource
   void shouldNotThrowAnything(File f) {
     val content = ResourceLoader.readString(f);
-    val bundle = fhirCodec.decode(Bundle.class, content);
-    val auditEvent =
-        bundle.getEntry().stream()
-            .map(Bundle.BundleEntryComponent::getResource)
-            .filter(resource -> resource.getResourceType().equals(ResourceType.AuditEvent))
-            .map(resource -> (AuditEvent) resource)
-            .findFirst()
-            .orElseThrow();
+    val auditEvent = fhirCodec.decode(AuditEvent.class, content);
     val mutatorProvider = new AuditEventMutatorProvider();
 
     mutatorProvider
@@ -60,7 +51,7 @@ class AuditEventMutatorProviderTest extends FhirFuzzingMutatorTest {
   static Stream<Arguments> shouldNotThrowAnything() {
 
     return ResourceLoader.getResourceFilesInDirectory(
-            "examples/fhir/valid/erp/erx/1.1.1/auditeventbundle", true)
+            "examples/fhir/valid/erp/erx/1.2.0/auditevent", true)
         .stream()
         .map(Arguments::of);
   }

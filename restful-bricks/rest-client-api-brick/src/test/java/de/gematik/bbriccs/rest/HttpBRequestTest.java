@@ -30,7 +30,8 @@ class HttpBRequestTest {
   @Test
   void shouldNotThrowOnNullBody01() {
     byte[] nullBody = null;
-    val request = new HttpBRequest(HttpRequestMethod.GET, "a/b/c", List.of(), nullBody);
+    val request =
+        new HttpBRequest(HttpVersion.HTTP_1_1, HttpRequestMethod.GET, "a/b/c", List.of(), nullBody);
     assertNotNull(request.body());
     assertEquals(0, request.body().length);
     assertTrue(request.isEmptyBody());

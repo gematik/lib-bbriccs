@@ -3,7 +3,7 @@ include::../attributes-sections.adoc[]
 
 == Smartcards-Brick
 
-Smartcards mittles `smartcard-brick`.... TODO
+Smartcards mittels `smartcard-brick`.... TODO
 
 [plantuml, "{pumldir}/smartcard-brick", svg]
 .Smartcard-Brick

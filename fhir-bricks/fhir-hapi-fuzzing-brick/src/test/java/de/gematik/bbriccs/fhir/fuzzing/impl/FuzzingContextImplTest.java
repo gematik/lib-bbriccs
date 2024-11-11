@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import de.gematik.bbriccs.fhir.fuzzing.impl.log.FuzzingLogEntryType;
 import de.gematik.bbriccs.fhir.fuzzing.testutils.FhirFuzzingMutatorTest;
+import lombok.NoArgsConstructor;
 import lombok.val;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.DateTimeType;
@@ -61,4 +62,33 @@ class FuzzingContextImplTest extends FhirFuzzingMutatorTest {
     val fle = this.ctx.fuzzChildResources(bundle);
     assertEquals(FuzzingLogEntryType.NOOP, fle.getType());
   }
+
+  @Test
+  void shouldFuzzDeeplyInheritedResources() {
+    val deepBundle = new MyBundleThree();
+    val fle = assertDoesNotThrow(() -> this.ctx.startFuzzingSession(deepBundle));
+    assertFalse(fle.isEmpty());
+  }
+
+  @Test
+  void shouldFuzzDeeplyInheritedTypes() {
+    val deepType = new MyDateTimeTypeThree();
+    val fle = assertDoesNotThrow(() -> this.ctx.fuzzChild("test", deepType));
+    assertNotNull(fle);
+  }
+
+  static class MyBundleOne extends Bundle {}
+
+  static class MyBundleTwo extends MyBundleOne {}
+
+  static class MyBundleThree extends MyBundleTwo {}
+
+  @NoArgsConstructor
+  static class MyDateTimeTypeOne extends DateTimeType {}
+
+  @NoArgsConstructor
+  static class MyDateTimeTypeTwo extends MyDateTimeTypeOne {}
+
+  @NoArgsConstructor
+  static class MyDateTimeTypeThree extends MyDateTimeTypeTwo {}
 }

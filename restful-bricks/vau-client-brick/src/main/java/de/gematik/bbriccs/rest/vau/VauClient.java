@@ -100,17 +100,18 @@ public class VauClient implements HttpBClient {
     val vauRequest = this.createRequest(bRequest, vauEncrypted);
 
     log.info(
-        format(
-            "Send VAU-Request to: {0} with Request ID {1}",
-            getVauRequestUrl(), vauEncrypted.requestIdAsString()));
+        "Send VAU-Request to: {} with Request ID {}",
+        getVauRequestUrl(),
+        vauEncrypted.requestIdAsString());
     val outerResponse = vauRequest.asBytes();
     val bResponse = createResponse(vauEncrypted, outerResponse);
     this.vauObserver.serveResponseObservers(bResponse);
     log.info(
-        format(
-            "Received VAU-Response with Status Code {0} for Request ID {1} with"
-                + " VAU Userpseudonym: {2}",
-            outerResponse.getStatus(), vauEncrypted.requestIdAsString(), vauUserPseudonym));
+        "Received VAU-Response with Status Code {} for Request ID {} with"
+            + " VAU Userpseudonym: {}",
+        outerResponse.getStatus(),
+        vauEncrypted.requestIdAsString(),
+        vauUserPseudonym);
     return bResponse;
   }
 
@@ -140,7 +141,7 @@ public class VauClient implements HttpBClient {
               request.requestId(),
               request.accessToken(),
               decrypted));
-      return rawHttpCodec.decode(decrypted);
+      return rawHttpCodec.decodeResponse(decrypted);
     } catch (BadPaddingException e) {
       val innerHttp = outerResponse.getBody();
       val b64Body = Base64.getEncoder().encodeToString(innerHttp);
@@ -172,10 +173,7 @@ public class VauClient implements HttpBClient {
             .map(h -> new HttpHeader(h.getName(), h.getValue()))
             .toList();
     return new HttpBResponse(
-        rawHttpCodec.getHttpVersionString(),
-        outerResponse.getStatus(),
-        headers,
-        outerResponse.getBody());
+        HttpVersion.HTTP_1_1, outerResponse.getStatus(), headers, outerResponse.getBody());
   }
 
   /**
@@ -221,6 +219,7 @@ public class VauClient implements HttpBClient {
   }
 
   public static class VauClientBuilder {
+
     private final VauVersion vauVersion = VauVersion.V1;
     private final String url;
     private final List<HttpHeader> headers;
@@ -333,9 +332,13 @@ public class VauClient implements HttpBClient {
     }
 
     public VauClient usingPublicKey(@NonNull ECPublicKey publicKey) {
-      if (this.unirest == null) this.withoutTlsVerification();
+      if (this.unirest == null) {
+        this.withoutTlsVerification();
+      }
 
-      if (this.codec == null) this.withHttpCodec(new InnerHttp());
+      if (this.codec == null) {
+        this.withHttpCodec(RawHttpCodec.defaultCodec());
+      }
 
       val vauProtocol = new VauProtocol(this.vauVersion, publicKey);
       return new VauClient(this, vauProtocol);

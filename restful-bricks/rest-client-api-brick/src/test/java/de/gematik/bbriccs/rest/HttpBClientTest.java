@@ -35,7 +35,7 @@ class HttpBClientTest {
 
     @Override
     public HttpBResponse send(HttpBRequest bRequest) {
-      return new HttpBResponse("HTTP/1.1", 200, List.of(), new byte[0]);
+      return new HttpBResponse(HttpVersion.HTTP_1_1, 200, List.of(), new byte[0]);
     }
   }
 }
