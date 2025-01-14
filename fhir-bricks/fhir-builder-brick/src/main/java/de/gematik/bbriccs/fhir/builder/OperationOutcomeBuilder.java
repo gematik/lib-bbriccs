@@ -59,9 +59,7 @@ public class OperationOutcomeBuilder
 
   @Override
   public OperationOutcome build() {
-    val oo = new OperationOutcome();
-
-    oo.setId(this.getResourceId());
+    val oo = this.setIdTo(new OperationOutcome());
     oo.setIssue(issues);
 
     Optional.ofNullable(this.narrativeText)
@@ -80,7 +78,7 @@ public class OperationOutcomeBuilder
     private final OperationOutcome.OperationOutcomeIssueComponent issue =
         new OperationOutcome.OperationOutcomeIssueComponent();
 
-    public IssueBuilder(
+    private IssueBuilder(
         Function<OperationOutcome.OperationOutcomeIssueComponent, OperationOutcomeBuilder>
             finalizer) {
       this.finalizer = finalizer;

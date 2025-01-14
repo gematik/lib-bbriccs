@@ -1,13 +1,24 @@
-include::../attributes-sections.adoc[]
+include::fhir-commons.adoc[]
 
+[#fhir-validation-brick]
+== FHIR Validation Brick
+In addition to <<fhir-configurator-brick,configuring>>, <<fhir-builder-brick,building>>  and <<fhir-codec-brick,serializing>>, the FHIR standard also allows us to validate the correctness of resources.
 
-== FHIR-Validator
-
-Was ist der FHIR-Validator und wie funktionieren die Implementierungen... TODO
-
+Fortunately, the {bbriccs-wordmark} provides a simple and easy to use API for validating FHIR resources. The {brick-fhir-validation} provides a structured way to validate any FHIR resource. It is designed to be easy to use and to provide a clear and consistent API that can be used across projects and teams.
 
 [plantuml, "{pumldir}/fhir-validator", svg]
 .FHIR-Validator
 ----
 include::{pumldir}/fhir-validator.puml[]
 ----
+
+In addition, the {brick-fhir-validation} allows you to implement your own validation strategies or use those already in place.
+
+.Strategies already implemented are:
+1. `DummyValidator` is a dummy validator that always returns `true` (which can be seen as an option to disable the validation).
+2. `NonProfiledValidator` is a validator that only knows the basic FHIR rules, but no specific profiles.
+3. `ProfiledValidator` is a validator that additionally knows a specific set of profiles in a single configuration.
+4. `MultiProfiledValidator` is a composition of multiple `ProfiledValidators`. This allows you to validate resources against multiple versions of a set of profiles.
+5. Finally, the `ReferenzValidator` which is a wrapper around the {link-gematik-refval}
+
+include::tutorial-validation-disabled.adoc[leveloffset=+1]

@@ -28,13 +28,15 @@ public enum DeBasisProfilVersion implements ProfileVersion {
   V1_3_2("1.3.2"),
   V1_4_0("1.4.0");
 
+  private static final String PROFILE_NAME = "de.basisprofil.r4";
   private final String version;
+  private final String name = PROFILE_NAME;
 
   public static DeBasisProfilVersion fromString(String input) {
     return VersionUtil.fromString(DeBasisProfilVersion.class, input);
   }
 
   public static DeBasisProfilVersion getDefaultVersion() {
-    return VersionUtil.getDefaultVersion(DeBasisProfilVersion.class, "de.basisprofil.r4");
+    return VersionUtil.getDefaultVersion(DeBasisProfilVersion.class, PROFILE_NAME);
   }
 }

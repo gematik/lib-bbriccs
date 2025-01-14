@@ -1,0 +1,37 @@
+@startuml
+
+skinparam groupInheritance 2
+skinparam packageStyle Frame
+set namespaceSeparator none
+
+interface WithSystem {
+  systemUrl: String
+}
+
+interface WithNamingSystem extends WithSystem
+interface WithStructureDefinition extends WithSystem
+interface WithCodeSystem extends WithSystem
+interface ProfileVersion {
+  version: String
+}
+
+interface FromValueSet
+class SemanticValue<T> {
+  value: T
+}
+
+WithStructureDefinition -up-> ProfileVersion
+FromValueSet -left-> WithCodeSystem
+SemanticValue -left-> WithSystem
+
+rectangle "FHIR package implementation" #CCFFE0 {
+    class MyCodeSystem implements WithCodeSystem
+    class MyValueSet implements FromValueSet
+    class MyNamingSystem implements WithNamingSystem
+    class MyStructureDefinition implements WithStructureDefinition
+    class MyProfileVersion implements ProfileVersion
+
+    MyValueSet -left-> MyCodeSystem
+    MyStructureDefinition -left-> MyProfileVersion
+}
+@enduml

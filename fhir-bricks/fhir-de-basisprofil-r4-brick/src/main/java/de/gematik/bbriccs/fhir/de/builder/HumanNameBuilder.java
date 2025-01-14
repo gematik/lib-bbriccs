@@ -16,6 +16,7 @@
 
 package de.gematik.bbriccs.fhir.de.builder;
 
+import com.google.common.base.Strings;
 import de.gematik.bbriccs.fhir.builder.exceptions.BuilderException;
 import de.gematik.bbriccs.fhir.de.DeBasisProfilStructDef;
 import de.gematik.bbriccs.fhir.de.HL7StructDef;
@@ -27,9 +28,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.hl7.fhir.r4.model.CodeType;
 import org.hl7.fhir.r4.model.HumanName;
-import org.hl7.fhir.r4.model.StringType;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class HumanNameBuilder {
@@ -72,7 +71,7 @@ public class HumanNameBuilder {
       name.addPrefix(prefix);
       name.getPrefix()
           .get(0)
-          .addExtension(HL7StructDef.ISO_21090_EN_QUALIFIER.getCanonicalUrl(), new CodeType("AC"));
+          .addExtension(HL7StructDef.ISO_21090_EN_QUALIFIER.asCodeExtension("AC"));
     }
 
     return name;
@@ -88,8 +87,7 @@ public class HumanNameBuilder {
 
     val tokenized = TokenizedFamilyName.split(family);
     name.getFamilyElement()
-        .addExtension(
-            HL7StructDef.HUMAN_OWN_NAME.getCanonicalUrl(), new StringType(tokenized.familyName));
+        .addExtension(HL7StructDef.HUMAN_OWN_NAME.asStringExtension(tokenized.familyName));
 
     // set prefix if existent
     tokenized
@@ -97,9 +95,7 @@ public class HumanNameBuilder {
         .ifPresent(
             familyPrefix ->
                 name.getFamilyElement()
-                    .addExtension(
-                        HL7StructDef.HUMAN_OWN_PREFIX.getCanonicalUrl(),
-                        new StringType(familyPrefix)));
+                    .addExtension(HL7StructDef.HUMAN_OWN_PREFIX.asStringExtension(familyPrefix)));
 
     // set name extension if existent
     tokenized
@@ -108,8 +104,8 @@ public class HumanNameBuilder {
             nameExtension ->
                 name.getFamilyElement()
                     .addExtension(
-                        DeBasisProfilStructDef.HUMAN_NAMENSZUSATZ.getCanonicalUrl(),
-                        new StringType(nameExtension)));
+                        DeBasisProfilStructDef.HUMAN_NAMENSZUSATZ.asStringExtension(
+                            nameExtension)));
     return name;
   }
 
@@ -129,7 +125,7 @@ public class HumanNameBuilder {
     }
 
     public static TokenizedFamilyName split(String family) {
-      if (family == null || family.isEmpty() || family.isBlank()) {
+      if (Strings.isNullOrEmpty(family) || family.isBlank()) {
         throw new BuilderException("Given family name is missing");
       }
 

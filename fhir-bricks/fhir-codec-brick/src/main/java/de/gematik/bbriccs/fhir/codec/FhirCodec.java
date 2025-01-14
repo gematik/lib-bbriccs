@@ -23,7 +23,7 @@ import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.parser.LenientErrorHandler;
 import de.gematik.bbriccs.fhir.EncodingType;
 import de.gematik.bbriccs.fhir.codec.exceptions.FhirCodecException;
-import de.gematik.bbriccs.fhir.coding.ProfileStructureDefinition;
+import de.gematik.bbriccs.fhir.coding.WithStructureDefinition;
 import de.gematik.bbriccs.fhir.coding.version.ProfileVersion;
 import de.gematik.bbriccs.fhir.validation.*;
 import de.gematik.refv.SupportedValidationModule;
@@ -142,13 +142,14 @@ public class FhirCodec {
     }
 
     public <T extends ProfileVersion, R extends Resource> FhirCodecBuilder withTypeHint(
-        ProfileStructureDefinition<T> definition, Class<R> mappingClass) {
-      return withTypeHint(ResourceTypeHint.forStructure(definition, mappingClass));
+        WithStructureDefinition<T> definition, Class<R> mappingClass) {
+      return withTypeHint(ResourceTypeHint.forStructure(definition).mappingTo(mappingClass));
     }
 
     public <T extends ProfileVersion, R extends Resource> FhirCodecBuilder withTypeHint(
-        ProfileStructureDefinition<T> definition, @Nullable T version, Class<R> mappingClass) {
-      return withTypeHint(ResourceTypeHint.forStructure(definition, version, mappingClass));
+        WithStructureDefinition<T> definition, @Nullable T version, Class<R> mappingClass) {
+      return withTypeHint(
+          ResourceTypeHint.forStructure(definition).forVersion(version).mappingTo(mappingClass));
     }
 
     public <T extends ProfileVersion, R extends Resource> FhirCodecBuilder withTypeHint(

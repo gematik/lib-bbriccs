@@ -26,10 +26,11 @@ public class InvalidSystemException extends RuntimeException {
     super(message);
   }
 
+  public InvalidSystemException(Class<?> type, String system) {
+    this(format("Type {0} is not allowed to have System {1}", type.getSimpleName(), system));
+  }
+
   public InvalidSystemException(Class<?> type, WithSystem system) {
-    this(
-        format(
-            "Type {0} is not allowed to have System {1}",
-            type.getSimpleName(), system.getCanonicalUrl()));
+    this(type, system.getCanonicalUrl());
   }
 }

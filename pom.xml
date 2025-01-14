@@ -7,7 +7,7 @@
 
     <groupId>de.gematik.bbriccs</groupId>
     <artifactId>bbriccs-parent</artifactId>
-    <version>0.1.10</version>
+    <version>0.2.0</version>
     <name>Bbriccs Parent</name>
     <description>Bbriccs provides reusable and independent building bricks for flexible and maintainable TestSuites with Clean Code Principles</description>
     <packaging>pom</packaging>
@@ -46,13 +46,13 @@
         <version.guava>33.3.1-jre</version.guava>
         <version.hapi-fhir>7.2.3</version.hapi-fhir>
         <version.ref-validator>2.0.2</version.ref-validator>
-        <version.fasterxml>2.16.1</version.fasterxml>
+        <version.fasterxml>2.18.1</version.fasterxml>
         <version.apache-commons-lang3>3.14.0</version.apache-commons-lang3>
         <version.faker>1.0.2</version.faker>
         <version.streamex>0.8.2</version.streamex>
         <version.junit>5.9.3</version.junit>
         <version.mockito>5.12.0</version.mockito>
-        <version.junit-pioneer>2.0.1</version.junit-pioneer>
+        <version.junit-pioneer>2.3.0</version.junit-pioneer>
         <version.dss>6.0</version.dss>
         <version.bouncycastle>1.78.1</version.bouncycastle>
         <artefact.bouncycastle>jdk18on</artefact.bouncycastle>
@@ -108,7 +108,6 @@
             <organizationUrl>https://www.gematik.de/</organizationUrl>
         </developer>
     </developers>
-
 
     <profiles>
         <profile>
@@ -222,6 +221,11 @@
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${version.fasterxml}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>${version.fasterxml}</version>
             </dependency>
@@ -267,6 +271,11 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${version.apache-commons-lang3}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib</artifactId>
+                <version>${kotlin.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-codec</groupId>
@@ -336,11 +345,6 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib</artifactId>
-            <version>${kotlin.version}</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -487,6 +491,8 @@
                         </property>
                     </properties>
                     <skip>${skip.unittests}</skip>
+                    <parallel>classes</parallel>
+                    <runOrder>random</runOrder>
                 </configuration>
             </plugin>
             <plugin>

@@ -16,6 +16,7 @@
 
 package de.gematik.bbriccs.toggle;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 public interface FeatureToggle<T> {
@@ -25,4 +26,24 @@ public interface FeatureToggle<T> {
   Function<String, T> getConverter();
 
   T getDefaultValue();
+
+  static boolean hasToggle(String key) {
+    return new FeatureConfiguration().hasToggle(key);
+  }
+
+  static Optional<String> getStringToggle(String key) {
+    return new FeatureConfiguration().getStringToggle(key);
+  }
+
+  static String getStringToggle(String key, String defaultValue) {
+    return new FeatureConfiguration().getStringToggle(key, defaultValue);
+  }
+
+  static boolean getBooleanToggle(String key, boolean defaultValue) {
+    return new FeatureConfiguration().getBooleanToggle(key, defaultValue);
+  }
+
+  static int getIntegerToggle(String key, int defaultValue) {
+    return new FeatureConfiguration().getIntegerToggle(key, defaultValue);
+  }
 }

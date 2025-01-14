@@ -20,10 +20,13 @@ import static java.text.MessageFormat.format;
 import static org.junit.jupiter.api.Assertions.*;
 
 import de.gematik.bbriccs.fhir.builder.exceptions.BuilderException;
-import de.gematik.bbriccs.fhir.coding.ProfileStructureDefinition;
+import de.gematik.bbriccs.fhir.coding.FromValueSet;
+import de.gematik.bbriccs.fhir.coding.WithCodeSystem;
+import de.gematik.bbriccs.fhir.coding.WithStructureDefinition;
 import de.gematik.bbriccs.fhir.coding.version.GenericProfileVersion;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -34,7 +37,7 @@ class ResourceBuilderTest {
 
   @Test
   void shouldSetResourceId() {
-    val b = new TestBuilder().setResourceId("123");
+    val b = new TestBuilder().setId("123");
     assertEquals("123", b.getResourceId());
   }
 
@@ -53,6 +56,62 @@ class ResourceBuilderTest {
   void shouldThrowOnMissingRequiredValues() {
     val b = new TestBuilder();
     assertThrows(BuilderException.class, () -> b.checkRequired(b.name, "name is missing"));
+  }
+
+  @Test
+  void shouldThrowOnMissingExactlyOneRequired() {
+    val b = new TestBuilder();
+    assertThrows(
+        BuilderException.class,
+        () -> b.checkRequiredExactlyOneOf("name is missing", b.name, b.info));
+  }
+
+  @Test
+  void shouldThrowOnExceedingExactlyOneRequired() {
+    val b = new TestBuilder();
+    b.name = "Module";
+    b.info = "some info";
+    assertThrows(
+        BuilderException.class,
+        () -> b.checkRequiredExactlyOneOf("name is missing", b.name, b.info));
+  }
+
+  @Test
+  void shouldPassOnExactlyOne() {
+    val b = new TestBuilder();
+    b.name = "Module";
+    assertDoesNotThrow(() -> b.checkRequiredExactlyOneOf("name is missing", b.name, b.info));
+  }
+
+  @Test
+  void shouldThrowOnWrongValueSet() {
+    val b = new TestBuilder();
+    val e =
+        assertThrows(
+            BuilderException.class,
+            () ->
+                b.checkValueSet(
+                    TestProfileValueSet.AA, TestProfileValueSet.AB, TestProfileValueSet.AC));
+    assertTrue(e.getMessage().contains("AA is not in the list"));
+    assertTrue(e.getMessage().contains("expected choices: 'AB, AC'"));
+  }
+
+  @Test
+  void shouldThrowOnEmptyExpectation() {
+    val b = new TestBuilder();
+    assertThrows(BuilderException.class, () -> b.checkValueSet(TestProfileValueSet.AA));
+  }
+
+  @Test
+  void shouldNotThrowIfValueSetIsOneOf() {
+    val b = new TestBuilder();
+    assertDoesNotThrow(
+        () ->
+            b.checkValueSet(
+                TestProfileValueSet.AA,
+                TestProfileValueSet.AB,
+                TestProfileValueSet.AC,
+                TestProfileValueSet.AA));
   }
 
   @Test
@@ -108,7 +167,9 @@ class ResourceBuilderTest {
   }
 
   private static class TestBuilder extends ResourceBuilder<Task, TestBuilder> {
+
     private String name;
+    private String info;
     private final List<String> bricks = new ArrayList<>(2);
 
     @Override
@@ -123,10 +184,33 @@ class ResourceBuilderTest {
 
   @Getter
   @RequiredArgsConstructor
-  private enum TestStructDef implements ProfileStructureDefinition<GenericProfileVersion> {
-    TEST_STRUCT_DEF("https://gematik.de/fhir/test/StructureDefinition/test"),
-    ;
+  private enum TestStructDef implements WithStructureDefinition<GenericProfileVersion> {
+    TEST_STRUCT_DEF("https://gematik.de/fhir/test/StructureDefinition/test");
 
     private final String canonicalUrl;
+  }
+
+  @Getter
+  @AllArgsConstructor
+  public enum TestCodeSystem implements WithCodeSystem {
+    TYPE_A("https://gematik.de/test/CodeSystem/Type-A");
+
+    private final String canonicalUrl;
+  }
+
+  @Getter
+  @RequiredArgsConstructor
+  private enum TestProfileValueSet implements FromValueSet {
+    AA("AA", "first value"),
+    AB("AB", "second value"),
+    AC("AC", "third value");
+
+    private final String code;
+    private final String display;
+
+    @Override
+    public TestCodeSystem getCodeSystem() {
+      return TestCodeSystem.TYPE_A;
+    }
   }
 }

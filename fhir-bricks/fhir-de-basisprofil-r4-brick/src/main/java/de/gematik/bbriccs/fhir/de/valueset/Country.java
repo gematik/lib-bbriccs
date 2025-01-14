@@ -16,7 +16,7 @@
 
 package de.gematik.bbriccs.fhir.de.valueset;
 
-import de.gematik.bbriccs.fhir.coding.ProfileValueSet;
+import de.gematik.bbriccs.fhir.coding.FromValueSet;
 import de.gematik.bbriccs.fhir.de.DeBasisProfilCodeSystem;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Getter
 @RequiredArgsConstructor
-public enum Country implements ProfileValueSet {
+public enum Country implements FromValueSet {
   D("D", "Deutschland"),
   AFG("AFG", "Afghanistan"),
   ET("ET", "Ägypten"),
@@ -266,8 +266,6 @@ public enum Country implements ProfileValueSet {
 
   public static final DeBasisProfilCodeSystem CODE_SYSTEM =
       DeBasisProfilCodeSystem.LAENDERKENNZEICHEN;
-  public static final String DESCRIPTION = "Länderkennzeichen nach DEÜV";
-  public static final String PUBLISHER = "HL7";
 
   private final String code;
   private final String display;
@@ -278,6 +276,6 @@ public enum Country implements ProfileValueSet {
   }
 
   public static Country fromCode(String code) {
-    return ProfileValueSet.fromCode(Country.class, code);
+    return FromValueSet.fromCode(Country.class, code);
   }
 }

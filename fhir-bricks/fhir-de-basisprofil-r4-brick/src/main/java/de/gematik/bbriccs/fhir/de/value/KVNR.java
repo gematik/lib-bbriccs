@@ -33,18 +33,42 @@ import lombok.EqualsAndHashCode;
 import lombok.val;
 import one.util.streamex.StreamEx;
 import org.hl7.fhir.r4.model.Identifier;
+import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.Resource;
 
 /**
- * <a href="https://de.wikipedia.org/wiki/Krankenversichertennummer">Krankenversichertennummer</a>
+ * Represents a Krankenversichertennummer (KVNR), a German health insurance number. This class
+ * provides methods to generate, validate, and manipulate KVNRs.
+ *
+ * <p>KVNRs are used to uniquely identify individuals in the German health insurance system. They
+ * consist of a leading capital letter, followed by 8 digits, and a check number.
+ *
+ * <p>For more information, see <a
+ * href="https://de.wikipedia.org/wiki/Krankenversichertennummer">Krankenversichertennummer</a>.
+ *
+ * <p>This class supports both GKV (statutory health insurance) and PKV (private health insurance)
+ * systems, and provides methods to generate random KVNRs for both systems.
+ *
+ * <p>Example usage:
+ *
+ * <pre>
+ *     KVNR kvnr = KVNR.random();
+ *     boolean isValid = kvnr.isValid();
+ * </pre>
+ *
+ * <p>Note: This class implements the {@link WithChecksum} interface to provide checksum validation.
+ *
+ * @see DeBasisProfilNamingSystem
+ * @see InsuranceTypeDe
+ * @see WithChecksum
  */
 @EqualsAndHashCode(callSuper = true)
 public class KVNR extends SemanticValue<String, DeBasisProfilNamingSystem> implements WithChecksum {
 
   private static final List<DeBasisProfilNamingSystem> KVNR_SYSTEMS =
       List.of(
-          DeBasisProfilNamingSystem.SID_KVID_GKV,
-          DeBasisProfilNamingSystem.SID_KVID_PKV,
+          DeBasisProfilNamingSystem.KVID_GKV_SID,
+          DeBasisProfilNamingSystem.KVID_PKV_SID,
           DeBasisProfilNamingSystem.KVID);
   private static final Pattern KVNR_PATTERN = Pattern.compile("^([A-Z])(\\d{8})(\\d)$");
 
@@ -54,19 +78,29 @@ public class KVNR extends SemanticValue<String, DeBasisProfilNamingSystem> imple
 
   public InsuranceTypeDe getInsuranceType() {
     return switch (this.getSystem()) {
-      case KVID, SID_KVID_GKV -> InsuranceTypeDe.GKV;
-      case SID_KVID_PKV -> InsuranceTypeDe.PKV;
+      case KVID, KVID_GKV_SID -> InsuranceTypeDe.GKV;
+      case KVID_PKV_SID -> InsuranceTypeDe.PKV;
       default -> throw new InvalidSystemException(this.getClass(), this.getSystem());
     };
   }
 
   public boolean isGkv() {
     return this.getSystem()
-        .matches(DeBasisProfilNamingSystem.SID_KVID_GKV, DeBasisProfilNamingSystem.KVID);
+        .matches(DeBasisProfilNamingSystem.KVID_GKV_SID, DeBasisProfilNamingSystem.KVID);
   }
 
   public boolean isPkv() {
-    return this.getSystem().matches(DeBasisProfilNamingSystem.SID_KVID_PKV);
+    return this.getSystem().matches(DeBasisProfilNamingSystem.KVID_PKV_SID);
+  }
+
+  public Reference asReference(boolean withCoding) {
+    return asReference(this.getSystem(), withCoding);
+  }
+
+  public Reference asReference(DeBasisProfilNamingSystem system, boolean withCoding) {
+    val ref = new Reference();
+    ref.setIdentifier(asIdentifier(system, withCoding));
+    return ref;
   }
 
   @Override
@@ -86,19 +120,25 @@ public class KVNR extends SemanticValue<String, DeBasisProfilNamingSystem> imple
   public Identifier asIdentifier(DeBasisProfilNamingSystem system, boolean withCoding) {
     val identifier = super.asIdentifier(system);
 
-    if (withCoding) identifier.getType().addCoding(this.getInsuranceType().asCoding());
+    if (withCoding) {
+      identifier.getType().addCoding(this.getInsuranceType().asCoding());
+    }
     return identifier;
   }
 
   @Override
   public boolean isValid() {
     val kvnr = getValue();
-    if (kvnr == null) return false;
+    if (kvnr == null) {
+      return false;
+    }
 
     val matcher = KVNR_PATTERN.matcher(kvnr);
-    if (!matcher.matches()) return false;
+    if (!matcher.matches()) {
+      return false;
+    }
 
-    val calculated = getCalculateCheckNumber(matcher.group(0).charAt(0), matcher.group(2));
+    val calculated = calculateCheckNumber(matcher.group(0).charAt(0), matcher.group(2));
 
     return calculated == getChecksum();
   }
@@ -111,24 +151,27 @@ public class KVNR extends SemanticValue<String, DeBasisProfilNamingSystem> imple
 
   public static KVNR random() {
     val faker = FakerBrick.getGerman();
-    if (faker.bool().bool()) return randomGkv();
-    else return randomPkv();
+    if (faker.bool().bool()) {
+      return randomGkv();
+    } else {
+      return randomPkv();
+    }
   }
 
   public static KVNR randomPkv() {
-    return forPkv(randomStringValue());
+    return asPkv(randomStringValue());
   }
 
   public static KVNR randomGkv() {
-    return forGkv(randomStringValue());
+    return asGkv(randomStringValue());
   }
 
-  public static KVNR forPkv(String value) {
-    return from(DeBasisProfilNamingSystem.SID_KVID_PKV, value);
+  public static KVNR asPkv(String value) {
+    return from(DeBasisProfilNamingSystem.KVID_PKV_SID, value);
   }
 
-  public static KVNR forGkv(String value) {
-    return from(DeBasisProfilNamingSystem.SID_KVID_GKV, value);
+  public static KVNR asGkv(String value) {
+    return from(DeBasisProfilNamingSystem.KVID_GKV_SID, value);
   }
 
   public static KVNR from(String value) {
@@ -137,6 +180,11 @@ public class KVNR extends SemanticValue<String, DeBasisProfilNamingSystem> imple
 
   public static KVNR from(DeBasisProfilNamingSystem namingSystem, String value) {
     return new KVNR(namingSystem, value);
+  }
+
+  public static KVNR from(Identifier identifier) {
+    return extractFrom(identifier)
+        .orElseThrow(() -> new InvalidSystemException(KVNR.class, identifier.getSystem()));
   }
 
   public static Optional<KVNR> extractFrom(Identifier identifier) {
@@ -170,30 +218,35 @@ public class KVNR extends SemanticValue<String, DeBasisProfilNamingSystem> imple
     val faker = FakerBrick.getGerman();
     val capLetter = faker.regexify("[A-Z]{1}").charAt(0);
     val numbers = faker.regexify("[0-9]{8}");
-    val checkNum = getCalculateCheckNumber(capLetter, numbers);
+    val checkNum = calculateCheckNumber(capLetter, numbers);
     return format("{0}{1}{2}", capLetter, numbers, checkNum);
   }
 
   /**
-   * get the chunked KVNR without the check number and calculate the check number
+   * Calculates the check number for a given "chunked" KVNR (Krankenversichertennummer) without the
+   * check number. The check number is placed as the last digit on the "full" KVNR.
    *
-   * @param capLetter is the leading capital letter [A-Z]
-   * @param numbers 8 random digits
+   * @param capLetter the leading capital letter [A-Z]
+   * @param numbers the 8 random digits
    * @return the calculated check number
    */
-  private static int getCalculateCheckNumber(char capLetter, String numbers) {
+  private static int calculateCheckNumber(char capLetter, String numbers) {
     val letterValue = String.format("%02d", capLetter - 64);
     val rawNumber = format("{0}{1}", letterValue, numbers);
 
     val idx = new AtomicInteger();
-    var sum = new AtomicInteger();
+    val sum = new AtomicInteger();
     rawNumber
         .chars()
         .map(asciiValue -> asciiValue - 48)
         .forEach(
             value -> {
-              if (idx.getAndIncrement() % 2 == 1) value *= 2;
-              if (value > 9) value -= 9;
+              if (idx.getAndIncrement() % 2 == 1) {
+                value *= 2;
+              }
+              if (value > 9) {
+                value -= 9;
+              }
               sum.addAndGet(value);
             });
     return sum.get() % 10;

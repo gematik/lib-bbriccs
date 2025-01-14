@@ -16,15 +16,15 @@
 
 package de.gematik.bbriccs.fhir.de;
 
-import de.gematik.bbriccs.fhir.coding.ProfileStructureDefinition;
-import lombok.AllArgsConstructor;
+import de.gematik.bbriccs.fhir.coding.WithStructureDefinition;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 @ToString
-public enum DeBasisProfilStructDef implements ProfileStructureDefinition<DeBasisProfilVersion> {
+public enum DeBasisProfilStructDef implements WithStructureDefinition<DeBasisProfilVersion> {
   GKV_PERSON_GROUP("http://fhir.de/StructureDefinition/gkv/besondere-personengruppe"),
   GKV_DMP_KENNZEICHEN("http://fhir.de/StructureDefinition/gkv/dmp-kennzeichen"),
   GKV_WOP("http://fhir.de/StructureDefinition/gkv/wop"),

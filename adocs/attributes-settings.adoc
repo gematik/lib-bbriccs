@@ -1,12 +1,6 @@
 :doctype: book
 :title-page-background-image: image:bbriccs_icon.png[position=top center,fit=none,pdfwidth=50%]
 
-// Captures
-:caution-caption: Achtung
-:important-caption: Wichtig
-:note-caption: Hinweis
-:tip-caption: Tip
-:warning-caption: Warnung
 
 // Settings:
 :experimental:
@@ -21,17 +15,19 @@
 :pumldir: plantuml
 :codedir: code
 
-:toc: macro
+:toc: auto
 :toclevels: 3
-:toc-title: Inhaltsverzeichnis
-:sectnums:
+:toc-title: Contents
 :chapter-signifier:
+
+:license-url: https://www.apache.org/licenses/LICENSE-2.0.txt
+:license-title: Apache License, Version 2.0
 
 include::attributes-commons.adoc[]
 include::attributes-urls.adoc[]
 
 :title: {bbriccs-name}
-:description: {bbriccs-name} provides reusable and independent building bricks for flexible and maintainable TestSuites with Clean Code Principles.
+:description: {bbriccs-name} provides reusable and independent building blocks for flexible, clean and maintainable test suites.
 
 :copyright: {docyear} by {orgname}, Berlin
 

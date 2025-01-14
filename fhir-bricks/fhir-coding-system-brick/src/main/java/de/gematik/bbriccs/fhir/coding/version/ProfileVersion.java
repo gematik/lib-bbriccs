@@ -29,6 +29,8 @@ public interface ProfileVersion {
 
   String getVersion();
 
+  String getName();
+
   default boolean isEqual(String version) {
     return compareTo(version) == 0;
   }

@@ -19,10 +19,14 @@ package de.gematik.bbriccs.fhir.coding.version;
 import static java.text.MessageFormat.format;
 
 import de.gematik.bbriccs.fhir.coding.exceptions.FhirVersionException;
+import de.gematik.bbriccs.fhir.conf.ProfileDto;
 import de.gematik.bbriccs.fhir.conf.ProfilesConfigurator;
+import de.gematik.bbriccs.toggle.FeatureToggle;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
@@ -71,11 +75,11 @@ public class VersionUtil {
    *
    * <pre><code>return omitZeroPatch(left).equals(omitZeroPatch(right))</code></pre>
    *
-   * and
+   * <p>and
    *
    * <pre><code>return compare(left, right) == 0</code></pre>
    *
-   * but slightly faster
+   * <p>but slightly faster
    *
    * <ul>
    *   <li>1.2.3 == 1.2.3
@@ -83,15 +87,15 @@ public class VersionUtil {
    *   <li>1.0 == 1.0.0
    * </ul>
    *
-   * While the following combinations won't be equal
+   * <p>While the following combinations won't be equal
    *
    * <ul>
    *   <li>1.2.3 != 1.2.0
    *   <li>1.0 != 1.0.1
    * </ul>
    *
-   * There is also a special case for invalid SemVer Strings. If at least one of the given Versions
-   * does not comply with the pattern MAJOR.MINOR.PATCH? the response will be false
+   * <p>There is also a special case for invalid SemVer Strings. If at least one of the given
+   * Versions does not comply with the pattern MAJOR.MINOR.PATCH? the response will be false
    *
    * @param left version for comparison
    * @param right version for comparison
@@ -130,28 +134,48 @@ public class VersionUtil {
     return 0;
   }
 
-  public static <T extends ProfileVersion> T fromString(Class<T> type, String input) {
-    val profileVersion = parseVersion(input);
+  public static <T extends ProfileVersion> T fromString(Class<T> type, List<String> inputs) {
+    val profileVersion = inputs.stream().map(VersionUtil::parseVersion).toList();
 
     if (type.isEnum()) {
       return fromEnumeratedVersionType(type, profileVersion);
     } else {
-      return fromClassVersionType(type, profileVersion);
+      // Note: on Class-VersionType currently only the concrete version is supported
+      // and compatible versions will be omitted
+      return fromClassVersionType(type, profileVersion.get(0));
     }
   }
 
-  public static <T extends ProfileVersion> T getDefaultVersion(Class<T> type, String profileName) {
-    val pc = ProfilesConfigurator.getInstance();
-    val defaultConfig = pc.getDefaultProfile();
-    val defaultVersion =
-        defaultConfig.getProfiles().stream()
-            .filter(p -> p.getName().equalsIgnoreCase(profileName))
-            .findFirst()
-            .orElseThrow(
+  public static <T extends ProfileVersion> T fromString(Class<T> type, String... inputs) {
+    return fromString(type, Arrays.asList(inputs));
+  }
+
+  public static <T extends ProfileVersion> Optional<T> getDefaultVersionOptionally(
+      Class<T> type, String profileName) {
+    // if a profile name is configured by a feature toggle use always this version,
+    // otherwise fallback to the configuration from the virtual default profile
+    val profileVersions =
+        FeatureToggle.getStringToggle(profileName)
+            .map(List::of)
+            .orElseGet(
                 () ->
-                    new FhirVersionException(
-                        format("Profile {0} not found in configuration", profileName)));
-    return fromString(type, defaultVersion.getVersion());
+                    ProfilesConfigurator.getVirtualDefaultProfile(profileName)
+                        .map(ProfileDto::getAllVersions)
+                        .orElse(List.of()));
+    return Optional.of(profileVersions)
+        .filter(list -> !list.isEmpty())
+        .map(list -> fromString(type, list));
+  }
+
+  public static <T extends ProfileVersion> T getDefaultVersion(Class<T> type, String profileName) {
+    return getDefaultVersionOptionally(type, profileName)
+        .orElseThrow(
+            () ->
+                new FhirVersionException(
+                    format(
+                        "Profile {0} not found in virtual configuration: have you initialized the"
+                            + " profile configuration?",
+                        profileName)));
   }
 
   @SuppressWarnings("unchecked")
@@ -199,8 +223,11 @@ public class VersionUtil {
   private static <T extends ProfileVersion> T instantiateVersionClassConstructor(
       Constructor<T> constructor, @Nullable String profileVersion) {
     try {
-      if (profileVersion != null) return constructor.newInstance(profileVersion);
-      else return constructor.newInstance();
+      if (profileVersion != null) {
+        return constructor.newInstance(profileVersion);
+      } else {
+        return constructor.newInstance();
+      }
     } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
       throw new FhirVersionException(
           format("Unable to instantiate Version class {0}", constructor.getClass().getSimpleName()),
@@ -209,15 +236,15 @@ public class VersionUtil {
   }
 
   private static <T extends ProfileVersion> T fromEnumeratedVersionType(
-      Class<T> type, String profileVersion) {
+      Class<T> type, List<String> profileVersions) {
     return Arrays.stream(type.getEnumConstants())
-        .filter(version -> version.isEqual(profileVersion))
+        .filter(version -> profileVersions.contains(version.getVersion()))
         .findFirst()
         .orElseThrow(
             () ->
                 new FhirVersionException(
                     format(
                         "Profile version {0} is not known for {1}",
-                        profileVersion, type.getSimpleName())));
+                        String.join("|", profileVersions), type.getSimpleName())));
   }
 }

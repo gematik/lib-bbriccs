@@ -21,11 +21,14 @@ import static java.text.MessageFormat.format;
 import de.gematik.bbriccs.fhir.builder.FakerBrick;
 import de.gematik.bbriccs.fhir.coding.SemanticValue;
 import de.gematik.bbriccs.fhir.coding.WithChecksum;
+import de.gematik.bbriccs.fhir.coding.exceptions.InvalidSystemException;
 import de.gematik.bbriccs.fhir.de.DeBasisProfilNamingSystem;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 import lombok.EqualsAndHashCode;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.hl7.fhir.r4.model.Identifier;
 
 /** <a href="https://de.wikipedia.org/wiki/Institutionskennzeichen">Institutionskennzeichen</a> */
 @EqualsAndHashCode(callSuper = true)
@@ -53,12 +56,30 @@ public class IKNR extends SemanticValue<String, DeBasisProfilNamingSystem> imple
     return Character.getNumericValue(value.charAt(value.length() - 1));
   }
 
+  public static IKNR from(Identifier identifier) {
+    return Stream.of(DeBasisProfilNamingSystem.IKNR, DeBasisProfilNamingSystem.IKNR_SID)
+        .filter(system -> system.matches(identifier))
+        .map(system -> new IKNR(system, identifier.getValue()))
+        .findFirst()
+        .orElseThrow(() -> new InvalidSystemException(IKNR.class, identifier.getSystem()));
+  }
+
+  /**
+   * Creating an IKNR with the default NamingSystem
+   *
+   * @param value of the IKNR
+   * @return an IKNR object carrying the semantic value and the default Naming System for the IKNR
+   */
+  public static IKNR asDefaultIknr(String value) {
+    return asSidIknr(value);
+  }
+
   public static IKNR asArgeIknr(String value) {
-    return new IKNR(DeBasisProfilNamingSystem.ARGE_IKNR, value);
+    return new IKNR(DeBasisProfilNamingSystem.IKNR, value);
   }
 
   public static IKNR asSidIknr(String value) {
-    return new IKNR(DeBasisProfilNamingSystem.SID_IKNR, value);
+    return new IKNR(DeBasisProfilNamingSystem.IKNR_SID, value);
   }
 
   public static IKNR random() {
@@ -78,13 +99,13 @@ public class IKNR extends SemanticValue<String, DeBasisProfilNamingSystem> imple
   public static String randomStringValue() {
     val faker = FakerBrick.getGerman();
     val numbers = faker.regexify("\\d{8}");
-    int checksum = calcChecksum(numbers);
+    val checksum = calcChecksum(numbers);
     return format("{0}{1}", numbers, checksum);
   }
 
   private static int calcChecksum(String number) {
     var sum = 0;
-    for (int i = 7; i >= 2; i--) {
+    for (var i = 7; i >= 2; i--) {
       var value = Character.getNumericValue(number.charAt(i));
       if (i % 2 == 0) value *= 2;
       sum += WithChecksum.crossSum(value);

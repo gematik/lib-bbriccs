@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import de.gematik.bbriccs.fhir.conf.ProfileSettingsDto;
-import de.gematik.bbriccs.fhir.conf.exceptions.InvalidConfigurationException;
+import de.gematik.bbriccs.fhir.conf.exceptions.FhirConfigurationException;
 import de.gematik.bbriccs.fhir.exceptions.UnsupportedEncodingException;
 import de.gematik.bbriccs.utils.PrivateConstructorsUtil;
 import de.gematik.bbriccs.utils.ResourceLoader;
@@ -46,7 +46,7 @@ class ValidatorFhirFactoryTest {
     val configuredProfiles = new LinkedList<ProfileSettingsDto>();
     val ctx = FhirContext.forR4();
     assertThrows(
-        InvalidConfigurationException.class,
+        FhirConfigurationException.class,
         () -> ValidatorFhirFactory.createValidator(ctx, configuredProfiles));
   }
 
@@ -54,7 +54,7 @@ class ValidatorFhirFactoryTest {
   void shouldThrowOnNullConfiguration() {
     val ctx = FhirContext.forR4();
     assertThrows(
-        InvalidConfigurationException.class, () -> ValidatorFhirFactory.createValidator(ctx, null));
+        FhirConfigurationException.class, () -> ValidatorFhirFactory.createValidator(ctx, null));
   }
 
   @Test
@@ -65,12 +65,34 @@ class ValidatorFhirFactoryTest {
             .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
     val configuredProfiles =
         mapper.readValue(profilesConfig, new TypeReference<List<ProfileSettingsDto>>() {});
+    configuredProfiles.stream()
+        .flatMap(psd -> psd.getProfiles().stream())
+        .forEach(p -> p.setOmitProfiles(List.of("invalid.json")));
     val ctx = FhirContext.forR4();
     val uee =
         assertThrows(
             UnsupportedEncodingException.class,
             () -> ValidatorFhirFactory.createValidator(ctx, configuredProfiles));
     assertTrue(uee.getMessage().contains("invalid.txt"));
+  }
+
+  @Test
+  void shouldThrowOnInvalidProfileFile() throws JsonProcessingException {
+    val profilesConfig = ResourceLoader.readFileFromResource("fhir/ihe-d_configuration_01.yaml");
+    val mapper =
+        new ObjectMapper(new YAMLFactory())
+            .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+    val configuredProfiles =
+        mapper.readValue(profilesConfig, new TypeReference<List<ProfileSettingsDto>>() {});
+    configuredProfiles.stream()
+        .flatMap(psd -> psd.getProfiles().stream())
+        .forEach(p -> p.setOmitProfiles(List.of("invalid.txt")));
+    val ctx = FhirContext.forR4();
+    val uee =
+        assertThrows(
+            FhirConfigurationException.class,
+            () -> ValidatorFhirFactory.createValidator(ctx, configuredProfiles));
+    assertTrue(uee.getMessage().contains("invalid.json"));
   }
 
   @Test

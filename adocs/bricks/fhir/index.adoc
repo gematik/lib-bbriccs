@@ -2,10 +2,11 @@ include::../attributes-sections.adoc[]
 
 
 == FHIR-Bricks
-Mit {link-hl7-fhir}
+While {link-hl7-fhir} (Fast Health Interoperability Resources) is a powerful standard for exchanging healthcare data, it is also complex and can be difficult to understand. Luckily, there are some tools and libraries available that can help you work with the FHIR standard.
 
-TODO: Beschreibung what is FHIR-Bricks
+For the JVM (Java Virtual Machine), {link-hapi} is the only open source implementation of the full standard. In fact, you could call HAPI the reference implementation. As such, it is the solution of choice for many developers in the healthcare industry worldwide.
 
+However, even with HAPI, it can be challenging to use FHIR in a maintainable, reusable, and scalable way. To help with this, we have created a set of FHIR-Bricks, which are intended to be small, reusable, and extendable. Each FHIR-Brick solves a common problem that may arise when working with the FHIR standard.
 
 [plantuml, "{pumldir}/fhir-bricks", svg]
 .FHIR-Bricks
@@ -13,8 +14,8 @@ TODO: Beschreibung what is FHIR-Bricks
 include::{pumldir}/fhir-bricks.puml[]
 ----
 
-:leveloffset: +1
-include::fhir-validator.adoc[]
-<<<
-:leveloffset: -1
-
+include::fhir-coding-system.adoc[leveloffset=+1]
+include::fhir-builder.adoc[leveloffset=+1]
+include::fhir-codec.adoc[leveloffset=+1]
+include::fhir-configurator.adoc[leveloffset=+1]
+include::fhir-validator.adoc[leveloffset=+1]

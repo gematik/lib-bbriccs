@@ -6,7 +6,7 @@
     <parent>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>bbriccs-parent</artifactId>
-        <version>0.1.10</version>
+        <version>0.2.0</version>
     </parent>
 
     <artifactId>bricks-integration-coverage</artifactId>
@@ -33,6 +33,11 @@
         <dependency>
             <groupId>de.gematik.bbriccs</groupId>
             <artifactId>ca-supplier-brick</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.gematik.bbriccs</groupId>
+            <artifactId>vsdm-check-digit-brick</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 

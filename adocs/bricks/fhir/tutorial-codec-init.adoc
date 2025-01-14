@@ -1,0 +1,29 @@
+include::fhir-commons.adoc[]
+
+[#tutorial_fhir_codec_init]
+== Instantiating a FHIR Codec
+Where can we get one of these `FhirCodec`? Can we customise it and do we need a {brick-fhir-coding-system}?
+
+Let's find out!
+
+The simplest way to instantiate a simple `FhirCodec` is as follows:
+
+[source,java]
+----
+FhirCodec fhirCodec = FhirCodec.forR4().andDummyValidator();
+----
+
+This will instantiate a `FhirCodec` for the R4 version of FHIR and add a dummy validator to it. The dummy validator will always return `true` for any resource that is passed to it.
+
+It might be more appropriate to use a method name such as `andNoValidator()` or `withoutValidation()`. However, `andDummyValidator()` describes exactly its purpose: it will instantiate the `FhirCodec` with a `DummyValidator`.
+
+So basically what happens under the hood:
+
+[source,java]
+----
+FhirCodec fhirCodec = FhirCodec.forR4().andCustomValidator(new DummyValidator(FhirContext.forR4()));
+----
+
+Slightly more code but the same result. Now we can look at the `andCustomValidator` method in more detail. As the name suggests, we can pass anything to this method that is a `ValidatorFhir`. Validation of FHIR resources is explained in more detail in the <<fhir-validation-brick>>.
+
+

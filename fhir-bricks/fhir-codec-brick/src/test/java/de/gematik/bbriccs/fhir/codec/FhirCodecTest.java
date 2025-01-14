@@ -24,8 +24,9 @@ import ca.uhn.fhir.parser.IParser;
 import de.gematik.bbriccs.fhir.EncodingType;
 import de.gematik.bbriccs.fhir.codec.exceptions.FhirCodecException;
 import de.gematik.bbriccs.fhir.codec.utils.FhirTest;
-import de.gematik.bbriccs.fhir.coding.ProfileStructureDefinition;
+import de.gematik.bbriccs.fhir.coding.WithStructureDefinition;
 import de.gematik.bbriccs.fhir.coding.version.GenericProfileVersion;
+import de.gematik.bbriccs.fhir.coding.version.ProfileVersion;
 import de.gematik.bbriccs.fhir.validation.DummyValidator;
 import de.gematik.bbriccs.fhir.validation.ValidatorFhirFactory;
 import de.gematik.bbriccs.utils.ResourceLoader;
@@ -231,10 +232,33 @@ class FhirCodecTest extends FhirTest {
     val version = new GenericProfileVersion("1.1.0", false);
     val typeHints =
         List.of(
-            ResourceTypeHint.forStructure(
-                TestKbvStructDef.KBV_PATIENT, version, TestKbvPatient.class),
-            ResourceTypeHint.forStructure(
-                TestKbvStructDef.KBV_BUNDLE, version, TestKbvBundle.class));
+            ResourceTypeHint.forStructure(TestKbvStructDef.KBV_PATIENT)
+                .forVersion(version)
+                .mappingTo(TestKbvPatient.class),
+            ResourceTypeHint.forStructure(TestKbvStructDef.KBV_BUNDLE)
+                .forVersion(version)
+                .mappingTo(TestKbvBundle.class));
+
+    val typedFhir = FhirCodec.forR4().withTypeHints(typeHints).andNonProfiledValidator();
+
+    val bundle = assertDoesNotThrow(() -> typedFhir.decode(TestKbvBundle.class, content));
+    assertEquals(TestKbvBundle.class, bundle.getClass());
+    assertEquals(TestKbvPatient.class, bundle.getPatient().getClass());
+  }
+
+  @ParameterizedTest
+  @MethodSource("shouldDecodeExamplesWithMultipleTypeHints")
+  void shouldDecodeExamplesWithMultipleTypeHints03(File file) {
+    val content = ResourceLoader.readString(file);
+
+    val typeHints =
+        List.of(
+            ResourceTypeHint.forStructure(TestKbvStructDefTwo.KBV_PATIENT)
+                .forAllVersionsFrom(TestKbvVersion.class)
+                .mappingTo(TestKbvPatient.class),
+            ResourceTypeHint.forStructure(TestKbvStructDefTwo.KBV_BUNDLE)
+                .forAllVersionsFrom(TestKbvVersion.class)
+                .mappingTo(TestKbvBundle.class));
 
     val typedFhir = FhirCodec.forR4().withTypeHints(typeHints).andNonProfiledValidator();
 
@@ -318,7 +342,34 @@ class FhirCodecTest extends FhirTest {
 
   @Getter
   @RequiredArgsConstructor
-  public enum TestKbvStructDef implements ProfileStructureDefinition<GenericProfileVersion> {
+  public enum TestKbvVersion implements ProfileVersion {
+    V_1_1_0("1.1.0");
+
+    private final String version;
+
+    @Override
+    public String getName() {
+      return "kbv.test";
+    }
+
+    @Override
+    public boolean omitZeroPatch() {
+      return false;
+    }
+  }
+
+  @Getter
+  @RequiredArgsConstructor
+  public enum TestKbvStructDef implements WithStructureDefinition<GenericProfileVersion> {
+    KBV_PATIENT("https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Patient"),
+    KBV_BUNDLE("https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Bundle");
+
+    private final String canonicalUrl;
+  }
+
+  @Getter
+  @RequiredArgsConstructor
+  public enum TestKbvStructDefTwo implements WithStructureDefinition<TestKbvVersion> {
     KBV_PATIENT("https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Patient"),
     KBV_BUNDLE("https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Bundle");
 

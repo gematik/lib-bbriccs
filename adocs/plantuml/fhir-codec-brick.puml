@@ -1,0 +1,25 @@
+@startuml
+skinparam groupInheritance 2
+skinparam packageStyle Frame
+set namespaceSeparator none
+
+interface ValidatorFhir {
+    validate(content: String): ValidationResult
+    validate(resource: Resource): ValidationResult
+    isValid(content: String): boolean
+    isValid(resource: Resource): boolean
+}
+
+class FhirCodec {
+    ctx: FhirContext
+    xmlParser: IParser
+    jsonParser: IParser
+
+    + encode(resource: Resource): String
+    + decode(expectedType: Class<T>, content: String): T
+    + decode(content: String): Resource
+}
+
+FhirCodec -right-> ValidatorFhir : delegate
+
+@enduml

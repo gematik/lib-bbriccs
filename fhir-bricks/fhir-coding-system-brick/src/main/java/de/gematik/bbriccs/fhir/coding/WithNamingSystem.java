@@ -16,4 +16,11 @@
 
 package de.gematik.bbriccs.fhir.coding;
 
-public interface WithNamingSystem extends WithSystem {}
+import org.hl7.fhir.r4.model.Identifier;
+
+public interface WithNamingSystem extends WithSystem {
+
+  default Identifier asIdentifier(String value) {
+    return new Identifier().setSystem(this.getCanonicalUrl()).setValue(value);
+  }
+}

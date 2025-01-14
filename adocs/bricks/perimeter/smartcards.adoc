@@ -1,9 +1,10 @@
 include::../attributes-sections.adoc[]
 :sca: pass:c,q[`SmartcardArchive`]
 
-== Smartcards-Brick
+== Smartcards Brick
+When testing the {link-gematik-ti}, we often have to deal with smart cards. These are used in the TI for authorization, authentication and the creation of signatures, etc. With the goal of (test-)automation, we often pursue the approach of using “virtual images” of the smart cards. However, dealing with certificates and especially with the raw cryptography files can be really challenging. To simplify this process, we have created the Smartcards Brick.
 
-Smartcards mittels `smartcard-brick`.... TODO
+This brick provides a simple and easy-to-use API for loading and dealing with smart cards.
 
 [plantuml, "{pumldir}/smartcard-brick", svg]
 .Smartcard-Brick
@@ -11,9 +12,19 @@ Smartcards mittels `smartcard-brick`.... TODO
 include::{pumldir}/smartcard-brick.puml[]
 ----
 
-=== Smartcards
+=== Smartcards API
+For example, when dealing with raw .p12 files or `X509Certificates`, it is very easy to mix up the certificates.
 
-Die Smartcards sind folgendermaßen aufgebaut:
+Imagine you have an API with the following signatures:
+
+[source,java]
+----
+public byte[] signData(X509Certificate certificate, byte[] data);
+public boolean verifySignature(X509Certificate certificate, byte[] data, byte[] signature);
+----
+
+When you encounter this API, you may ask yourself: _"Which certificate do I need to use for which operation?"_ Wouldn't it be nice to have a more structured way of dealing with certificates?
+To solve this kind of problem, the `smartcard-api-brick` introduces classes for each type of smartcard.
 
 [plantuml, "{pumldir}/smartcards", svg]
 .Smartcards
@@ -21,8 +32,33 @@ Die Smartcards sind folgendermaßen aufgebaut:
 include::{pumldir}/smartcards.puml[]
 ----
 
+So, instead of dealing with the raw files, you can now treat your "virtual smartcards" as Java objects in your code. The first example could be refactored to something more intuitive like:
+
+[source,java]
+----
+public byte[] signData(Hba hba, byte[] data);
+public boolean verifySignature(Smartcard smartcard, byte[] data, byte[] signature);
+----
+
+From a user perspective, you can provide a clean API for smartcard-related operations without worrying about which certificate to use.
+
+[source,java]
+----
+Egk egk; // we will get there soon
+Hba hba; // we will get there soon
+byte[] data; // coming from somewhere else
+
+var signature = signData(hba, data);
+var isValid = verifySignature(egk, data, signature);
+
+// the compiler will prevent you from doing this
+var s = signData(ega, data);
+// but not from this
+var v = verifySignature(hba, data, signature);
+----
+
 === Smartcard-Archiv
-Das {sca} ist ein Archiv, in dem die Smartcards verwaltet werden.
+Imagine having an archive of all the virtual smartcards you might need, with a simple API to retrieve them easily. That's exactly what the {sca} does.
 
 [plantuml, "{pumldir}/smartcards-archive", svg]
 .Smartcards
@@ -30,40 +66,46 @@ Das {sca} ist ein Archiv, in dem die Smartcards verwaltet werden.
 include::{pumldir}/smartcards-archive.puml[]
 ----
 
-Bevor man das {sca} nutzen kann, muss dieses zunächst mit den gewünschten Smartcards initialisiert werden.
-Hierfür hat man die Möglichkeit eigene Smartcards aus dem Dateisystem zu laden:
+Before we can use the {sca}, we need to initialise it with the smartcards file we want.
+You can do this by loading your own smartcards from the file system:
 
-[#sca_file,java]
+[#sca_file]
+[source,java]
 ----
 var smartcardsImage = new File("your/path/to/smartcards.json");
 var sca = SmartcardArchive.from(smartcardsImage);
 ----
 
-Alternativ ist es auch möglich, die Smartcard Images als Java-Resources (`resources/smartcards/smartcards.json`) zu speichern und diese dann folgendermaßen in das {sca} zu laden:
+Alternatively, we can save the smartcards file as Java resources (`resources/smartcards/smartcards.json`) and then load them into the {sca} as follows:
 
-[#sca_resources,java]
+[#sca_resources]
+[source,java]
 ----
 var sca = SmartcardArchive.fromResources();
 ----
 
-Anschließend können die Smartcards aus dem {sca} anhand unterschiedlicher Kriterien geladen werden:
+By convention, `resources/smartcards/smartcards.json` is the default location for the smartcards file.
 
-[#sca_load_explicit_smartcards,java]
+The smartcards can then be loaded from the {sca} using various criteria:
+
+[#sca_load_explicit_smartcards]
+[source,java]
 ----
-var egk0 = sca.getEgk(0);
-var egk1 = sca.getEgkByICCSN("80276883110000113311");
-var egk2 = sca.getEgkByKvnr("X110407071");
+Egk egk0 = sca.getEgk(0);
+Egk egk1 = sca.getEgkByICCSN("80276883110000113311");
+Egk egk2 = sca.getEgkByKvnr("X110407071");
 
-var hba0 = sca.getHba(0);
-var hba1 = sca.getHbaByICCSN("80276001011699901501");
+Hba hba0 = sca.getHba(0);
+Hba hba1 = sca.getHbaByICCSN("80276001011699901501");
 
-var smcb0 = sca.getSmcB(0);
-var smcb1 = sca.getSmcBByICCSN("80276001011699900861");
+SmcB smcb0 = sca.getSmcB(0);
+SmcB smcb1 = sca.getSmcBByICCSN("80276001011699900861");
 ----
 
-Das {sca} bietet darüber hinaus auch die Möglichkeit eine Smartcard anhand des konkreten Typs und der ICCSN zu laden:
+The {sca} also offers the option of loading a smartcard based on the specific type and ICCSN:
 
-[#sca_load_typed_smartcards,java]
+[#sca_load_typed_smartcards]
+[source,java]
 ----
 Egk egk1       = sca.getByICCSN(Egk.class, "80276883110000113311");
 Smartcard egk2 = sca.getSmartcardByICCSN(SmartcardType.EGK, "80276883110000113311");
@@ -75,12 +117,13 @@ SmcB smcb0     = sca.getByICCSN(SmcB.class, "80276001011699900861");
 Smartcard hba2 = sca.getSmartcardByICCSN(SmartcardType.SMC_B, "80276001011699900861");
 ----
 
-NOTE: Bei dem Aufruf über `getSmartcardByICCSN` wird die Smartcard als Basis-Klasse `Smartcard` zurückgegeben, weil hier der konkrete Typ der Smartcard syntaktisch nicht bekannt ist. Es sollen, wenn immer möglich, die konkreten und typisierten Methoden verwendet werden umd die Typsicherheit zu bewahren.
+NOTE: When called via `getSmartcardByICCSN`, the smartcard is returned as the base class `Smartcard` because the concrete type of the smartcard is not syntactically known here. Whenever possible, the concrete and typed methods should be used in order to maintain type safety.
 
-Das {sca} kann natürlich aber nur Smartcards laden und herausgeben, die konfiguriert sind.
-Das bedeutet, dass die folgenden beiden Aufrufe zur Laufzeit zu Fehlern führen:
+However, the {sca} can of course only load and issue smartcards that are configured.
+This means that the following two calls lead to errors at runtime:
 
-[#sca_load_unknown_smartcards,java]
+[#sca_load_unknown_smartcards]
+[source,java]
 ----
 // exeeding index
 assertThrows(IndexOutOfBoundsException.class, () -> sca.getEgk(100));
@@ -89,11 +132,12 @@ assertThrows(IndexOutOfBoundsException.class, () -> sca.getEgk(100));
 assertThrows(SmartcardNotFoundException.class, () -> sca.getEgkByICCSN("123"));
 ----
 
-WARNING: Grundsätzlich wird dringend davon abgeraten, das Laden der Smartcards über den Index als Standardmethode zu verwenden.
+CAUTION: We strongly advise against using the loading of smartcards via the index as the standard method.
 
-Beide Fehlerfälle können zur Laufzeit in etwa folgendermaßen behandelt werden:
+Both error cases can be handled at runtime as follows:
 
-[#sca_load_unknown_smartcards_safely,java]
+[#sca_load_unknown_smartcards_safely]
+[source,java]
 ----
 // gives you the amount of known EGK smartcards
 int idx = 100;

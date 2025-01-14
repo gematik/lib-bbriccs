@@ -12,6 +12,8 @@ node "Common Profiles" #D4DCFF {
     [fhir-de-basisprofil-r4-brick]
 }
 
+[epa-medication-brick] <<external>>
+
 node "FHIR Facility" #FFD1E5 {
     [fhir-validation-brick]
     [fhir-codec-brick]
@@ -28,9 +30,10 @@ node "FHIR Core" #CCFFE0 {
 
 [FHIR Facility] -up-> [FHIR Core]
 [Common Profiles] -down-> [FHIR Core]
+[epa-medication-brick] -right-> [FHIR Core]
 
 [fhir-codec-brick] -left-> [fhir-validation-brick]
 [fhir-coding-system-brick] -left-> [fhir-configurator-brick]
-[fhir-validation-brick] -[#red,dashed]-> [de.gematik.refv.referencevalidator-lib]
-
+[fhir-validation-brick] -[#red,dashed]left-> [de.gematik.refv.referencevalidator-lib]
+[fhir-validation-brick] -left-> [fhir-configurator-brick]
 @enduml

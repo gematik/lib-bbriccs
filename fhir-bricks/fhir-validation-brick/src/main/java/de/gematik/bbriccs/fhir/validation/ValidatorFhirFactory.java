@@ -21,16 +21,17 @@ import static java.text.MessageFormat.format;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.support.IValidationSupport;
 import ca.uhn.fhir.parser.IParser;
+import com.google.common.reflect.ClassPath;
+import com.google.common.reflect.ClassPath.ResourceInfo;
+import de.gematik.bbriccs.fhir.EncodingType;
 import de.gematik.bbriccs.fhir.conf.ProfileDto;
 import de.gematik.bbriccs.fhir.conf.ProfileSettingsDto;
 import de.gematik.bbriccs.fhir.conf.ProfilesConfigurator;
-import de.gematik.bbriccs.fhir.conf.exceptions.InvalidConfigurationException;
-import de.gematik.bbriccs.fhir.exceptions.UnsupportedEncodingException;
+import de.gematik.bbriccs.fhir.conf.exceptions.FhirConfigurationException;
 import de.gematik.bbriccs.fhir.validation.support.CodeSystemFilter;
 import de.gematik.bbriccs.fhir.validation.support.ErrorMessageFilter;
 import de.gematik.bbriccs.fhir.validation.support.ProfileValidationSupport;
 import de.gematik.bbriccs.utils.ResourceLoader;
-import java.io.File;
 import java.util.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -58,14 +59,14 @@ public class ValidatorFhirFactory {
   }
 
   public static ValidatorFhir createValidator(FhirContext ctx) {
-    val profileSettings = ProfilesConfigurator.getInstance();
+    val profileSettings = ProfilesConfigurator.getDefaultConfiguration();
     return createValidator(ctx, profileSettings.getProfileConfigurations());
   }
 
   public static ValidatorFhir createValidator(
       FhirContext ctx, List<ProfileSettingsDto> profileSettings) {
     if (profileSettings == null || profileSettings.isEmpty()) {
-      throw new InvalidConfigurationException(
+      throw new FhirConfigurationException(
           "FHIR Configuration does not contain any profile settings");
     } else if (profileSettings.size() == 1) {
       return createSingleProfileValidator(ctx, profileSettings.get(0));
@@ -104,6 +105,7 @@ public class ValidatorFhirFactory {
   }
 
   private static class Builder {
+
     private final Map<String, StructureDefinition> structureDefinitions = new HashMap<>();
     private final Map<String, NamingSystem> namingSystems = new HashMap<>();
     private final Map<String, CodeSystem> codeSystems = new HashMap<>();
@@ -122,32 +124,48 @@ public class ValidatorFhirFactory {
     }
 
     @SneakyThrows
-    private void initProfile(File profileFile) {
-      val fileSizeMb = profileFile.length() / (1024 * 1024);
+    private ProfileValidationSupport build() {
+      // Note: fhir/profiles is a convention for the resource path of FHIR profiles
+      val packageName =
+          format("fhir/profiles/{0}-{1}/package", profile.getName(), profile.getVersion());
+
+      ClassPath.from(ValidatorFhirFactory.class.getClassLoader()).getResources().stream()
+          .filter(info -> info.getResourceName().startsWith(packageName))
+          .filter(info -> !info.getResourceName().contains("package.json"))
+          .filter(
+              info ->
+                  profile.getOmitProfiles().stream().noneMatch(info.getResourceName()::contains))
+          .forEach(this::initProfile);
+
+      return new ProfileValidationSupport(
+          ctx, profile, structureDefinitions, namingSystems, codeSystems, valueSets);
+    }
+
+    private void initProfile(ResourceInfo info) {
+      val profileContent = ResourceLoader.readFileFromResource(info.getResourceName());
+      val fileSizeMb = profileContent.length() / (1024 * 1024);
+
       if (fileSizeMb > 1) {
-        log.warn("Large Profile ({} MB) detected - {}", fileSizeMb, profileFile.getCanonicalPath());
+        log.warn("Large Profile ({} MB) detected - {}", fileSizeMb, info.getResourceName());
         log.warn(
             "\tThis might lead to excessive memory consumption: make sure you really need {} and"
                 + " consider the ''omitProfiles'' option",
-            profileFile.getName());
+            info.getResourceName());
       } else {
-        log.trace("Load Profile ({} MB) - {}", fileSizeMb, profileFile.getName());
+        log.info("Load Profile ({} MB) - {}", fileSizeMb, info.getResourceName());
       }
 
-      val parser = chooseParserFor(profileFile.getName());
-      val input = ResourceLoader.readString(profileFile);
-      val resource = parser.parseResource(input);
-      this.addResource(resource);
-    }
+      val parser =
+          EncodingType.chooseAppropriateParser(
+              info.getResourceName(), this.xmlParser, this.jsonParser);
 
-    private IParser chooseParserFor(String fileName) {
-      if (fileName.endsWith(".json")) {
-        return this.jsonParser;
-      } else if (fileName.endsWith(".xml")) {
-        return this.xmlParser;
-      } else {
-        throw new UnsupportedEncodingException(
-            format("Unsupported file extension for profile: {0}", fileName));
+      try {
+        val resource = parser.parseResource(profileContent);
+        this.addResource(resource);
+      } catch (Exception e) {
+        val message =
+            format("Something went wrong while reading profile {0}", info.getResourceName());
+        throw new FhirConfigurationException(message, e);
       }
     }
 
@@ -169,26 +187,14 @@ public class ValidatorFhirFactory {
       } else {
         added = false;
         log.trace(
-            format(
-                "\tProfile-Resource of type {0} ({1}) is omitted",
-                typeName, resource.getClass().getSimpleName()));
+            "\tProfile-Resource of type {} ({}) is omitted",
+            typeName,
+            resource.getClass().getSimpleName());
       }
 
       if (added) {
-        log.trace(format("\tPut {0} to profile {1}", typeName, this.profile));
+        log.trace("\tPut {} to profile {}", typeName, this.profile);
       }
-    }
-
-    private ProfileValidationSupport build() {
-      ResourceLoader.getResourceFilesInDirectory(
-              format("fhir/profiles/{0}-{1}/package", profile.getName(), profile.getVersion()))
-          .stream()
-          .filter(f -> !f.getName().equals("package.json"))
-          .filter(f -> !profile.getOmitProfiles().contains(f.getName()))
-          .forEach(this::initProfile);
-
-      return new ProfileValidationSupport(
-          ctx, profile, structureDefinitions, namingSystems, codeSystems, valueSets);
     }
   }
 }

@@ -1,0 +1,29 @@
+@startuml
+skinparam groupInheritance 2
+skinparam packageStyle Frame
+set namespaceSeparator none
+
+skinparam component {
+    BackgroundColor<<external>> #CCFFE0
+    BorderColor<<external>> DarkGreen
+}
+
+class FakerBrick << (C,#FF7700) Singleton>> {
+    -faker: Faker
+    + {static} getGerman() : FakerBrick
+    + {static} getLocalized() : FakerBrick
+}
+
+abstract class BaseBuilder<R, B> {
+  resourceId: String
+  {abstract} build(): R
+}
+
+
+abstract class ResourceBuilder<R, B> extends BaseBuilder
+abstract class ElementBuilder<R, B> extends BaseBuilder
+
+rectangle "Concrete implementation" #CCFFE0 {
+    class OperationOutcomeBuilder extends ResourceBuilder
+}
+@enduml

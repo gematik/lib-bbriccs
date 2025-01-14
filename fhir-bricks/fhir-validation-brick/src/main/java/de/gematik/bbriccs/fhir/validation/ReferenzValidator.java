@@ -17,13 +17,19 @@
 package de.gematik.bbriccs.fhir.validation;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.validation.ResultSeverityEnum;
+import ca.uhn.fhir.validation.SingleValidationMessage;
 import ca.uhn.fhir.validation.ValidationResult;
 import de.gematik.refv.SupportedValidationModule;
 import de.gematik.refv.ValidationModuleFactory;
 import de.gematik.refv.commons.validation.ValidationModule;
+import java.util.List;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 
+@Slf4j
 public class ReferenzValidator implements ValidatorFhir {
 
   private final ValidationModule validationModule;
@@ -41,8 +47,32 @@ public class ReferenzValidator implements ValidatorFhir {
 
   @Override
   public ValidationResult validate(String content) {
-    val refVr = this.validationModule.validateString(content);
-    return new ValidationResult(this.getContext(), refVr.getValidationMessages().stream().toList());
+
+    try {
+      val refVr = this.validationModule.validateString(content);
+      return new ValidationResult(
+          this.getContext(), refVr.getValidationMessages().stream().toList());
+    } catch (Exception e) {
+      /*
+      some sort of error led to an Exception: handle this case via ValidationResult=ERROR
+       */
+      log.error("Error while validating FHIR content", e);
+      val svm = new SingleValidationMessage();
+      svm.setMessage(e.getMessage());
+      svm.setSeverity(ResultSeverityEnum.ERROR);
+      return new ValidationResult(this.getContext(), List.of(svm));
+    }
+  }
+
+  @Override
+  public ValidationResult validate(IBaseResource resource) {
+    // reference-validator does not support IBaseResource validation directly
+    val content =
+        this.context
+            .newXmlParser()
+            .setOverrideResourceIdWithBundleEntryFullUrl(false)
+            .encodeResourceToString(resource);
+    return validate(content);
   }
 
   public static ValidatorFhir withValidationModule(SupportedValidationModule svm) {

@@ -1,12 +1,13 @@
 include::../attributes-sections.adoc[]
 
 == Perimeter-Bricks
-Was sind die TI-Perimeter-Bricks... TODO
+A _perimeter_ is a boundary that surrounds a particular area. In the context of TI, we also have a perimeter. It is the boundary that surrounds the TI and separates it from the outside world. The perimeter is the first line of defence against unauthorised access to the TI. This perimeter is usually crossed by a combination of a smart card, a card terminal and a Konnektor.
 
-image::intro_perimeter_bricks.png[align=center, pdfwidth=70%, scaledwidth=70%]
+[plantuml, "{pumldir}/perimeter-bricks", svg]
+.Perimeter-Bricks
+----
+include::{pumldir}/perimeter-bricks.puml[]
+----
 
-:leveloffset: +1
-include::smartcards.adoc[]
-<<<
-include::konnektor.adoc[]
-:leveloffset: -1
+include::smartcards.adoc[leveloffset=+1]
+include::konnektor.adoc[leveloffset=+1]

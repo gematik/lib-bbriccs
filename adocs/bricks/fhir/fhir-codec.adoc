@@ -1,0 +1,20 @@
+include::fhir-commons.adoc[]
+
+[#fhir-codec-brick]
+== FHIR Codec Brick
+So far we have only covered the creation and handling of FHIR objects. We have deliberately left out the aspect of serialisation. This is where the {brick-fhir-codec} comes into action.
+
+A https://en.wikipedia.org/wiki/Codec[codec] is a component that encodes and decodes a data stream or signal. And a `FhirCodec` in the {bricks-fhir} ecosystem is a component that can encode and decode FHIR objects.
+
+
+[plantuml, "{pumldir}/fhir-codec-brick", svg]
+.FHIR Codec Brick
+----
+include::{pumldir}/fhir-codec-brick.puml[]
+----
+
+In addition to a normal codec, the `FhirCodec` is able to validate the correctness of the FHIR objects by delegating a `ValidatorFhir`. This topic will be covered in the <<fhir-validation-brick>>.
+
+
+include::tutorial-codec-init.adoc[leveloffset=+1]
+include::tutorial-type-hints.adoc[leveloffset=+1]

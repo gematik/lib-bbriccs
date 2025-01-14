@@ -20,10 +20,12 @@ import static java.text.MessageFormat.format;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import de.gematik.bbriccs.fhir.EncodingType;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Predicate;
 import javax.annotation.Nonnull;
@@ -41,8 +43,8 @@ public class ProfileExtractor {
   private static final String ENTRY_LITERAL = "entry";
   private static final String VALUE_LITERAL = "value";
 
-  private XmlMapper xmlMapper;
-  private JsonMapper jsonMapper;
+  private ObjectMapper xmlMapper;
+  private ObjectMapper jsonMapper;
 
   public Optional<String> extractProfile(String content) {
     val root = encodeContent(content);
@@ -60,7 +62,7 @@ public class ProfileExtractor {
   public boolean isUnprofiledSearchSet(String content) {
     return encodeContent(content)
         .filter(root -> extractProfileFromRoot(root).isEmpty())
-        .map(root -> isOfType(root, BundleType.SEARCHSET))
+        .map(root -> isOfType(root, BundleType.SEARCHSET, BundleType.COLLECTION))
         .orElse(false);
   }
 
@@ -71,10 +73,7 @@ public class ProfileExtractor {
       val root = mapper.readTree(content);
       return Optional.of(root);
     } catch (JsonProcessingException jpe) {
-      log.warn(
-          format(
-              "Given content cannot be parsed as JSON/XML: {0}",
-              shortenContentForLogging(content)));
+      log.warn("Given content cannot be parsed as JSON/XML: {}", shortenContentForLogging(content));
       return Optional.empty();
     }
   }
@@ -117,9 +116,8 @@ public class ProfileExtractor {
         .or(
             () -> {
               log.info(
-                  format(
-                      "Given content does not contain a profile: {0}",
-                      shortenContentForLogging(content)));
+                  "Given content does not contain a profile: {}",
+                  shortenContentForLogging(content));
               return Optional.empty();
             });
   }
@@ -153,7 +151,6 @@ public class ProfileExtractor {
    *     profile
    */
   private Optional<JsonNode> extractProfileFromRoot(JsonNode root) {
-    // find the first meta-tag on the root
     val meta = root.get(META_LITERAL);
     return Optional.ofNullable(meta)
         .filter(this::filterEmptyProfiles)
@@ -174,9 +171,9 @@ public class ProfileExtractor {
     return !profile.asText("").isEmpty();
   }
 
-  private boolean isOfType(JsonNode root, BundleType type) {
+  private boolean isOfType(JsonNode root, BundleType... types) {
     val extractedType = extractBundleType(root);
-    return extractedType.equals(type);
+    return Arrays.asList(types).contains(extractedType);
   }
 
   /**
@@ -198,7 +195,7 @@ public class ProfileExtractor {
           .map(node -> BundleType.fromCode(node.asText()))
           .orElse(BundleType.NULL);
     } catch (FHIRException fe) {
-      log.warn(format("Unable to extract FHIR BundleType from type-node {0}", typeNode));
+      log.warn("Unable to extract FHIR BundleType from type-node {}", typeNode);
       return BundleType.NULL;
     }
   }
@@ -220,14 +217,14 @@ public class ProfileExtractor {
     }
   }
 
-  private XmlMapper getXmlMapper() {
+  private ObjectMapper getXmlMapper() {
     if (this.xmlMapper == null) {
       this.xmlMapper = new XmlMapper();
     }
     return this.xmlMapper;
   }
 
-  private JsonMapper getJsonMapper() {
+  private ObjectMapper getJsonMapper() {
     if (this.jsonMapper == null) {
       this.jsonMapper = new JsonMapper();
     }

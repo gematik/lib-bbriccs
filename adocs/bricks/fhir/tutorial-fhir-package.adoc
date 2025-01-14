@@ -1,0 +1,200 @@
+include::fhir-commons.adoc[]
+
+[#tutorial_fhir_package]
+== Implementing a FHIR package
+In fact {bbriccs-wordmark} comes already with a basic implementation of the {package-basis-de} package, which is called {module-basis-de}. We will build the {module-basis-de} to demonstrate how to implement a FHIR package with the {brick-fhir-coding-system} from scratch.
+
+Let's dive in with a simple task!
+
+*Task:* create the following Extension for _link:https://www.bfarm.de/DE/Arzneimittel/Arzneimittelinformationen/Packungsgroessen/_node.html[Normgröße]_ using plain {link-hapi-docs-stucts}.
+
+[source,xml]
+----
+<extension url="http://fhir.de/StructureDefinition/normgroesse">
+  <valueCode value="N1"/>
+</extension>
+----
+
+[source,java]
+----
+var code = new CodeType("N4");
+var ext  = new Extension("https://fhir.de/StructureDefinition/Normgroesse", code);
+----
+
+Pretty simple, right?
+
+But what kind of code ist that anyway? Surely this thing "N4" must have some kind of meaning. And indeed it does. Basically, the URL `http://fhir.de/StructureDefinition/normgroesse` tells us exactly where we can find the definition of this object. But what if we would mix up the URL with the CodeSystem?
+
+WARNING: Have you spotted the issues in this small code snippet? Don't worry, the compiler wouldn't either, but a validator would notice that immediately.
+
+Image this scenario in a larger project with multiple developers. Constant interruption and confusion about the system urls of the elements and structures slow you down, make you less productive and can lead to errors all the time. Just trust me for a second, you don't want to go there.
+
+What if we think about an architectural approach to enforce the natural structure of the FHIR standard and to avoid those kind of issues. So, instead of passing all relevant data (something like `N1`) and meta-data (something like `http://fhir.de/CodeSystem/normgroesse`) around in a unstructured way, you could use the {brick-fhir-coding-system} to represent your information in an intuitive and supportive way.
+
+WARNING: Have you noticed again? Did we just mix up the definitions `http://fhir.de/StructureDefinition/normgroesse` and `http://fhir.de/CodeSystem/normgroesse`?
+
+So basically, in order to implement the {package-basis-de} with {brick-fhir-coding-system} we need to implement the interfaces one by one.
+
+TIP: Don't worry about gathering all the information from the {package-basis-de} package at once. You can always add more elements and structures later as you move on.
+
+
+*Step 1:* implement a `DeBasisProfilNamingSystem` which will hold all the link:https://build.fhir.org/namingsystem.html[NamingSystems] of the {package-basis-de} package.
+
+
+[source,java]
+----
+@Getter
+@RequiredArgsConstructor
+public enum DeBasisProfilNamingSystem implements WithNamingSystem {
+  IKNR("http://fhir.de/sid/arge-ik/iknr"),
+  KVID_GKV("http://fhir.de/sid/gkv/kvid-10"),
+  KVID_PKV("http://fhir.de/sid/pkv/kvid-10"),
+  TELEMATIK_ID("https://gematik.de/fhir/sid/telematik-id");
+
+  private final String canonicalUrl;
+}
+----
+
+TIP: Remember, no need to have all the NamingSystems at once. When you discover a new NamingSystem, just add it to the enumeration.
+
+
+*Step 2:* implement a `DeBasisProfilCodeSystem` which will hold all the https://build.fhir.org/codesystem.html[CodeSystems] of the {package-basis-de} package.
+
+[source,java]
+----
+@Getter
+@AllArgsConstructor
+public enum DeBasisProfilCodeSystem implements WithCodeSystem {
+  LAENDERKENNZEICHEN("http://fhir.de/CodeSystem/deuev/anlage-8-laenderkennzeichen"),
+  VERSICHERUNGSART_DE_BASIS("http://fhir.de/CodeSystem/versicherungsart-de-basis"),
+  IDENTIFIER_TYPE_DE_BASIS("http://fhir.de/CodeSystem/identifier-type-de-basis"),
+  NORMGROESSE("http://fhir.de/CodeSystem/normgroesse"),
+  PZN("http://fhir.de/CodeSystem/ifa/pzn");
+
+  private final String canonicalUrl;
+}
+----
+
+*Step 3:* implement a `Normgroesse` which will hold all the defined values of the https://applications.kbv.de/S_KBV_NORMGROESSE_V1.00.xhtml[Normgröße-ValueSet]:
+
+[source,java]
+----
+@Getter
+@RequiredArgsConstructor
+public enum Normgroesse implements FromValueSet {
+  KA("KA", "Kein Angabe"),
+  KTP("KTP", "Keine therapiegerechte Packungsgröße"),
+  N1("N1", "Normgröße 1"),
+  N2("N2", "Normgröße 2"),
+  N3("N3", "Normgröße 3"),
+  NB("NB", "Nicht betroffen"),
+  SONSTIGES("Sonstiges", "Sonstiges");
+
+  private final String code;
+  private final String display;
+
+  @Override
+  public DeBasisProfilCodeSystem getCodeSystem() {
+    return DeBasisProfilCodeSystem.NORMGROESSE;
+  }
+
+  public Extension asExtension() {
+    return DeBasisProfilStructDef.NORMGROESSE.asCodeExtension(this.getCode());
+  }
+}
+----
+
+*Step 4:* You may have noticed that those FHIR packages can also evolve and change over time and thus must be versioned accordingly.
+To handle this, we implement the `DeBasisProfilVersion` which will hold all the versions of the {package-basis-de} package.
+
+[source,java]
+----
+@Getter
+@RequiredArgsConstructor
+public enum DeBasisProfilVersion implements ProfileVersion {
+  V1_3_2("1.3.2"),
+  V1_4_0("1.4.0");
+
+  private final String version;
+  private final String name = "de.basisprofil.r4";
+}
+----
+
+*Step 5:* Once we have the versions we want to deal with, we can finish the profile definition by implementing the `DeBasisProfilStructureDefinition` which will hold all the https://build.fhir.org/structuredefinition.html[StructureDefinitions] of the {package-basis-de} package.
+
+[source,java]
+----
+@Getter
+@RequiredArgsConstructor
+public enum DeBasisProfilStructDef implements WithStructureDefinition<DeBasisProfilVersion> {
+  GKV_VERSICHERTENART("http://fhir.de/StructureDefinition/gkv/versichertenart"),
+  NORMGROESSE("http://fhir.de/StructureDefinition/normgroesse"),
+  HUMAN_NAMENSZUSATZ("http://fhir.de/StructureDefinition/humanname-namenszusatz");
+
+  private final String canonicalUrl;
+}
+----
+
+You've done it!
+
+OK, so this approach requires a bit more code to set up. But hang on a sec.
+
+We have now a solid way of working with the elements and structures of the {package-basis-de} package that is structured and type-safe.
+
+.Advantages are:
+1. Structured and logical interface for dealing with the FHIR coding system
+2. Many common use cases for creating FHIR elements are already implemented for you
+3. No more fiddling with those awkward system URLs.
+4. Implementations of {brick-fhir-coding-system} are standardized and can be reused across different projects and teams.
+5. Fits naturally into the {bricks-fhir} ecosystem.
+
+.Disadvantages are:
+1. tediously setting up the initial structure
+
+To demonstrate the advantages of the {brick-fhir-coding-system}, let's return to the original task.
+
+[source,xml]
+----
+<extension url="http://fhir.de/StructureDefinition/normgroesse">
+  <valueCode value="N1"/>
+</extension>
+----
+
+It's really just the value code that we already have in place as an enumeration called `Normgroesse`.
+
+[source,java]
+----
+Extension ext = Normgroesse.N1.asExtension();
+----
+
+That's all it takes, and it reads like a charm. And it gets even better, {brick-fhir-coding-system} gives your code some superpowers. Remember how we have implemented `Normgroesse.N1.asExtension()`:
+
+[source,java]
+----
+public Extension asExtension() {
+  return DeBasisProfilStructDef
+          .NORMGROESSE       // StructureDefinition/normgroesse
+          .asCodeExtension(  // create as an extension for a value code
+              this.getCode() // this == Normgroesse.N1
+          );
+}
+----
+
+In addition to extensions, it is also very common that codes or value sets have to be represented as a `CodeableConcept`. The {brick-fhir-coding-system} already has default implementations for many of the common use cases. For example, it is directly possible to represent the `Normgroesse` as a `CodeableConcept` without having to explicitly implement any additional method for this:
+
+[source,java]
+----
+CodeableConcept cc = Normgroesse.NB.asCodeableConcept();
+----
+
+Which will encode in XML to:
+
+[source,xml]
+----
+<code>
+  <coding>
+     <system value="http://fhir.de/CodeSystem/normgroesse"/>
+     <code value="KTP"/>
+  </coding>
+</code>
+----

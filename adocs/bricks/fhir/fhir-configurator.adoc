@@ -1,0 +1,40 @@
+include::fhir-commons.adoc[]
+
+[#fhir-configurator-brick]
+== FHIR Configurator Brick
+The FHIR packages that we want to map with the HAPI are subject to the same development cycle as classic software. Bug fixes and refactorings are carried out, but new features are also added or old ones are dropped. This can lead to the point where you need to handle different versions of the same package. Remember when we sneakily introduced the `KbvItaErpVersion` in the <<tutorial_resource_builder, ResourceBuilder Tutorial>>?
+
+As this undertaking can be very tricky, the {brick-fhir-conf} provides a structure to handle different versions of FHIR packages. It is designed to be easy to use and understand.
+
+[plantuml, "{pumldir}/fhir-configurator-brick", svg]
+.FHIR Configurator Brick
+----
+include::{pumldir}/fhir-configurator-brick.puml[]
+----
+
+With this structure the `ProfilesConfigurator` can read your configuration which looks in yaml like this:
+
+[source,yaml]
+----
+- id: "1.4.0"
+  note: "erp-workflow valid from 1.4.25"
+  profiles:
+    - name: "kbv.ita.erp"
+      version: "1.1.2"
+      compatibleVersions: "1.1.0"
+      canonicalClaims: "https://fhir.kbv.de/"
+    - name: "kbv.basis"
+      version: "1.3.0"
+      canonicalClaims: "https://fhir.kbv.de/"
+      omitProfiles: [ "KBV_VS_Base_Diagnosis_SNOMED_CT.json", "KBV_VS_Base_Device_SNOMED_CT.json" ]
+    - name: "de.gematik.erezept-workflow.r4"
+      version: "1.4.0"
+      compatibleVersions: [ "1.4" ]
+      canonicalClaims: [ "https://gematik.de/fhir", "http://gematik.de/fhir" ]
+  errorFilter:
+    - "^2 profiles found for contained resource.*"
+  ignoreCodeSystems:
+    - "http://fhir.de/CodeSystem/ask"
+    - "http://fhir.de/CodeSystem/ifa/pzn"
+    - "http://fhir.de/CodeSystem/bfarm/atc"
+----

@@ -24,6 +24,7 @@ import lombok.Getter;
 public class GenericProfileVersion implements ProfileVersion {
 
   private final String version;
+  private final String name;
   private final boolean omitZeroPatch;
 
   public GenericProfileVersion(String version) {
@@ -31,7 +32,12 @@ public class GenericProfileVersion implements ProfileVersion {
   }
 
   public GenericProfileVersion(String version, boolean omitZeroPatch) {
+    this("generic.fhir.r4", version, omitZeroPatch);
+  }
+
+  public GenericProfileVersion(String name, String version, boolean omitZeroPatch) {
     this.version = version;
+    this.name = name;
     this.omitZeroPatch = omitZeroPatch;
   }
 

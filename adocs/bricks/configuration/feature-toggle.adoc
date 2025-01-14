@@ -1,11 +1,10 @@
 include::../attributes-sections.adoc[]
 
-
+[#conf-feature-toggle-brick]
 == Feature-Toggle
+A feature toggle module allows developers to enable or disable certain functions or code sections in an application. This is particularly useful for the gradual introduction of new features. Especially in test suites, we often have the case that certain features go through different stages and need to be activated or deactivated in different environments.
 
-Ein Feature-Toggle-Modul ermöglicht es Entwicklern, bestimmte Funktionen oder Codeabschnitte in einer Anwendung ein- oder auszuschalten. Dies ist besonders nützlich für die schrittweise Einführung neuer Features. Besonders bei Testsuiten haben wir oftmals den Fall, dass bestimmte Features unterschiedliche Stages durchlaufen und in unterschiedlichen Umgebungen aktiviert oder deaktiviert werden müssen.
-
-Das `feature-toggle-brick` bietet eine flexible Lösung, indem es ermöglicht, Funktionen über die System-Properties und Umgebungsvariablen zu aktivieren oder zu deaktivieren.
+The `feature-toggle-brick` offers a flexible solution by allowing functions to be enabled or disabled via system properties and environment variables.
 
 [plantuml, "{pumldir}/feature-toggle-brick", svg]
 .Feature-Toggle-Brick
@@ -13,189 +12,16 @@ Das `feature-toggle-brick` bietet eine flexible Lösung, indem es ermöglicht, F
 include::{pumldir}/feature-toggle-overview.puml[]
 ----
 
-Um die Wartbarkeit im Code zu erhöhen, bietet das `feature-toggle-brick` eine Abstraktion mit einer einfachen API an Feature-Toggles aus dem System auszulesen ohne dabei direkt auf System-Properties oder Umgebungsvariablen. Dadurch lässt sich die Abhängigkeit zum jeweiligen "Key" (sei es ein System-Property oder eine Umgebungsvariable) auf ein Minimum reduzieren. Dabei wird nicht nur die Abstraktion von System-Properties/Umgebungsvariablen fokussiert, sondern auch ein Konzept angeboten, um die Feature-Toggles sowohl über System-Properties als auch über Umgebungsvariablen gleichzeitig zu konfigurieren.
+To increase maintainability in the code, the `feature-toggle-brick` offers an abstraction with a simple API to read feature toggles from the system without directly accessing system properties or environment variables. This reduces the dependency on the respective "key" (whether it is a system property or an environment variable) to a minimum. It not only focuses on the abstraction of system properties/environment variables but also offers a concept to configure feature toggles simultaneously via system properties and environment variables.
 
-=== Feature-Toggles setzen
-Ein entscheidender Vorteil des `feature-toggle-brick` ist es, dass Feature-Toggle sowohl über System-Properties als auch über Umgebungsvariablen gesetzt werden können. Dabei wird die Konfiguration über System-Properties bevorzugt, falls diese nicht gesetzt sind, wird auf die Umgebungsvariablen zurückgegriffen und im aller letzten Fall (wenn weder System-Properties noch Umgebungsvariablen gesetzt sind) wird der Default-Wert verwendet.
+.Use it when:
+* You have many feature toggles in your application
+* You have to use specific feature toggles in many different places of your code
+* You need to use SystemProperties and EnvironmentVariables simultaneously to control your feature toggles
 
-Angenommen wir haben die Applikation `MyApplication` die ein Boolean-Toggle benötigt:
+.Don't use it when:
+* You have only a few feature toggles in your application and the `feature-toggle-brick` is not already in your classpath
 
-[source,java]
-----
-class MyApplication {
-  public static void main(String[] args){
-    val featureConf = new FeatureConfiguration();
-    boolean isFeatureActive = featureConf.getBooleanToggle("myFeature.isActive");
-    // Alternative mit meinem eigenen Default-Wert: false ist der Default-Wert für den Default-Wert
-    // boolean isFeatureActive = featureConf.getBooleanToggle("hello.boolean", false);
+include::tutorial-feature-toggle-create.adoc[leveloffset=+1]
+include::tutorial-custom-feature-toggle.adoc[leveloffset=+1]
 
-    if(isFeatureActive){
-      System.out.println("Feature is active");
-    } else {
-      System.out.println("Feature is NOT active");
-    }
-  }
-}
-----
-
-Nun können wir das Feature-Toggle über System-Properties oder Umgebungsvariablen setzen und die Applikation starten:
-
-[source,shell]
-----
-# verwendet den Default-Wert weil kein Feature-Toggle gesetzt ist
-java MyApplication
->> Feature is NOT active
-
-# setze das Feature-Toggle über System-Properties
-java -DmyFeature.isActive=true MyApplication
->> Feature is active
-
-# setze das Feature-Toggle über Umgebungsvariablen
-export MYFEATURE_ISACTIVE=YES
-java MyApplication
->> Feature is active
-
-# Umgebungsvariable weiterhin gesetzt
-# das Feature-Toggle wird über System-Properties überschrieben
-echo $MYFEATURE_ISACTIVE
-java -DmyFeature.isActive=false MyApplication
->> Feature is NOT active
-----
-
-Mit diesem kleinen Demonstrator werden bereits die Grundlagen des `feature-toggle-brick` demonstriert:
-
-* Feature-Toggles können über System-Properties und Umgebungsvariablen gesetzt werden
-* Die Konfiguration über System-Properties hat Vorrang vor der Konfiguration über Umgebungsvariablen
-* Der Default-Wert wird verwendet, wenn weder System-Properties noch Umgebungsvariablen gesetzt sind. Damit werden unerwartete Fehler vermieden und wir können die Applikation immer in einem definierten Zustand ohne zusätzliche Konfigurationen starten.
-
-Dann wäre da noch die Nomenklatur der Toggles selbst. Das `feature-toggle-brick` sorgt dafür, dass die Feature-Toggles stets aus einer einheitlichen Bildungsregel abgeleitet werden und immer einem festen Schema folgen.
-
-Dabei gelten die folgenden Ableitungsregeln für die System-Properties und Umgebungsvariablen:
-
-* das Feature-Toggle `myFeature.isActive` wird als System-Property mit `-DmyFeature.isActive=true` gesetzt und hat damit exakt den gleichen Namen
-* das Feature-Toggle `myFeature.isActive` wird als Umgebungsvariable mit `MYFEATURE_ISACTIVE=YES` und wird dabei über `key.toUpperCase().replace(".", "_")` gebildet.
-* über die API der `FeatureConfiguration` wird ein Feature-Toggle (wenn über einen String abgefragt) immer über den Namen (z.B. `myFeature.isActive`) abgefragt.
-
-=== Benutzerdefinierte Feature-Toggles
-Im letzten Beispiel haben wir gesehen, wie man ein Feature-Toggle über seinen Namen abfragen kann. Dabei wird der Name des Feature-Toggles als String übergeben und die `FeatureConfiguration` kümmert sich um die Auflösung und das konkrete Mapping zum jeweiligen Datentypen des Feature-Toggles. So sind z.B. auch weitere gängige Datentypen wie `Integer`, `Double`, `String` oder auch allgemein für Enumerationen bereits implementiert.
-
-Damit können wir zwar schon die konsistente Nomenklatur der Feature-Toggles gewährleisten, haben aber weiterhin das Problem, dass Feature-Toggles tendenziell(wenn über String abgefragt), extrem schlecht wartbar sind. Diese Art der Abfrage ist daher nur empfehlenswert, wenn ein Feature-Toggle nur an einer einzigen Stelle abgefragt wird. Für komplexere Feature-Toggles, oder solche die an vielen Stellen verwendet werden müssen, bietet das `feature-toggle-brick` auch die Möglichkeit, benutzerdefinierte Feature-Toggles zu erstellen. Damit kann der tatsächliche Name eines Toggles in einer einzigen Stelle gekapselt werden, wodurch die Wartbarkeit und Lesbarkeit des Codes deutlich erhöht wird.
-
-Angenommen wir haben ein Feature-Toggle mir mehreren Zuständen mit dem Namen `myFeature.state` welches zusätzlich an vielen Stellen benötigt wird. Der Zustand dafür kann über eine Enumeration `MyFeatureState` abgebildet werden und folgendermaßen abgefragt werden:
-
-[source,java]
-----
-class MyApplication {
-  public static void main(String[] args){
-    val featureConf = new FeatureConfiguration();
-    MyFeatureStateToggle isFeatureActive = featureConf.getEnumToggle("myFeature.state", MyFeatureStateToggle.class, MyFeatureStateToggle.STATE_ONE);
-    System.out.println("Feature state is: " + isFeatureActive.getState());
-  }
-
-  enum MyFeatureStateToggle {
-    STATE_ONE("first"),
-    STATE_TWO("second"),
-    STATE_THREE("third");
-
-    private final String state;
-
-    MyFeatureStateToggle(String state){
-      this.state = state;
-    }
-
-    public String getState(){
-      return state;
-    }
-  }
-}
-----
-
-Dann können wir das Feature-Toggle bereits so auch im einfachsten Fall direkt nutzen:
-
-[source,shell]
-----
-java -DmyFeature.state=STATE_THREE MyApplication
->> Feature state is: third
-----
-
-Allerdings besteht hier weiterhin das Problem der Wartbarkeit mit der "String-Adressierung". Diese lässt sich durch die Verwendung eines benutzerdefinierten Feature-Toggles lösen und darüber hinaus lässt sich das Feature-Toggle auch mit zusätzlicher Funktionalität versehen:
-
-[source,java]
-----
-class MyApplication {
-  public static void main(String[] args){
-    val featureConf = new FeatureConfiguration();
-    MyFeatureState isFeatureActive = featureConf.getToggle(new MyFeatureStateToggle());
-    System.out.println("Feature state is: " + isFeatureActive.getState());
-  }
-
-  public static class MyFeatureStateToggle implements FeatureToggle<MyFeatureState> {
-
-    @Override
-    public String getKey() {
-      return "myFeature.state";
-    }
-
-    @Override
-    public Function<String, MyFeatureState> getConverter() {
-      return this::mapState;
-    }
-
-    public MyFeatureState mapState(String value) {
-      if (StringUtils.isNumeric(value)) {
-        val index = Integer.parseInt(value) % MyFeatureState.values().length;
-        return MyFeatureState.values()[index];
-      } else {
-        return Arrays.stream(MyFeatureState.values())
-            .filter(e -> e.getState().equalsIgnoreCase(value) || e.name().equalsIgnoreCase(value))
-            .findFirst()
-            .orElse(getDefaultValue());
-      }
-    }
-
-    @Override
-    public MyFeatureState getDefaultValue() {
-      return MyFeatureState.STATE_ONE;
-    }
-  }
-
-  enum MyFeatureState {
-    STATE_ONE("first"),
-    STATE_TWO("second"),
-    STATE_THREE("third");
-
-    private final String state;
-
-    MyFeatureState(String state){
-      this.state = state;
-    }
-
-    public String getState(){
-      return state;
-    }
-  }
-}
-----
-
-Mit dieser Implementierung ist das gesamte FeatureToggle in einer einzigen Klasse gekapselt und kann an beliebiger Stelle abgefragt werden. Dabei wird die Nomenklatur der Feature-Toggles beibehalten und die Wartbarkeit des Codes deutlich erhöht. Darüber hinaus kann das Feature-Toggle auch mit zusätzlicher Funktionalität versehen werden, wie z.B. die Umwandlung von numerischen Werten in Enumerationen oder auch die Verwendung von sprechenden Werten (anstatt der Enumerationsnamen):
-
-[source,shell]
-----
-# mapping über den Enumerationsnamen
-java -DmyFeature.state=STATE_THREE MyApplication
->> Feature state is: third
-
-# mapping über den State-Wert der Enumeration
-java -DmyFeature.state=second MyApplication
->> Feature state is: second
-
-# mapping über den Enumerationsindex
-java -DmyFeature.state=2 MyApplication
->> Feature state is: third
-
-# mapping über einen rollenden Enumerationsindex (Überlauf mit modulo)
-java -DmyFeature.state=42 MyApplication
->> Feature state is: first
-----
-
-Mit diesem Konzept lassen sich sowohl einfache als auch extrem komplexe und vor allem wiederverwendbare Feature-Toggles bauen.

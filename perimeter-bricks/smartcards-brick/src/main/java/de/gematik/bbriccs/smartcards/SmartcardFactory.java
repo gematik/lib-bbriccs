@@ -70,7 +70,7 @@ class SmartcardFactory {
         config.getStores().stream()
             .map(
                 path -> {
-                  log.trace(format("Load Smartcard certificate from Store={0}", path));
+                  log.trace("Load Smartcard certificate from Store={}", path);
                   return new SmartcardCertificateP12(path, () -> this.fileLoader.apply(path));
                 })
             .toList();

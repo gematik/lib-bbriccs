@@ -81,12 +81,12 @@ public abstract class FhirTest {
     System.out.println("\n##########\n" + resource + "\n##########\n");
   }
 
-  protected void printValidationResult(final ValidationResult result) {
+  protected void printValidationResult(ValidationResult result) {
     printValidationResult(result, m -> !m.getSeverity().equals(ResultSeverityEnum.INFORMATION));
   }
 
   protected void printValidationResult(
-      final ValidationResult result, Predicate<SingleValidationMessage> messageFilter) {
+      ValidationResult result, Predicate<SingleValidationMessage> messageFilter) {
     if (!result.isSuccessful()) {
       // give me some hints if the encoded result is invalid
       val r =
@@ -102,9 +102,9 @@ public abstract class FhirTest {
                           m.getLocationLine()))
               .collect(Collectors.joining("\n\t"));
       log.warn(
-          format(
-              "--- Found Validation Messages after validation: {0} ---\n\t{1}\n------",
-              result.getMessages().stream().filter(messageFilter).count(), r));
+          "--- Found Validation Messages after validation: {} ---\n\t{}\n------",
+          result.getMessages().stream().filter(messageFilter).count(),
+          r);
     }
   }
 }

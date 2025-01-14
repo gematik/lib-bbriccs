@@ -39,9 +39,6 @@ public enum Currency {
   public Money asMoney(BigDecimal value) {
     // currency values are always formatted with two decimal places
     val fValue = value.setScale(2, RoundingMode.HALF_UP);
-    val money = new Money();
-    money.setValue(fValue);
-    money.setCurrency(this.getCode());
-    return money;
+    return new Money().setValue(fValue).setCurrency(this.getCode());
   }
 }

@@ -24,6 +24,7 @@ import ca.uhn.fhir.validation.SingleValidationMessage;
 import ca.uhn.fhir.validation.ValidationResult;
 import java.util.List;
 import lombok.val;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 
 public class DummyValidator implements ValidatorFhir {
 
@@ -40,14 +41,23 @@ public class DummyValidator implements ValidatorFhir {
 
   @Override
   public ValidationResult validate(String content) {
+    return this.getValidationResult();
+  }
+
+  @Override
+  public ValidationResult validate(IBaseResource resource) {
+    return this.getValidationResult();
+  }
+
+  @Override
+  public boolean isValid(String content) {
+    return true;
+  }
+
+  private ValidationResult getValidationResult() {
     val svm = new SingleValidationMessage();
     svm.setSeverity(ResultSeverityEnum.INFORMATION);
     svm.setMessage(format("Information provided by {0}", this.getClass().getSimpleName()));
     return new ValidationResult(this.ctx, List.of(svm));
-  }
-
-  @Override
-  public boolean isValid(final String content) {
-    return true;
   }
 }

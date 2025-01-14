@@ -17,9 +17,13 @@
 package de.gematik.bbriccs.fhir.validation;
 
 import static java.text.MessageFormat.format;
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.validation.ResultSeverityEnum;
 import de.gematik.bbriccs.fhir.conf.ProfilesConfigurator;
 import de.gematik.bbriccs.fhir.validation.utils.FhirValidatingTest;
 import de.gematik.bbriccs.utils.ResourceLoader;
@@ -32,6 +36,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.NullSource;
 
 class ValidatorFhirTest extends FhirValidatingTest {
 
@@ -89,6 +94,27 @@ class ValidatorFhirTest extends FhirValidatingTest {
 
   @ParameterizedTest
   @MethodSource
+  @NullSource
+  void shouldFailOnValidateGarbage(String content) {
+    val vr = assertDoesNotThrow(() -> this.fhirValidator.validate(content));
+    assertFalse(vr.isSuccessful());
+    assertFalse(vr.getMessages().isEmpty());
+    val severity = vr.getMessages().get(0).getSeverity();
+    assertThat(severity, anyOf(is(ResultSeverityEnum.ERROR), is(ResultSeverityEnum.FATAL)));
+  }
+
+  static Stream<Arguments> shouldFailOnValidateGarbage() {
+    return Stream.of(
+            "Garbage content is definitely no valid FHIR content",
+            "<xml>invalid</xml>",
+            "{content: \"invalid\"}",
+            "{\"content}\": \"invalid\"}",
+            "")
+        .map(Arguments::of);
+  }
+
+  @ParameterizedTest
+  @MethodSource
   void shouldValidateValidErpFhirResources(File file) {
     val content = ResourceLoader.readString(file);
     val vr = this.fhirValidator.validate(content);
@@ -127,9 +153,9 @@ class ValidatorFhirTest extends FhirValidatingTest {
     val content = ResourceLoader.readString(file);
 
     val ctx = FhirContext.forR4();
-    val profileSettings = ProfilesConfigurator.getInstance().getProfileConfigurations();
+    val profileSettings = ProfilesConfigurator.getDefaultConfiguration().getProfileConfigurations();
     profileSettings.forEach(
-        psdto -> psdto.getProfiles().forEach(pdto -> pdto.setCanonicalClaims(null)));
+        psdto -> psdto.getProfiles().forEach(pdto -> pdto.setCanonicalClaims(List.of())));
     val customValidator = ValidatorFhirFactory.createValidator(ctx, profileSettings);
 
     val vr = customValidator.validate(content);

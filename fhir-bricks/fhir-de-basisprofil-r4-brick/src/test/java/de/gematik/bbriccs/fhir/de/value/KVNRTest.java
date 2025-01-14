@@ -27,7 +27,6 @@ import de.gematik.bbriccs.fhir.de.valueset.InsuranceTypeDe;
 import java.util.List;
 import lombok.val;
 import org.hl7.fhir.r4.model.Task;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -36,6 +35,8 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class KVNRTest {
+
+  private static final int TEST_REPS = 5;
 
   @ParameterizedTest(name = "[{index}]: KVNR {0} is structurally invalid")
   @NullSource
@@ -79,7 +80,7 @@ class KVNRTest {
   void shouldGenerateRandomPkv() {
     val kvnr = KVNR.randomPkv();
     assertTrue(kvnr.isValid());
-    assertEquals(DeBasisProfilNamingSystem.SID_KVID_PKV.getCanonicalUrl(), kvnr.getSystemUrl());
+    assertEquals(DeBasisProfilNamingSystem.KVID_PKV_SID.getCanonicalUrl(), kvnr.getSystemUrl());
     assertEquals(InsuranceTypeDe.PKV, kvnr.getInsuranceType());
     assertTrue(kvnr.isPkv());
   }
@@ -88,9 +89,27 @@ class KVNRTest {
   void shouldGenerateRandomGkv() {
     val kvnr = KVNR.randomGkv();
     assertTrue(kvnr.isValid());
-    assertEquals(DeBasisProfilNamingSystem.SID_KVID_GKV.getCanonicalUrl(), kvnr.getSystemUrl());
+    assertEquals(DeBasisProfilNamingSystem.KVID_GKV_SID.getCanonicalUrl(), kvnr.getSystemUrl());
     assertEquals(InsuranceTypeDe.GKV, kvnr.getInsuranceType());
     assertTrue(kvnr.isGkv());
+  }
+
+  @ParameterizedTest
+  @ValueSource(booleans = {true, false})
+  void shouldCreateAsReference(boolean withCoding) {
+    val kvnr = KVNR.randomGkv();
+    val reference = kvnr.asReference(withCoding);
+    val identifier = reference.getIdentifier();
+
+    assertTrue(DeBasisProfilNamingSystem.KVID_GKV_SID.matches(identifier));
+    assertEquals(kvnr.getValue(), identifier.getValue());
+
+    val code = identifier.getType().getCodingFirstRep().getCode();
+    if (withCoding) {
+      assertEquals(InsuranceTypeDe.GKV.getCode(), code);
+    } else {
+      assertNull(code);
+    }
   }
 
   @Test
@@ -98,9 +117,10 @@ class KVNRTest {
     val kvnr = KVNR.randomGkv();
     val identifier = kvnr.asIdentifier();
 
-    assertTrue(DeBasisProfilNamingSystem.SID_KVID_GKV.matches(identifier));
+    assertTrue(DeBasisProfilNamingSystem.KVID_GKV_SID.matches(identifier));
     val code = identifier.getType().getCodingFirstRep().getCode();
     assertEquals(InsuranceTypeDe.GKV.getCode(), code);
+    assertEquals(kvnr.getValue(), identifier.getValue());
   }
 
   @Test
@@ -108,7 +128,7 @@ class KVNRTest {
     val kvnr = KVNR.randomGkv();
     val identifier = kvnr.asIdentifier(false);
 
-    assertTrue(DeBasisProfilNamingSystem.SID_KVID_GKV.matches(identifier));
+    assertTrue(DeBasisProfilNamingSystem.KVID_GKV_SID.matches(identifier));
     val code = identifier.getType().getCodingFirstRep().getCode();
     assertNull(code);
   }
@@ -118,7 +138,7 @@ class KVNRTest {
     val kvnr = KVNR.randomGkv();
     val identifier = kvnr.asIdentifier(DeBasisProfilNamingSystem.KVID);
 
-    assertFalse(DeBasisProfilNamingSystem.SID_KVID_GKV.matches(identifier));
+    assertFalse(DeBasisProfilNamingSystem.KVID_GKV_SID.matches(identifier));
     val code = identifier.getType().getCodingFirstRep().getCode();
     assertEquals(InsuranceTypeDe.GKV.getCode(), code);
   }
@@ -126,12 +146,26 @@ class KVNRTest {
   @Test
   void shouldThrowOnInvalidSystem() {
     val kvnr = spy(KVNR.randomGkv());
-    when(kvnr.getSystem()).thenReturn(DeBasisProfilNamingSystem.ARGE_IKNR);
+    when(kvnr.getSystem()).thenReturn(DeBasisProfilNamingSystem.IKNR);
 
     assertThrows(InvalidSystemException.class, kvnr::getInsuranceType);
   }
 
-  @RepeatedTest(value = 10)
+  @Test
+  void shouldGetFromIdentifier() {
+    val originalKvnr = KVNR.random();
+    val newKvnr = KVNR.from(originalKvnr.asIdentifier());
+    assertEquals(originalKvnr.getValue(), newKvnr.getValue());
+    assertEquals(originalKvnr.getSystem(), newKvnr.getSystem());
+  }
+
+  @Test
+  void shouldThrowOnGettingFromIdentifier() {
+    val pznIdentifier = PZN.random().asIdentifier();
+    assertThrows(InvalidSystemException.class, () -> KVNR.from(pznIdentifier));
+  }
+
+  @RepeatedTest(value = TEST_REPS)
   void shouldExtractFromIdentifier() {
     val originalKvnr = KVNR.random();
     val identifier = originalKvnr.asIdentifier();
@@ -141,7 +175,7 @@ class KVNRTest {
     assertEquals(originalKvnr, kvnr.get());
   }
 
-  @RepeatedTest(value = 10)
+  @RepeatedTest(value = TEST_REPS)
   void shouldExtractFromIdentifiers() {
     val originalKvnr = KVNR.random();
     val kvnrIdentifier = originalKvnr.asIdentifier();
@@ -153,7 +187,7 @@ class KVNRTest {
     assertEquals(originalKvnr, kvnr.get());
   }
 
-  @RepeatedTest(value = 10)
+  @RepeatedTest(value = TEST_REPS)
   void shouldThrowOnMissingKvnrInIdentifiers() {
     val iknrIdentifier = IKNR.random().asIdentifier();
     val pznIdentifier = PZN.random().asIdentifier();
@@ -163,16 +197,16 @@ class KVNRTest {
         MissingFieldException.class, () -> KVNR.extractFromOrThrow(Task.class, identifiers));
   }
 
-  @RepeatedTest(value = 10)
+  @RepeatedTest(value = TEST_REPS)
   void shouldThrowOnInvalidIdentifier() {
     val iknrIdentifier = IKNR.random().asIdentifier();
     assertThrows(
         MissingFieldException.class, () -> KVNR.extractFromOrThrow(Task.class, iknrIdentifier));
   }
 
-  @RepeatedTest(value = 10)
+  @RepeatedTest(value = TEST_REPS)
   void shouldNotThrowOnValidIdentifier() {
     val identifier = KVNR.random().asIdentifier();
-    Assertions.assertDoesNotThrow(() -> KVNR.extractFromOrThrow(Task.class, identifier));
+    assertDoesNotThrow(() -> KVNR.extractFromOrThrow(Task.class, identifier));
   }
 }

@@ -1,0 +1,16 @@
+include::../attributes-sections.adoc[]
+
+:bricks-fhir: pass:c,q[`fhir-bricks`]
+:brick-fhir-coding-system: pass:c,q[`fhir-coding-system-brick`]
+:brick-fhir-builder: pass:c,q[`fhir-builder-brick`]
+:brick-fhir-conf: pass:c,q[`fhir-configurator-brick`]
+:brick-fhir-codec: pass:c,q[`fhir-codec-brick`]
+:brick-fhir-validation: pass:c,q[`fhir-validation-brick`]
+
+:module-basis-de: pass:c,q[`fhir-de-basisprofil-r4-brick`]
+:package-basis-de: Basisprofil DE (R4)
+:package-kbv-erp: KBV E-Rezept
+
+:warning-noticed-bug: {warning-caption} Have you spotted the issues in this small code snippet? Don't worry, the compiler wouldn't either, but a validator would notice that immediately.
+
+:brick-intro-01: The FHIR standard is a set of rules and specifications for the exchange of health care data. It is designed to be flexible and adaptable, so that it can be used in a wide range of settings and with different health care information systems. Unfortunately, this flexibility can also make it difficult to work with HAPI. Thise comes primarily from the "being a general-purpose-library" nature of HAPI. Conversely, however, this also means that a consistent and maintainable usage across different projects and teams can be very challenging.

@@ -65,7 +65,7 @@ public class RestClient implements HttpBClient {
 
   @Override
   public HttpBResponse send(HttpBRequest bRequest) {
-    log.trace(format("Send HTTP Request:\n----------\n{0}\n----------", bRequest));
+    log.trace("Send HTTP Request:\n----------\n{}\n----------", bRequest);
     this.restObserver.serveRequestObservers(bRequest);
     val requestUrl = format("{0}{1}", this.url, bRequest.urlPath());
 

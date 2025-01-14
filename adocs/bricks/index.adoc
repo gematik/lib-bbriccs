@@ -1,20 +1,15 @@
 include::./attributes-sections.adoc[]
 
-== Bricks-Module
-Nach dem Baukaustenprinzip ist {bbriccs-wordmark} in mehrere separate Teile gruppiert...
+== Bricks
+The core objective of {bbriccs-wordmark} is to create a modular toolkit for more efficient development of applications for the German healthcare system.
 
+image::bricks_overview.png[align=center]
 
-:leveloffset: +1
-include::configuration/index.adoc[]
-<<<
-include::fhir/index.adoc[]
-<<<
-include::perimeter/index.adoc[]
-<<<
-include::restful/index.adoc[]
-<<<
-include::cli/index.adoc[]
-<<<
-include::utils/index.adoc[]
-<<<
-:leveloffset: -1
+Within {bbriccs-wordmark}, the core modules are referred to as a `brick`. Each `brick` is a small, reusable component that solves a common problem. A group of such components, which together can solve a larger problem, are simply called `bricks`. This documentation follows this pattern and presents each group of `bricks` individually.
+
+include::fhir/index.adoc[leveloffset=0]
+include::perimeter/index.adoc[leveloffset=]
+include::configuration/index.adoc[leveloffset=0]
+include::restful/index.adoc[leveloffset=0]
+include::utils/index.adoc[leveloffset=0]
+include::cli/index.adoc[leveloffset=0]

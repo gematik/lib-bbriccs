@@ -21,11 +21,13 @@ import static java.text.MessageFormat.format;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.Generated;
 import lombok.SneakyThrows;
@@ -72,8 +74,11 @@ public class ResourceLoader {
   }
 
   public static File getFileFromResource(String fileName) {
-    val resourceFileName = Objects.requireNonNull(CLASS_LOADER.getResource(fileName)).getFile();
-    return Path.of(resourceFileName).toFile();
+    return Optional.ofNullable(CLASS_LOADER.getResource(fileName))
+        .map(URL::getFile)
+        .map(path -> Path.of(path).toFile())
+        .orElseThrow(
+            () -> new ResourceFileException(format("File {0} not found in resources", fileName)));
   }
 
   public static List<String> readFilesFromDirectory(String path) {
@@ -92,7 +97,6 @@ public class ResourceLoader {
 
   public static List<File> getResourceFilesInDirectory(String path, boolean recursive) {
     val dir = toExistingResourceDirectoryPath(path);
-
     val maxDepth = recursive ? Integer.MAX_VALUE : 1;
     try (val walker = getFileWalker(dir, maxDepth)) {
       return walker.map(Path::toFile).toList();

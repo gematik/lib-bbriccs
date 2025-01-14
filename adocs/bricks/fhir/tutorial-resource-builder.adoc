@@ -1,0 +1,167 @@
+include::fhir-commons.adoc[]
+
+[#tutorial_resource_builder]
+== Implementing a FHIR Resource Builder
+Now that we have laid the foundations in the <<tutorial_fhir_package,last tutorial>>, we can start building entire FHIR resources.
+
+*Task:* create the following `Medication` resource using plain {link-hapi-docs-stucts}.
+
+[source,xml]
+----
+<Medication xmlns="http://hl7.org/fhir">
+  <id value="47076fb4-dc5c-4f75-85f6-b200033b3280" />
+  <meta>
+    <profile value="https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_PZN|1.1.0" />
+  </meta>
+  <extension url="http://fhir.de/StructureDefinition/normgroesse">
+    <valueCode value="N1" />
+  </extension>
+  <code>
+    <coding>
+      <system value="http://fhir.de/CodeSystem/ifa/pzn" />
+      <code value="03879429" />
+    </coding>
+    <text value="Beloc-Zok® mite 47,5 mg, 30 Retardtabletten N1" />
+  </code>
+</Medication>
+----
+
+[#source_medication_01]
+[source,java]
+----
+var medication = new Medication();
+medication.getMeta().addProfile("https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_PZN|1.1.0");
+medication.addExtension("http://fhir.de/StructureDefinition/normgroesse", new CodeType("N1"));
+medication.setCode(new CodeableConcept().addCoding(new Coding("http://fhir.de/CodeSystem/ifa/pzn", "03879429", "Beloc-Zok® mite 47,5 mg, 30 Retardtabletten N1")));
+----
+
+It's getting harder, isn't it? Now we must track down a whole bunch of different systems coming from different packages in different versions.
+
+WARNING: {warning-noticed-bug}
+
+For such a scenario the {brick-fhir-builder} comes in handy. It provides a set of classes and interfaces that allow you to build FHIR resources in a structured and type-safe way. It is designed to be easy to use, and to provide a clear and consistent API that can be used across different projects and teams.
+
+For this task, we have to introduce a new package called {package-kbv-erp}. We assume the coding being already implemented according to this <<tutorial_fhir_package, tutorial>>. Having those in place you could already simplify the above code to:
+
+[#source_medication_02]
+[source,java]
+----
+var medication = new Medication();
+medication.getMeta().addProfile(KbvItaErpStructDef.MEDICATION_PZN.getVersionedUrl(KbvItaErpVersion.V1_1_0));
+medication.addExtension(StandardSize.N1.asExtension());
+medication.setCode(PZN.from("03879429").asNamedCodeable("Beloc-Zok® mite 47,5 mg, 30 Retardtabletten N1"));
+----
+
+But it gets even better!
+
+The {brick-fhir-builder} provides a simple interface to apply the https://en.wikipedia.org/wiki/Builder_pattern[Builder Pattern], which significantly improves the readability of your code.
+
+*Step 1:* implement the basic structure for a `MedicationBuilder` class:
+
+[source,java]
+----
+class MedicationBuilder extends ResourceBuilder<Medication, MedicationBuilder> {
+
+    @Override
+    public Medication build() {
+      return null;
+    }
+}
+----
+
+NOTE: Recap to <<ResourceBuilder>> to learn more about those generics.
+
+
+*Step 2:* implement the `build`-Method with the code from the <<source_medication_01, first>> or <<source_medication_02, second>> example:
+
+[source,java]
+----
+class MedicationBuilder extends ResourceBuilder<Medication, MedicationBuilder> {
+
+    @Override
+    public Medication build() {
+      var medication = this.createResource(Medication::new, KbvItaErpStructDef.BUNDLE, KbvItaErpVersion.V1_1_0);
+      medication.addExtension(StandardSize.N1.asExtension());
+      medication.setCode(PZN.from("03879429").asNamedCodeable("Beloc-Zok® mite 47,5 mg, 30 Retardtabletten N1"));
+      return medication;
+    }
+}
+----
+
+Here the `ResourceBuilder` supports us with the `createResource`-method, which is a simple factory method to create a new resource instance and set the profile automatically. From the user perspective we already a nice and clean API to build a `Medication` resource:
+
+[source,java]
+----
+Medication medication = new MedicationBuilder().build();
+----
+
+But what about those hardcoded values like the PZN or the name of the medication? Do they stay fixed or can we do better and provide some sort of setters? That's a perfect use case for the {link-pattern-builder}.
+
+*Step 3:* implement the `MedicationBuilder` with the Builder Pattern:
+
+[source,java]
+----
+class MedicationBuilder extends ResourceBuilder<Medication, MedicationBuilder> {
+
+    // default values are optional but sometimes pretty handy
+    private KbvItaErpVersion version = KbvItaErpVersion.V1_1_0;
+    private StandardSize size = StandardSize.N1;
+    private CodeableConcept medicationCode;
+
+    public static MedicationBuilder builder() {
+      return new MedicationBuilder();
+    }
+
+    public MedicationBuilder withVersion(KbvItaErpVersion version) {
+      this.version = version;
+      return this;
+    }
+
+    public MedicationBuilder withStandardSize(StandardSize size) {
+      this.size = size;
+      return this;
+    }
+
+    public MedicationBuilder withMedication(String pzn, String name) {
+      this.medicationCode = PZN.from(pzn).asNamedCodeable(name);
+      return this;
+    }
+
+    public MedicationBuilder withMedication(PZN pzn, String name) {
+      this.medicationCode = pzn.asNamedCodeable(name);
+      return this;
+    }
+
+    @Override
+    public Medication build() {
+      var medication = this.createResource(Medication::new, KbvItaErpStructDef.BUNDLE, version);
+      medication.addExtension(size.asExtension());
+      medication.setCode(medicationCode);
+      return medication;
+    }
+}
+----
+
+And from the user perspective:
+
+[source,java]
+----
+var medication = MedicationBuilder.builder()
+    .setId("47076fb4-dc5c-4f75-85f6-b200033b3280")
+    .withVersion(KbvItaErpVersion.V1_0_2)
+    .withStandardSize(StandardSize.N3)
+    .withMedication("03879429", "Beloc-Zok® mite 47,5 mg, 30 Retardtabletten N1")
+    .build();
+----
+
+Much better, isn't it? And because we are using `this.createResource` in our `MedicationBuilder` we could even leave out setting the `id` because a random UUID will be generated automatically. In fact, you never need to specify it explicitly unless you really need a specific one.
+
+[source,java]
+----
+var medication = MedicationBuilder.builder()
+    .withStandardSize(StandardSize.N3)
+    .withMedication("03879429", "Beloc-Zok® mite 47,5 mg, 30 Retardtabletten N1")
+    .build();
+----
+
+NOTE: Instantiating with `MedicationBuilder.builder()` is just a convention for the {link-pattern-builder}. As we already provide the information (_being a builder_) in the class name. You can repurpose this method freely, or just use the default constructor.

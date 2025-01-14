@@ -16,8 +16,6 @@
 
 package de.gematik.bbriccs.fhir.validation;
 
-import static java.text.MessageFormat.format;
-
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.validation.SingleValidationMessage;
@@ -25,12 +23,17 @@ import ca.uhn.fhir.validation.ValidationResult;
 import de.gematik.bbriccs.fhir.EncodingType;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.assertj.core.util.Strings;
+import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.instance.model.api.IPrimitiveType;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Bundle.BundleType;
 
 @Slf4j
 public class MultiProfileValidator implements ValidatorFhir {
@@ -57,29 +60,81 @@ public class MultiProfileValidator implements ValidatorFhir {
 
   @Override
   public ValidationResult validate(String content) {
-    if (this.profileExtractor.isUnprofiledSearchSet(content)) {
-      return this.validateSearchsetBundle(content);
+    val nullSafeContent = Objects.requireNonNullElse(content, "");
+    if (this.profileExtractor.isUnprofiledSearchSet(nullSafeContent)) {
+      val parser =
+          EncodingType.guessFromContent(nullSafeContent)
+              .choose(this::getXmlParser, this::getJsonParser);
+      val bundleResource = parser.parseResource(Bundle.class, nullSafeContent);
+      return validateUnprofiledBundle(bundleResource);
     } else {
-      val p = chooseProfileValidator(() -> this.profileExtractor.extractProfile(content));
-      return p.validate(content);
+      val p = chooseProfileValidator(() -> this.profileExtractor.extractProfile(nullSafeContent));
+      return p.validate(nullSafeContent);
     }
   }
 
-  private ValidationResult validateSearchsetBundle(String bundle) {
+  @Override
+  public ValidationResult validate(IBaseResource resource) {
+    // instead of using the default implementation, we can use the resource directly for easier
+    // decision if this is an unprofiled bundle
+    val isUnprofiled =
+        resource.getMeta().getProfile().stream()
+            .map(IPrimitiveType::getValue)
+            .filter(p -> !Strings.isNullOrEmpty(p))
+            .toList()
+            .isEmpty();
+    val isCollectionBundle =
+        Optional.of(resource)
+            .filter(Bundle.class::isInstance)
+            .map(r -> (Bundle) r)
+            .filter(
+                bundle ->
+                    bundle.getType() == BundleType.COLLECTION
+                        || bundle.getType() == BundleType.SEARCHSET)
+            .isPresent();
+
+    if (isUnprofiled && isCollectionBundle) {
+      return validateUnprofiledBundle((Bundle) resource);
+    } else {
+      val parser =
+          this.getXmlParser()
+              .setOverrideResourceIdWithBundleEntryFullUrl(false)
+              .setOmitResourceId(false);
+      val content = parser.encodeResourceToString(resource);
+      return this.validate(content);
+    }
+  }
+
+  /**
+   * Bundles which do not have a profile are usually a searchset or collection and thus might
+   * contain entry resources coming from different profiles. Validating these directly with a single
+   * validator will result errors because of validating against wrong profiles.
+   *
+   * <p>Therefore the entry resources of such a bundle must be validated separately, each with it's
+   * own choice of a profileset to validate against
+   *
+   * @param bundle to be validated
+   * @return a {@link ValidationResult} for the entry resources of the bundle
+   */
+  private ValidationResult validateUnprofiledBundle(Bundle bundle) {
     val validationMessages = new LinkedList<SingleValidationMessage>();
 
-    val parser =
-        EncodingType.guessFromContent(bundle).choose(this::getXmlParser, this::getJsonParser);
-    parser.parseResource(Bundle.class, bundle).getEntry().stream()
+    bundle.getEntry().stream()
         .map(Bundle.BundleEntryComponent::getResource)
-        .map(parser::encodeToString)
         .forEach(
             r -> {
-              val vr = this.validate(r);
+              val validator = chooseProfileValidator(r);
+              val vr = validator.validate(r);
               validationMessages.addAll(vr.getMessages());
             });
 
     return new ValidationResult(this.getContext(), validationMessages);
+  }
+
+  private ProfiledValidator chooseProfileValidator(IBaseResource resource) {
+    val profile =
+        resource.getMeta().getProfile().stream().map(IPrimitiveType::getValue).findFirst();
+    return chooseProfileValidator(() -> profile);
   }
 
   private ProfiledValidator chooseProfileValidator(Supplier<Optional<String>> profileSupplier) {
@@ -90,16 +145,15 @@ public class MultiProfileValidator implements ValidatorFhir {
         () -> {
           val defaultParser = this.defaultProfileValidator;
           log.warn(
-              format(
-                  "Could not determine the Profile from given content! Use default Validator"
-                      + " ''{0}''",
-                  defaultParser.getId()));
+              "Could not determine the Profile from given content! Use default Validator '{}' as"
+                  + " fallback",
+              defaultParser.getId());
           chosenParser.set(defaultParser);
         });
 
     val chosenValidator = chosenParser.get();
-    val profileUrl = profileUrlOpt.orElse("no found profile");
-    log.trace(format("Choose Validator {0} for {1}", chosenValidator.getId(), profileUrl));
+    val profileUrl = profileUrlOpt.orElse("unknown profile");
+    log.trace("Choose Validator {} for {}", chosenValidator.getId(), profileUrl);
     return chosenValidator;
   }
 
@@ -108,15 +162,12 @@ public class MultiProfileValidator implements ValidatorFhir {
         this.profiledValidators.stream().filter(p -> p.doesSupport(profileUrl)).findFirst();
 
     if (validator.isPresent()) {
-      log.trace(
-          format(
-              "Use Validator Configuration ''{0}'' for {1}", validator.get().getId(), profileUrl));
+      log.trace("Use Validator Configuration ''{}'' for {}", validator.get().getId(), profileUrl);
     } else {
       log.warn(
-          format(
-              "No supporting Validator found for {0}, use Validator Configuration ''{1}'' as"
-                  + " default",
-              profileUrl, this.defaultProfileValidator.getId()));
+          "No supporting Validator found for {}, use Validator Configuration '{}' as default",
+          profileUrl,
+          this.defaultProfileValidator.getId());
     }
 
     return validator.orElse(this.defaultProfileValidator);
@@ -124,14 +175,16 @@ public class MultiProfileValidator implements ValidatorFhir {
 
   private IParser getXmlParser() {
     if (this.xmlParser == null) {
-      this.xmlParser = this.getContext().newXmlParser();
+      this.xmlParser =
+          this.getContext().newXmlParser().setOverrideResourceIdWithBundleEntryFullUrl(false);
     }
     return this.xmlParser;
   }
 
   public IParser getJsonParser() {
     if (this.jsonParser == null) {
-      this.jsonParser = this.getContext().newJsonParser();
+      this.jsonParser =
+          this.getContext().newJsonParser().setOverrideResourceIdWithBundleEntryFullUrl(false);
     }
     return this.jsonParser;
   }

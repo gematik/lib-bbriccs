@@ -16,17 +16,18 @@
 
 package de.gematik.bbriccs.fhir.de.valueset;
 
-import de.gematik.bbriccs.fhir.coding.ProfileValueSet;
+import de.gematik.bbriccs.fhir.coding.FromValueSet;
 import de.gematik.bbriccs.fhir.de.HL7CodeSystem;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
- * https://terminology.hl7.org/2.1.0/CodeSystem-v3-ActCode.html Note: not complete, extend on demand
+ * <a href="https://terminology.hl7.org/2.1.0/CodeSystem-v3-ActCode.html">ACT-Code</a> Note: not
+ * complete, extend on demand
  */
 @Getter
 @RequiredArgsConstructor
-public enum ActCode implements ProfileValueSet {
+public enum ActCode implements FromValueSet {
   OPTIN(
       "OPTIN",
       "opt-in",
@@ -49,10 +50,6 @@ public enum ActCode implements ProfileValueSet {
           + " grantee selected terms.");
 
   public static final HL7CodeSystem CODE_SYSTEM = HL7CodeSystem.ACT_CODE;
-  public static final String DESCRIPTION =
-      "A code specifying the particular kind of Act that the Act-instance represents within its"
-          + " class.";
-  public static final String PUBLISHER = "Health Level 7";
 
   private final String code;
   private final String display;
@@ -64,6 +61,6 @@ public enum ActCode implements ProfileValueSet {
   }
 
   public static ActCode fromCode(String code) {
-    return ProfileValueSet.fromCode(ActCode.class, code);
+    return FromValueSet.fromCode(ActCode.class, code);
   }
 }

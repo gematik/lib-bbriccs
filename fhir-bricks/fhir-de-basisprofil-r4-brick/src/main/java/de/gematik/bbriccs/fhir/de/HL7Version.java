@@ -30,9 +30,13 @@ import lombok.RequiredArgsConstructor;
 public enum HL7Version implements ProfileVersion {
   V4_0_1("4.0.1");
 
+  private static final String PROFILE_NAME = "hl7.fhir.r4.core";
   private final String version;
+  private final String name = PROFILE_NAME;
 
   public static HL7Version getDefaultVersion() {
-    return VersionUtil.getDefaultVersion(HL7Version.class, "hl7.fhir.r4.core");
+    // Note: HL7 core is available in HAPI, therefore does not need to be configured necessarily
+    return VersionUtil.getDefaultVersionOptionally(HL7Version.class, PROFILE_NAME)
+        .orElse(HL7Version.V4_0_1);
   }
 }
