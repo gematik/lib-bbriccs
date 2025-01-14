@@ -68,3 +68,6 @@ de.gematik.bbriccs.smartcards.cli.cmd
 de.gematik.bbriccs.smartcards.exceptions
 de.gematik.bbriccs.toggle
 de.gematik.bbriccs.utils
+de.gematik.bbriccs.vsdm
+de.gematik.bbriccs.vsdm.exceptions
+de.gematik.bbriccs.vsdm.types
