@@ -6,9 +6,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.23">
 <meta name="application-name" content="Bbriccs">
-<meta name="description" content="Bbriccs provides reusable and independent building bricks for flexible and maintainable TestSuites with Clean Code Principles.">
+<meta name="description" content="Bbriccs provides reusable and independent building blocks for flexible, clean and maintainable test suites.">
 <meta name="author" content="gematik GmbH">
-<meta name="copyright" content="2024 by gematik GmbH, Berlin">
+<meta name="copyright" content="2025 by gematik GmbH, Berlin">
 <title>Bbriccs</title>
 <style>
 /*
@@ -231,6 +231,8 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 .CodeRay .change .change{color:#66f}
 .CodeRay .head .head{color:#f4f}
 </style>
+<link rel="license" href="https://www.apache.org/licenses/LICENSE-2.0.txt" title="Apache License, Version 2.0">
+
 <!-- Generate a nice TOC -->
 <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
 <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
@@ -312,47 +314,92 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 <h1>B<sup>2</sup>ric<sup>2</sup>s</h1>
 <div class="details">
 <span id="author" class="author">gematik GmbH</span><br>
-<span id="revnumber">version 0.1.10,</span>
-<span id="revdate">2024-11-11</span>
+<span id="revnumber">version 0.2.0,</span>
+<span id="revdate">2025-01-14</span>
 </div>
 <div id="toc" class="toc2">
-<div id="toctitle">Inhaltsverzeichnis</div>
+<div id="toctitle">Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_einleitung"> 1. Einleitung</a>
+<li><a href="#_scope">Scope</a>
 <ul class="sectlevel2">
-<li><a href="#_acronym">1.1. Acronym</a></li>
-<li><a href="#_motivation">1.2. Motivation</a></li>
+<li><a href="#_acronym">Acronym</a></li>
+<li><a href="#_bricks">Bricks</a></li>
 </ul>
 </li>
-<li><a href="#_bricks_module"> 2. Bricks-Module</a>
+<li><a href="#_fhir_bricks">FHIR-Bricks</a>
 <ul class="sectlevel2">
-<li><a href="#_configuration_bricks">2.1. Configuration-Bricks</a>
+<li><a href="#fhir-coding-system-brick">FHIR Coding System Brick</a>
 <ul class="sectlevel3">
-<li><a href="#_feature_toggle">2.1.1. Feature-Toggle</a></li>
-<li><a href="#_fhir_bricks">2.1.2. FHIR-Bricks</a></li>
-<li><a href="#_perimeter_bricks">2.1.3. Perimeter-Bricks</a></li>
-<li><a href="#_restful_bricks">2.1.4. RESTful-Bricks</a></li>
-<li><a href="#_cli_bricks">2.1.5. CLI-Bricks</a></li>
-<li><a href="#_utility_bricks">2.1.6. Utility-Bricks</a></li>
+<li><a href="#_architecture">Architecture</a></li>
+<li><a href="#tutorial_fhir_package">Implementing a FHIR package</a></li>
+<li><a href="#tutorial_custom_resources">Implementing a custom FHIR Resource</a></li>
+<li><a href="#tutorial_match_resources">Matching FHIR Resources and Elements</a></li>
 </ul>
 </li>
+<li><a href="#fhir-builder-brick">FHIR Builder Brick</a>
+<ul class="sectlevel3">
+<li><a href="#_resourcebuilder">ResourceBuilder</a></li>
+<li><a href="#_elementbuilder">ElementBuilder</a></li>
+<li><a href="#_fakerbrick">FakerBrick</a></li>
+<li><a href="#tutorial_resource_builder">Implementing a FHIR Resource Builder</a></li>
+</ul>
+</li>
+<li><a href="#fhir-codec-brick">FHIR Codec Brick</a>
+<ul class="sectlevel3">
+<li><a href="#tutorial_fhir_codec_init">Instantiating a FHIR Codec</a></li>
+<li><a href="#tutorial_type_hints">Decoding with Type Hints</a></li>
+</ul>
+</li>
+<li><a href="#fhir-configurator-brick">FHIR Configurator Brick</a></li>
+<li><a href="#fhir-validation-brick">FHIR Validation Brick</a>
+<ul class="sectlevel3">
+<li><a href="#tutorial_validation_disabled">Disable FHIR Validation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_perimeter_bricks">Perimeter-Bricks</a>
+<ul class="sectlevel2">
+<li><a href="#_smartcards_brick">Smartcards Brick</a>
+<ul class="sectlevel3">
+<li><a href="#_smartcards_api">Smartcards API</a></li>
+<li><a href="#_smartcard_archiv">Smartcard-Archiv</a></li>
+</ul>
+</li>
+<li><a href="#_konnektor">Konnektor</a></li>
+</ul>
+</li>
+<li><a href="#_configuration_bricks">Configuration-Bricks</a>
+<ul class="sectlevel2">
+<li><a href="#conf-feature-toggle-brick">Feature-Toggle</a>
+<ul class="sectlevel3">
+<li><a href="#tutorial_feature_toggle_create">Using basic Feature-Toggles</a></li>
+<li><a href="#_implementing_custom_feature_toggles">Implementing custom Feature-Toggles</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_restful_bricks">RESTful-Bricks</a></li>
+<li><a href="#_utility_bricks">Utility-Bricks</a></li>
+<li><a href="#_cli_bricks">CLI-Bricks</a></li>
 <li><a href="#_release_notes">Appendix A: Release Notes</a></li>
-</ul>
-</li>
 </ul>
 </div>
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_einleitung"> 1. Einleitung</h2>
+<h2 id="_scope">Scope</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>B<sup>2</sup>ric<sup>2</sup>s (<code>briks</code>) offers reusable building bricks for flexible and maintainable test suites based on clean code principles.</p>
+<p>As a national competence center for digital health, gematik GmbH covers a broad spectrum of core areas of the German healthcare system. This includes the development of test suites, test tools and self-developed products for the digital health infrastructure.</p>
+</div>
+<div class="paragraph">
+<p>Many products are built for TI, both inside and outside gematik GmbH. Redundant development is hard to avoid. However, the B<sup>2</sup>ric<sup>2</sup>s (<code>briks</code>) is trying to bundle many of the common solutions into a reusable SDK, which promises to significantly reduce development time and costs.</p>
 </div>
 <div class="sect2">
-<h3 id="_acronym">1.1. Acronym</h3>
+<h3 id="_acronym">Acronym</h3>
 <div class="paragraph">
-<p>While B<sup>2</sup>ric<sup>2</sup>s is merely the word mark and is rather unwieldy in everyday use,
+<p>While B<sup>2</sup>ric<sup>2</sup>s is just the word mark and is rather cumbersome in everyday use,
 the following uses are recommended depending on the situation:</p>
 </div>
 <div class="ulist">
@@ -370,64 +417,1660 @@ the following uses are recommended depending on the situation:</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_motivation">1.2. Motivation</h3>
+<h3 id="_bricks">Bricks</h3>
 <div class="paragraph">
-<p>Within gematik GmbH, many of the products developed have a very similar technology stack.</p>
+<p>The core objective of B<sup>2</sup>ric<sup>2</sup>s is to create a modular toolkit for more efficient development of applications for the German healthcare system.</p>
 </div>
-<div class="imageblock">
+<div class="imageblock text-center">
 <div class="content">
-<img src="./images/common_tech_stack.png" alt="common tech stack">
-</div>
-</div>
-<div class="paragraph">
-<p>B<sup>2</sup>ric<sup>2</sup>s provides a modular construction kit for the implementation of test suites and test tools, which simplifies the reuse of test code and the creation of test suites.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="./images/composable_testsuites_01.png" alt="composable testsuites 01">
+<img src="./images/bricks_overview.png" alt="bricks overview">
 </div>
 </div>
 <div class="paragraph">
-<p>Thanks to the modular design, test suites can be assembled from existing modules and adapted to the respective requirements.</p>
+<p>Within B<sup>2</sup>ric<sup>2</sup>s, the core modules are referred to as a <code>brick</code>. Each <code>brick</code> is a small, reusable component that solves a common problem. A group of such components, which together can solve a larger problem, are simply called <code>bricks</code>. This documentation follows this pattern and presents each group of <code>bricks</code> individually.</p>
 </div>
-<div class="imageblock">
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_fhir_bricks">FHIR-Bricks</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>While <a href="https://fhir.org/">FHIR</a> (Fast Health Interoperability Resources) is a powerful standard for exchanging healthcare data, it is also complex and can be difficult to understand. Luckily, there are some tools and libraries available that can help you work with the FHIR standard.</p>
+</div>
+<div class="paragraph">
+<p>For the JVM (Java Virtual Machine), <a href="https://hapifhir.io/">HAPI</a> is the only open source implementation of the full standard. In fact, you could call HAPI the reference implementation. As such, it is the solution of choice for many developers in the healthcare industry worldwide.</p>
+</div>
+<div class="paragraph">
+<p>However, even with HAPI, it can be challenging to use FHIR in a maintainable, reusable, and scalable way. To help with this, we have created a set of FHIR-Bricks, which are intended to be small, reusable, and extendable. Each FHIR-Brick solves a common problem that may arise when working with the FHIR standard.</p>
+</div>
+<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9oDKy5Ewp0GlFihLd3522IueGgzb0Xk24uewi6rD-cgZZVQE41vUl-E0-rJcgQ277pmpixCpZgtRJGIkzghTasXCM9gi5mt7334vxZn288scb1vL1xB2951g5f5SDHNY8EQweM_2jBtnzXr9Tm5bx5dkRd1zuWIZ9_Du0MzvxTl68j3EOGyeLF_b0hi44uohciEy2XSaiVs14xdL_CipxTIHRaYqPtjQhqKikl5uDQXNfgMskQhLylL3fB82soChj6HDVqqsmeCVUmSvFSFJv0RIvxY9kdd-VpoxdfF_zLuSaEYGSqc4djulJ8DwRBx-A1G3NmD93CMJ79P6lRkOa_ESYYfwiH4bad1dhFTj14dKbbsv5FimomSdbTO9__hSy7ojJzGC5ZSpfLKF2t7wHHxmIn0TusUGV7V-q8Le-KbZEEtC4PDhq9_FRWHLXrc2hf_eJtko2gEfp9gdOhr22deubJGdJdJhj0jTZI_3F8uwuz-RZ6uzED-0XcFIW80" /></div></div>
+<div class="sect2">
+<h3 id="fhir-coding-system-brick">FHIR Coding System Brick</h3>
+<div class="paragraph">
+<p>The FHIR standard is a set of rules and specifications for the exchange of health care data. It is designed to be flexible and adaptable, so that it can be used in a wide range of settings and with different health care information systems. Unfortunately, this flexibility can also make it difficult to work with HAPI. Thise comes primarily from the "being a general-purpose-library" nature of HAPI. Conversely, however, this also means that a consistent and maintainable usage across different projects and teams can be very challenging.</p>
+</div>
+<div class="paragraph">
+<p>The <code>fhir-coding-system-brick</code> introduce an additional layer of abstraction on top of HAPI, which makes it easier to work with FHIR resources in a consistent and maintainable way. The <code>fhir-coding-system-brick</code> is a set of classes and interfaces that provide a more structured and type-safe way to work with elements of any FHIR resources. It is designed to be easy to use, and to provide a clear and consistent API that can be used across different projects and teams.</p>
+</div>
+<div class="paragraph">
+<p>Wondering why you should use the <code>fhir-coding-system-brick</code>? Here are some reasons for and against using it.</p>
+</div>
+<div class="ulist">
+<div class="title">Use it if:</div>
+<ul>
+<li>
+<p>You are a complete beginner with FHIR. You want to get started quickly.</p>
+</li>
+<li>
+<p>You are tired of constantly having to deal with system urls of the elements and structures.</p>
+</li>
+<li>
+<p>You would like to have a more structured and type-safe way of working with FHIR resources.</p>
+</li>
+<li>
+<p>You are working on a project that requires interoperability with other projects and teams.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Don&#8217;t use it when:</div>
+<ul>
+<li>
+<p>You are working on a small project that doesn&#8217;t require a lot of complex FHIR resources.</p>
+</li>
+</ul>
+</div>
+<div class="sect3">
+<h4 id="_architecture">Architecture</h4>
+<div class="paragraph">
+<p>The <code>fhir-coding-system-brick</code> provides basically a set interfaces that represent the different elements and structures of a FHIR resource. These interfaces are designed to be easy to use, and to provide a clear and consistent API that can be used across different projects and teams:</p>
+</div>
+<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9oDKqrBmq0GlU-l6Egv81wBb48rs8CYfjRpaaxIfViHPYTYaVvtD-a7kqj4RxCpxxtvUCd2ioJkZ1R2xvLj9Ka33RckNTaTac9fAuIxgDZAQYyRBFcW4OgGGU6HmOR0XngMsEFO4LXdKGXb6QaE1VXGl2iFdj70jm3mG_XEUWObaxADEERe5sb2_ip1BqQxzP5ChitKLTmHFc2jh6BbxD-afTlYVngyagkLnWsIxtNx1JvFyVZu1JcpaReBzs1HQUazb6YaPLKDwVlr_2JIFsQmxjc_BJ7jskaycq343M2giUQ0IJSIISS4T0O8mYfOt0Gh9yNJwktYBYZJQZHeMVOJJE1ckIoAnzjXP83JFi-7w7XNWi-7Y0dNWIDuSgaOdBYVwSUrX3Hslumx0aaaCgiZTcR1m8gMkXmuFimPCshh5Pxf7iKYV8ZXf_m1UqbEsG00" /></div></div>
+<div class="paragraph">
+<p>The base <a href="https://fhir.org/">FHIR</a> specification describes only a set of base resources, while <a href="https://www.hl7.org/fhir/profiling.html">profiling FHIR</a> allows to tailor the standard to different jurisdictions and domains and published as packages. Let&#8217;s take for example the <a href="https://simplifier.net/basisprofil-de-r4">Basisprofile DE (R4)</a> package and see how the <code>fhir-coding-system-brick</code> can be used to implement it.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="tutorial_fhir_package">Implementing a FHIR package</h4>
+<div class="paragraph">
+<p>In fact B<sup>2</sup>ric<sup>2</sup>s comes already with a basic implementation of the Basisprofil DE (R4) package, which is called <code>fhir-de-basisprofil-r4-brick</code>. We will build the <code>fhir-de-basisprofil-r4-brick</code> to demonstrate how to implement a FHIR package with the <code>fhir-coding-system-brick</code> from scratch.</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s dive in with a simple task!</p>
+</div>
+<div class="paragraph">
+<p><strong>Task:</strong> create the following Extension for <em><a href="https://www.bfarm.de/DE/Arzneimittel/Arzneimittelinformationen/Packungsgroessen/_node.html">Normgröße</a></em> using plain <a href="https://hapifhir.io/hapi-fhir/apidocs/hapi-fhir-structures-r4/">HAPI FHIR Structures R4</a>.</p>
+</div>
+<div class="listingblock">
 <div class="content">
-<img src="./images/composable_testsuites_02.png" alt="composable testsuites 02">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;extension</span> <span class="attribute-name">url</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://fhir.de/StructureDefinition/normgroesse</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+  <span class="tag">&lt;valueCode</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">N1</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+<span class="tag">&lt;/extension&gt;</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="type">var</span> code = <span class="keyword">new</span> CodeType(<span class="string"><span class="delimiter">&quot;</span><span class="content">N4</span><span class="delimiter">&quot;</span></span>);
+<span class="type">var</span> ext  = <span class="keyword">new</span> Extension(<span class="string"><span class="delimiter">&quot;</span><span class="content">https://fhir.de/StructureDefinition/Normgroesse</span><span class="delimiter">&quot;</span></span>, code);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Pretty simple, right?</p>
+</div>
+<div class="paragraph">
+<p>But what kind of code ist that anyway? Surely this thing "N4" must have some kind of meaning. And indeed it does. Basically, the URL <code><a href="http://fhir.de/StructureDefinition/normgroesse" class="bare">fhir.de/StructureDefinition/normgroesse</a></code> tells us exactly where we can find the definition of this object. But what if we would mix up the URL with the CodeSystem?</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Have you spotted the issues in this small code snippet? Don&#8217;t worry, the compiler wouldn&#8217;t either, but a validator would notice that immediately.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Image this scenario in a larger project with multiple developers. Constant interruption and confusion about the system urls of the elements and structures slow you down, make you less productive and can lead to errors all the time. Just trust me for a second, you don&#8217;t want to go there.</p>
+</div>
+<div class="paragraph">
+<p>What if we think about an architectural approach to enforce the natural structure of the FHIR standard and to avoid those kind of issues. So, instead of passing all relevant data (something like <code>N1</code>) and meta-data (something like <code><a href="http://fhir.de/CodeSystem/normgroesse" class="bare">fhir.de/CodeSystem/normgroesse</a></code>) around in a unstructured way, you could use the <code>fhir-coding-system-brick</code> to represent your information in an intuitive and supportive way.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Have you noticed again? Did we just mix up the definitions <code><a href="http://fhir.de/StructureDefinition/normgroesse" class="bare">fhir.de/StructureDefinition/normgroesse</a></code> and <code><a href="http://fhir.de/CodeSystem/normgroesse" class="bare">fhir.de/CodeSystem/normgroesse</a></code>?
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>So basically, in order to implement the Basisprofil DE (R4) with <code>fhir-coding-system-brick</code> we need to implement the interfaces one by one.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Don&#8217;t worry about gathering all the information from the Basisprofil DE (R4) package at once. You can always add more elements and structures later as you move on.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><strong>Step 1:</strong> implement a <code>DeBasisProfilNamingSystem</code> which will hold all the <a href="https://build.fhir.org/namingsystem.html">NamingSystems</a> of the Basisprofil DE (R4) package.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Getter</span>
+<span class="annotation">@RequiredArgsConstructor</span>
+<span class="directive">public</span> <span class="type">enum</span> DeBasisProfilNamingSystem <span class="directive">implements</span> WithNamingSystem {
+  IKNR(<span class="string"><span class="delimiter">&quot;</span><span class="content">http://fhir.de/sid/arge-ik/iknr</span><span class="delimiter">&quot;</span></span>),
+  KVID_GKV(<span class="string"><span class="delimiter">&quot;</span><span class="content">http://fhir.de/sid/gkv/kvid-10</span><span class="delimiter">&quot;</span></span>),
+  KVID_PKV(<span class="string"><span class="delimiter">&quot;</span><span class="content">http://fhir.de/sid/pkv/kvid-10</span><span class="delimiter">&quot;</span></span>),
+  TELEMATIK_ID(<span class="string"><span class="delimiter">&quot;</span><span class="content">https://gematik.de/fhir/sid/telematik-id</span><span class="delimiter">&quot;</span></span>);
+
+  <span class="directive">private</span> <span class="directive">final</span> <span class="predefined-type">String</span> canonicalUrl;
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Remember, no need to have all the NamingSystems at once. When you discover a new NamingSystem, just add it to the enumeration.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><strong>Step 2:</strong> implement a <code>DeBasisProfilCodeSystem</code> which will hold all the <a href="https://build.fhir.org/codesystem.html">CodeSystems</a> of the Basisprofil DE (R4) package.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Getter</span>
+<span class="annotation">@AllArgsConstructor</span>
+<span class="directive">public</span> <span class="type">enum</span> DeBasisProfilCodeSystem <span class="directive">implements</span> WithCodeSystem {
+  LAENDERKENNZEICHEN(<span class="string"><span class="delimiter">&quot;</span><span class="content">http://fhir.de/CodeSystem/deuev/anlage-8-laenderkennzeichen</span><span class="delimiter">&quot;</span></span>),
+  VERSICHERUNGSART_DE_BASIS(<span class="string"><span class="delimiter">&quot;</span><span class="content">http://fhir.de/CodeSystem/versicherungsart-de-basis</span><span class="delimiter">&quot;</span></span>),
+  IDENTIFIER_TYPE_DE_BASIS(<span class="string"><span class="delimiter">&quot;</span><span class="content">http://fhir.de/CodeSystem/identifier-type-de-basis</span><span class="delimiter">&quot;</span></span>),
+  NORMGROESSE(<span class="string"><span class="delimiter">&quot;</span><span class="content">http://fhir.de/CodeSystem/normgroesse</span><span class="delimiter">&quot;</span></span>),
+  PZN(<span class="string"><span class="delimiter">&quot;</span><span class="content">http://fhir.de/CodeSystem/ifa/pzn</span><span class="delimiter">&quot;</span></span>);
+
+  <span class="directive">private</span> <span class="directive">final</span> <span class="predefined-type">String</span> canonicalUrl;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Step 3:</strong> implement a <code>Normgroesse</code> which will hold all the defined values of the <a href="https://applications.kbv.de/S_KBV_NORMGROESSE_V1.00.xhtml">Normgröße-ValueSet</a>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Getter</span>
+<span class="annotation">@RequiredArgsConstructor</span>
+<span class="directive">public</span> <span class="type">enum</span> Normgroesse <span class="directive">implements</span> FromValueSet {
+  KA(<span class="string"><span class="delimiter">&quot;</span><span class="content">KA</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Kein Angabe</span><span class="delimiter">&quot;</span></span>),
+  KTP(<span class="string"><span class="delimiter">&quot;</span><span class="content">KTP</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Keine therapiegerechte Packungsgröße</span><span class="delimiter">&quot;</span></span>),
+  N1(<span class="string"><span class="delimiter">&quot;</span><span class="content">N1</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Normgröße 1</span><span class="delimiter">&quot;</span></span>),
+  N2(<span class="string"><span class="delimiter">&quot;</span><span class="content">N2</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Normgröße 2</span><span class="delimiter">&quot;</span></span>),
+  N3(<span class="string"><span class="delimiter">&quot;</span><span class="content">N3</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Normgröße 3</span><span class="delimiter">&quot;</span></span>),
+  NB(<span class="string"><span class="delimiter">&quot;</span><span class="content">NB</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Nicht betroffen</span><span class="delimiter">&quot;</span></span>),
+  SONSTIGES(<span class="string"><span class="delimiter">&quot;</span><span class="content">Sonstiges</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Sonstiges</span><span class="delimiter">&quot;</span></span>);
+
+  <span class="directive">private</span> <span class="directive">final</span> <span class="predefined-type">String</span> code;
+  <span class="directive">private</span> <span class="directive">final</span> <span class="predefined-type">String</span> display;
+
+  <span class="annotation">@Override</span>
+  <span class="directive">public</span> DeBasisProfilCodeSystem getCodeSystem() {
+    <span class="keyword">return</span> DeBasisProfilCodeSystem.NORMGROESSE;
+  }
+
+  <span class="directive">public</span> Extension asExtension() {
+    <span class="keyword">return</span> DeBasisProfilStructDef.NORMGROESSE.asCodeExtension(<span class="local-variable">this</span>.getCode());
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Step 4:</strong> You may have noticed that those FHIR packages can also evolve and change over time and thus must be versioned accordingly.
+To handle this, we implement the <code>DeBasisProfilVersion</code> which will hold all the versions of the Basisprofil DE (R4) package.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Getter</span>
+<span class="annotation">@RequiredArgsConstructor</span>
+<span class="directive">public</span> <span class="type">enum</span> DeBasisProfilVersion <span class="directive">implements</span> ProfileVersion {
+  V1_3_2(<span class="string"><span class="delimiter">&quot;</span><span class="content">1.3.2</span><span class="delimiter">&quot;</span></span>),
+  V1_4_0(<span class="string"><span class="delimiter">&quot;</span><span class="content">1.4.0</span><span class="delimiter">&quot;</span></span>);
+
+  <span class="directive">private</span> <span class="directive">final</span> <span class="predefined-type">String</span> version;
+  <span class="directive">private</span> <span class="directive">final</span> <span class="predefined-type">String</span> name = <span class="string"><span class="delimiter">&quot;</span><span class="content">de.basisprofil.r4</span><span class="delimiter">&quot;</span></span>;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Step 5:</strong> Once we have the versions we want to deal with, we can finish the profile definition by implementing the <code>DeBasisProfilStructureDefinition</code> which will hold all the <a href="https://build.fhir.org/structuredefinition.html">StructureDefinitions</a> of the Basisprofil DE (R4) package.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Getter</span>
+<span class="annotation">@RequiredArgsConstructor</span>
+<span class="directive">public</span> <span class="type">enum</span> DeBasisProfilStructDef <span class="directive">implements</span> WithStructureDefinition&lt;DeBasisProfilVersion&gt; {
+  GKV_VERSICHERTENART(<span class="string"><span class="delimiter">&quot;</span><span class="content">http://fhir.de/StructureDefinition/gkv/versichertenart</span><span class="delimiter">&quot;</span></span>),
+  NORMGROESSE(<span class="string"><span class="delimiter">&quot;</span><span class="content">http://fhir.de/StructureDefinition/normgroesse</span><span class="delimiter">&quot;</span></span>),
+  HUMAN_NAMENSZUSATZ(<span class="string"><span class="delimiter">&quot;</span><span class="content">http://fhir.de/StructureDefinition/humanname-namenszusatz</span><span class="delimiter">&quot;</span></span>);
+
+  <span class="directive">private</span> <span class="directive">final</span> <span class="predefined-type">String</span> canonicalUrl;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You&#8217;ve done it!</p>
+</div>
+<div class="paragraph">
+<p>OK, so this approach requires a bit more code to set up. But hang on a sec.</p>
+</div>
+<div class="paragraph">
+<p>We have now a solid way of working with the elements and structures of the Basisprofil DE (R4) package that is structured and type-safe.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Advantages are:</div>
+<ol class="arabic">
+<li>
+<p>Structured and logical interface for dealing with the FHIR coding system</p>
+</li>
+<li>
+<p>Many common use cases for creating FHIR elements are already implemented for you</p>
+</li>
+<li>
+<p>No more fiddling with those awkward system URLs.</p>
+</li>
+<li>
+<p>Implementations of <code>fhir-coding-system-brick</code> are standardized and can be reused across different projects and teams.</p>
+</li>
+<li>
+<p>Fits naturally into the <code>fhir-bricks</code> ecosystem.</p>
+</li>
+</ol>
+</div>
+<div class="olist arabic">
+<div class="title">Disadvantages are:</div>
+<ol class="arabic">
+<li>
+<p>tediously setting up the initial structure</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>To demonstrate the advantages of the <code>fhir-coding-system-brick</code>, let&#8217;s return to the original task.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;extension</span> <span class="attribute-name">url</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://fhir.de/StructureDefinition/normgroesse</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+  <span class="tag">&lt;valueCode</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">N1</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+<span class="tag">&lt;/extension&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It&#8217;s really just the value code that we already have in place as an enumeration called <code>Normgroesse</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">Extension ext = Normgroesse.N1.asExtension();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>That&#8217;s all it takes, and it reads like a charm. And it gets even better, <code>fhir-coding-system-brick</code> gives your code some superpowers. Remember how we have implemented <code>Normgroesse.N1.asExtension()</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> Extension asExtension() {
+  <span class="keyword">return</span> DeBasisProfilStructDef
+          .NORMGROESSE       <span class="comment">// StructureDefinition/normgroesse</span>
+          .asCodeExtension(  <span class="comment">// create as an extension for a value code</span>
+              <span class="local-variable">this</span>.getCode() <span class="comment">// this == Normgroesse.N1</span>
+          );
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In addition to extensions, it is also very common that codes or value sets have to be represented as a <code>CodeableConcept</code>. The <code>fhir-coding-system-brick</code> already has default implementations for many of the common use cases. For example, it is directly possible to represent the <code>Normgroesse</code> as a <code>CodeableConcept</code> without having to explicitly implement any additional method for this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">CodeableConcept cc = Normgroesse.NB.asCodeableConcept();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Which will encode in XML to:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;code&gt;</span>
+  <span class="tag">&lt;coding&gt;</span>
+     <span class="tag">&lt;system</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://fhir.de/CodeSystem/normgroesse</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+     <span class="tag">&lt;code</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">KTP</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+  <span class="tag">&lt;/coding&gt;</span>
+<span class="tag">&lt;/code&gt;</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="tutorial_custom_resources">Implementing a custom FHIR Resource</h4>
+<div class="paragraph">
+<p>When working with native HAPI resources, you often have to deal with extracting certain values. Due to the 'general purpose' nature of HAPI, you need to extract your objects from the FHIR data model.</p>
+</div>
+<div class="paragraph">
+<p>The call looks something like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">Bundle bundle = getBundleFromSomewhere();
+Medication medication = bundle.getEntry().stream()
+    .filter(entry -&gt; entry.getResource().getResourceType().equals(ResourceType.Medication))
+    .filter(KbvStructDef.KBV_MEDICATION_PZN::matches)
+    .map(entry -&gt; (Medication)entry.getResource())
+    .findFirst()
+    .orElseThrow();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is not only extremely time-consuming, but also difficult to maintain. This is where <a href="https://hapifhir.io/hapi-fhir/docs/model/custom_structures.html">custom resources</a> come into play. Let&#8217;s take a look at how a 'KbvErpBundle' can make our lives a lot easier:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> <span class="type">class</span> <span class="class">KbvErpBundle</span> <span class="directive">extends</span> Bundle {
+    <span class="directive">public</span> Medication getErpMedication() {
+      <span class="keyword">return</span> <span class="local-variable">this</span>.getEntry().stream()
+          .filter(entry -&gt; entry.getResource().getResourceType().equals(ResourceType.Medication))
+          .filter(KbvStructDef.KBV_MEDICATION_PZN::matches)
+          .map(entry -&gt; (Medication)entry.getResource())
+          .findFirst()
+          .orElseThrow();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>So now whenever we have a <code>KbvErpBundle</code> object, and we need to extract the medication object, we can just do that:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">KbvErpBundle bundle = getKbvErpBundleFromSomewhere();
+Medication medication = bundle.getErpMedication();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And we can implement this concept with all the other FHIR resources you need to work with. And we can implement this concept with all the other FHIR resources you need to work with. Let&#8217;s have a look at what a <code>KbvErpMedication</code> might look like.</p>
+</div>
+<div id="code_kbv_erp_medication_01" class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">private</span> <span class="directive">static</span> <span class="type">class</span> <span class="class">KbvErpMedication</span> <span class="directive">extends</span> Medication {
+  <span class="directive">public</span> StandardSize getStandardSize() {
+    <span class="keyword">return</span> <span class="local-variable">this</span>.getExtension().stream()
+        .filter(DeBasisProfilStructDef.NORMGROESSE::matches)
+        .map(ext -&gt; StandardSize.fromCode(ext.getValue().castToCoding(ext.getValue()).getCode()))
+        .findFirst()
+        .orElse(StandardSize.KA);
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> <span class="type">class</span> <span class="class">KbvErpBundle</span> <span class="directive">extends</span> Bundle {
+    <span class="directive">public</span> KbvErpMedication getErpMedication() {
+      <span class="keyword">return</span> <span class="local-variable">this</span>.getEntry().stream()
+          .filter(entry -&gt; entry.getResource().getResourceType().equals(ResourceType.Medication))
+          .filter(KbvStructDef.KBV_MEDICATION_PZN::matches)
+          .map(entry -&gt; (KbvErpMedication)entry.getResource())
+          .findFirst()
+          .orElseThrow();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And now we can really treat our own FHIR objects as plain old Java objects:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">KbvErpBundle bundle = getKbvErpBundleFromSomewhere();
+KbvErpMedication medication = bundle.getErpMedication();
+StandardSize size = medication.getStandardSize();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Unfortunately, that is only half the story. The <a href="#tutorial_type_hints">next tutorial</a> will show you how to use a <code>TypeHint</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="tutorial_match_resources">Matching FHIR Resources and Elements</h4>
+<div class="paragraph">
+<p>Have you noticed how we have implemented the <code>getStandardSize()</code> method in the <a href="#code_kbv_erp_medication_01">KbvErpMedication</a> from <a href="#tutorial_custom_resources">this tutorial</a>? We have used a <code>filter</code> method to extract the <code>StandardSize</code> from the <code>Extension</code>-List of the <code>Medication</code>.</p>
+</div>
+<div class="paragraph">
+<p>This is a very common pattern when dealing with FHIR. Imagine a FHIR resource containing a list of extensions. If you want to select a particular one of them, the system url is your buddy here.</p>
+</div>
+<div class="paragraph">
+<p>If you have completed <a href="#tutorial_fhir_package">this tutorial</a> you already have everything you need to match the systems of your package in.
+And once you start using <a href="#tutorial_custom_resources">custom resources</a> you will quickly find that you need to filter your items out of HAPI lists quite often.</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s have a closer look at the example from the <a href="#tutorial_custom_resources">custom resources tutorial</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><table class="CodeRay"><tr>
+  <td class="line-numbers"><pre>1
+2
+3
+4
+5
+6
+7
+</pre></td>
+  <td class="code"><pre>Bundle bundle = getBundleFromSomewhere();
+Medication medication = bundle.getEntry().stream()
+    .filter(entry -&gt; entry.getResource().getResourceType().equals(ResourceType.Medication))
+    .filter(KbvStructDef.KBV_MEDICATION_PZN::matches)
+    .map(entry -&gt; (Medication)entry.getResource())
+    .findFirst()
+    .orElseThrow();</pre></td>
+</tr></table></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To understand what&#8217;s going on here, let&#8217;s look at an example bundle in plain xml:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><table class="CodeRay"><tr>
+  <td class="line-numbers"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+</pre></td>
+  <td class="code"><pre><span class="tag">&lt;Bundle</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://hl7.org/fhir</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+  ...
+  <span class="tag">&lt;entry&gt;</span>
+    <span class="tag">&lt;resource&gt;</span>
+      <span class="tag">&lt;Composition&gt;</span>
+        <span class="tag">&lt;meta&gt;</span>
+          <span class="tag">&lt;profile</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Composition|1.1.0</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+        <span class="tag">&lt;/meta&gt;</span>
+        ...
+      <span class="tag">&lt;/Composition&gt;</span>
+    <span class="tag">&lt;/resource&gt;</span>
+  <span class="tag">&lt;/entry&gt;</span>
+  <span class="tag">&lt;entry&gt;</span>
+    <span class="tag">&lt;resource&gt;</span>
+      <span class="tag">&lt;MedicationRequest&gt;</span>
+        <span class="tag">&lt;meta&gt;</span>
+          <span class="tag">&lt;profile</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Prescription|1.1.0</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+        <span class="tag">&lt;/meta&gt;</span>
+        ...
+      <span class="tag">&lt;/MedicationRequest&gt;</span>
+    <span class="tag">&lt;/resource&gt;</span>
+  <span class="tag">&lt;/entry&gt;</span>
+  <span class="tag">&lt;entry&gt;</span>
+    <span class="tag">&lt;resource&gt;</span>
+      <span class="tag">&lt;Medication&gt;</span>
+        <span class="tag">&lt;meta&gt;</span>
+          <span class="tag">&lt;profile</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_PZN|1.1.0</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+        <span class="tag">&lt;/meta&gt;</span>
+        ...
+      <span class="tag">&lt;/Medication&gt;</span>
+    <span class="tag">&lt;/resource&gt;</span>
+  <span class="tag">&lt;/entry&gt;</span>
+  <span class="tag">&lt;entry&gt;</span>
+    <span class="tag">&lt;resource&gt;</span>
+      <span class="tag">&lt;Patient&gt;</span>
+        <span class="tag">&lt;meta&gt;</span>
+          <span class="tag">&lt;profile</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Patient|1.1.0</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+        <span class="tag">&lt;/meta&gt;</span>
+        ...
+      <span class="tag">&lt;/Patient&gt;</span>
+    <span class="tag">&lt;/resource&gt;</span>
+  <span class="tag">&lt;/entry&gt;</span>
+  <span class="tag">&lt;entry&gt;</span>
+    <span class="tag">&lt;resource&gt;</span>
+      <span class="tag">&lt;Practitioner&gt;</span>
+        <span class="tag">&lt;meta&gt;</span>
+          <span class="tag">&lt;profile</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Practitioner|1.1.0</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+        <span class="tag">&lt;/meta&gt;</span>
+        ...
+      <span class="tag">&lt;/Practitioner&gt;</span>
+    <span class="tag">&lt;/resource&gt;</span>
+  <span class="tag">&lt;/entry&gt;</span>
+  <span class="tag">&lt;entry&gt;</span>
+    <span class="tag">&lt;resource&gt;</span>
+      <span class="tag">&lt;Organization&gt;</span>
+        <span class="tag">&lt;meta&gt;</span>
+          <span class="tag">&lt;profile</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Organization|1.1.0</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+        <span class="tag">&lt;/meta&gt;</span>
+        ...
+      <span class="tag">&lt;/Organization&gt;</span>
+    <span class="tag">&lt;/resource&gt;</span>
+  <span class="tag">&lt;/entry&gt;</span>
+  <span class="tag">&lt;entry&gt;</span>
+    <span class="tag">&lt;resource&gt;</span>
+      <span class="tag">&lt;Coverage&gt;</span>
+        <span class="tag">&lt;meta&gt;</span>
+          <span class="tag">&lt;profile</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Coverage|1.1.0</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+        <span class="tag">&lt;/meta&gt;</span>
+        ...
+      <span class="tag">&lt;/Coverage&gt;</span>
+    <span class="tag">&lt;/resource&gt;</span>
+  <span class="tag">&lt;/entry&gt;</span>
+<span class="tag">&lt;/Bundle&gt;</span></pre></td>
+</tr></table></code></pre>
+</div>
+</div>
+<div class="olist arabic">
+<div class="title">In general, we have at least two ways of finding a particular resource from the entries in a bundle:</div>
+<ol class="arabic">
+<li>
+<p>we use the <code>ResourceType</code> to filter the entries</p>
+</li>
+<li>
+<p>we use the <code>meta.profile</code> (system url) to filter the entries</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>In the original code, we used both approaches simultaneously, which is perfectly fine, but shouldn&#8217;t be necessary in most cases. The <code>meta.profile</code> is the more specific way to filter the entries, as it is unique for each resource type. The <code>ResourceType</code> is more general and can be used to filter out all resources of a certain type. So when we apply the following filter, we know implicitly from the structure definition that this resource must be of the desired <code>ResourceType</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><table class="CodeRay"><tr>
+  <td class="line-numbers"><pre>1
+2
+3
+4
+5
+6
+</pre></td>
+  <td class="code"><pre>Bundle bundle = getBundleFromSomewhere();
+Medication medication = bundle.getEntry().stream()
+    .filter(KbvStructDef.KBV_MEDICATION_PZN::matches)
+    .map(entry -&gt; (Medication)entry.getResource())
+    .findFirst()
+    .orElseThrow();</pre></td>
+</tr></table></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>What the filter does is basically compare the given system url of a specific <code>WithSystem</code> object with the <code>meta.profile</code> of a resource.</p>
+</div>
+<div class="paragraph">
+<p>Having such a powerful mechanism makes <a href="#tutorial_custom_resources">custom resources tutorial</a> easier to implement, easier to test and more robust.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="fhir-builder-brick">FHIR Builder Brick</h3>
+<div class="paragraph">
+<p>The FHIR standard is a set of rules and specifications for the exchange of health care data. It is designed to be flexible and adaptable, so that it can be used in a wide range of settings and with different health care information systems. Unfortunately, this flexibility can also make it difficult to work with HAPI. Thise comes primarily from the "being a general-purpose-library" nature of HAPI. Conversely, however, this also means that a consistent and maintainable usage across different projects and teams can be very challenging.</p>
+</div>
+<div class="paragraph">
+<p>To solve this issue, the <code>fhir-builder-brick</code> provides a simple concept based on the <a href="https://en.wikipedia.org/wiki/Builder_pattern">Builder Pattern</a>. This allows you to build FHIR resources in a structured and type-safe way.</p>
+</div>
+<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9o5KbzhmZ0GV--dEEQBCWUo5w4KaNPMX85WFq5CRrreUYcN5BQ9ttrNgqFTO7aATxz_kSlI1yMXQspaQqEjOjL0nQvhD_IER88YZV1yrMoLhbM5HVYq2BbKCF8OWEJYfOS5zhZW6CWHHbTCxPfMIXJW486SL9HwAoepPnqd2Nu4P59siO1HbkNvQZRW79V8lp4lYkir8r9qZ29jbVUGgnevPQDhI18OPzDHdi_diza42aELnU18Y8FzqriFZWVEgV881vb6CFe85OOrSgDeF87uIlOFtAlJofelBE-XaahjVM2b0mpnKkKnxOoLvoIxAQH354RlEjQuAMCe0ajGAHukr2FiUyPu4iEkbxpNt9tPjxhzcAYySRmdhYmsiep_UH6ZbdyWuuE7p95c30YcQGU-pC7HmsLXvzaE3jiM-TJUTa6MVn7yCRcBBgzRIbt-uZVOhE5K" /></div></div>
+<div class="paragraph">
+<p>The <code>fhir-builder-brick</code> provides basically a set of base classes which need to be extended and implemented for your own needs. The architecture will guide you through the process of building FHIR resources in a structured and flexible way.</p>
+</div>
+<div class="paragraph">
+<p>Wondering why you should use the <code>fhir-builder-brick</code>? Here are some reasons for and against using it.</p>
+</div>
+<div class="ulist">
+<div class="title">Use it if:</div>
+<ul>
+<li>
+<p>You are new to FHIR. You want to get started quickly. The <code>fhir-bricks</code> will guide you on your journey.</p>
+</li>
+<li>
+<p>You are tired of constantly having to deal with the system urls of the elements and structures.</p>
+</li>
+<li>
+<p>You want to have a more structured and type-safe way to working with FHIR</p>
+</li>
+<li>
+<p>You are working on a project that requires interoperability with other projects and teams.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Use it optionally if:</div>
+<ul>
+<li>
+<p>You have a small project that doesn&#8217;t require a lot of complex FHIR resources.</p>
+</li>
+<li>
+<p>You don&#8217;t have an implementation of <code>fhir-coding-system-brick</code>.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Don&#8217;t use it if:</div>
+<ul>
+<li>
+<p>You already have your own implementation of the <a href="https://en.wikipedia.org/wiki/Builder_pattern">Builder Pattern</a> that is too complex to refactor.</p>
+</li>
+</ul>
+</div>
+<div class="sect3">
+<h4 id="_resourcebuilder">ResourceBuilder</h4>
+<div class="paragraph">
+<p>The <code>ResourceBuilder</code> is designed to simplify and standardise the process of creating <a href="https://hl7.org/fhir/r4/resourcelist.html">FHIR Resources</a>. This base class has the following signature:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> <span class="directive">abstract</span> <span class="type">class</span> <span class="class">ResourceBuilder</span>&lt;R <span class="directive">extends</span> Resource, B <span class="directive">extends</span> ResourceBuilder&lt;R, B&gt;&gt; {
+  <span class="comment">// we'll cover this later</span>
+  <span class="directive">public</span> <span class="directive">abstract</span> R build();
+}</code></pre>
+</div>
+</div>
+<div class="olist arabic">
+<div class="title">The <code>ResourceBuilder</code> does so by:</div>
+<ol class="arabic">
+<li>
+<p>providing some common methods which are used in every builder</p>
+</li>
+<li>
+<p>enforcing the <code>build()</code>-method, making the builders uniform and intuitively to use</p>
+</li>
+</ol>
+</div>
+<div class="olist arabic">
+<div class="title">But why those generics?</div>
+<ol class="arabic">
+<li>
+<p><code>R</code> defines the builder to be specific for this special kind of <code>Resource</code></p>
+</li>
+<li>
+<p>the builder MUST generate native HL7/HAPI resources or <a href="https://hapifhir.io/hapi-fhir/docs/model/custom_structures.html">HAPI FHIR Custom Structures</a></p>
+</li>
+<li>
+<p><code>B</code> on the other hand tells the <code>ResourceBuilder</code> to return the specific builder instance on common functions</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_elementbuilder">ElementBuilder</h4>
+<div class="paragraph">
+<p>The <code>ResourceBuilder</code> is designed to simplify and standardize the building of <a href="https://hl7.org/fhir/r4/datatypes.html">FHIR Types</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> <span class="directive">abstract</span> <span class="type">class</span> <span class="class">ElementBuilder</span>&lt;E <span class="directive">extends</span> <span class="predefined-type">Element</span>, B <span class="directive">extends</span> ElementBuilder&lt;E, B&gt;&gt; {
+  <span class="comment">// we'll cover this later</span>
+  <span class="directive">public</span> <span class="directive">abstract</span> R build();
+}</code></pre>
+</div>
+</div>
+<div class="olist arabic">
+<div class="title">The <code>ElementBuilder</code> does so by:</div>
+<ol class="arabic">
+<li>
+<p>providing some common methods which are used in every builder</p>
+</li>
+<li>
+<p>enforcing the <code>build()</code>-method, making the builders uniform and intuitively to use</p>
+</li>
+</ol>
+</div>
+<div class="olist arabic">
+<div class="title">But why those generics?</div>
+<ol class="arabic">
+<li>
+<p><code>E</code> defines the builder to be specific for this special kind of <code>Element</code></p>
+</li>
+<li>
+<p>the builder MUST generate native HL7/HAPI resources or <a href="https://hapifhir.io/hapi-fhir/docs/model/custom_structures.html">HAPI FHIR Custom Structures</a></p>
+</li>
+<li>
+<p><code>B</code> on the other hand tells the <code>ElementBuilder</code> to return the specific builder instance on common functions</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_fakerbrick">FakerBrick</h4>
+<div class="paragraph">
+<p>When dealing with test data, it is often necessary to generate random or fake data. The <code>FakerBrick</code> provides a set of classes and interfaces that allow you to generate fake data for FHIR resources in a structured and extensible way.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="tutorial_resource_builder">Implementing a FHIR Resource Builder</h4>
+<div class="paragraph">
+<p>Now that we have laid the foundations in the <a href="#tutorial_fhir_package">last tutorial</a>, we can start building entire FHIR resources.</p>
+</div>
+<div class="paragraph">
+<p><strong>Task:</strong> create the following <code>Medication</code> resource using plain <a href="https://hapifhir.io/hapi-fhir/apidocs/hapi-fhir-structures-r4/">HAPI FHIR Structures R4</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;Medication</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://hl7.org/fhir</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+  <span class="tag">&lt;id</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">47076fb4-dc5c-4f75-85f6-b200033b3280</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+  <span class="tag">&lt;meta&gt;</span>
+    <span class="tag">&lt;profile</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_PZN|1.1.0</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+  <span class="tag">&lt;/meta&gt;</span>
+  <span class="tag">&lt;extension</span> <span class="attribute-name">url</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://fhir.de/StructureDefinition/normgroesse</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+    <span class="tag">&lt;valueCode</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">N1</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+  <span class="tag">&lt;/extension&gt;</span>
+  <span class="tag">&lt;code&gt;</span>
+    <span class="tag">&lt;coding&gt;</span>
+      <span class="tag">&lt;system</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://fhir.de/CodeSystem/ifa/pzn</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+      <span class="tag">&lt;code</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">03879429</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+    <span class="tag">&lt;/coding&gt;</span>
+    <span class="tag">&lt;text</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">Beloc-Zok® mite 47,5 mg, 30 Retardtabletten N1</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+  <span class="tag">&lt;/code&gt;</span>
+<span class="tag">&lt;/Medication&gt;</span></code></pre>
+</div>
+</div>
+<div id="source_medication_01" class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="type">var</span> medication = <span class="keyword">new</span> Medication();
+medication.getMeta().addProfile(<span class="string"><span class="delimiter">&quot;</span><span class="content">https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_PZN|1.1.0</span><span class="delimiter">&quot;</span></span>);
+medication.addExtension(<span class="string"><span class="delimiter">&quot;</span><span class="content">http://fhir.de/StructureDefinition/normgroesse</span><span class="delimiter">&quot;</span></span>, <span class="keyword">new</span> CodeType(<span class="string"><span class="delimiter">&quot;</span><span class="content">N1</span><span class="delimiter">&quot;</span></span>));
+medication.setCode(<span class="keyword">new</span> CodeableConcept().addCoding(<span class="keyword">new</span> Coding(<span class="string"><span class="delimiter">&quot;</span><span class="content">http://fhir.de/CodeSystem/ifa/pzn</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">03879429</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Beloc-Zok® mite 47,5 mg, 30 Retardtabletten N1</span><span class="delimiter">&quot;</span></span>)));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It&#8217;s getting harder, isn&#8217;t it? Now we must track down a whole bunch of different systems coming from different packages in different versions.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Warning Have you spotted the issues in this small code snippet? Don&#8217;t worry, the compiler wouldn&#8217;t either, but a validator would notice that immediately.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For such a scenario the <code>fhir-builder-brick</code> comes in handy. It provides a set of classes and interfaces that allow you to build FHIR resources in a structured and type-safe way. It is designed to be easy to use, and to provide a clear and consistent API that can be used across different projects and teams.</p>
+</div>
+<div class="paragraph">
+<p>For this task, we have to introduce a new package called KBV E-Rezept. We assume the coding being already implemented according to this <a href="#tutorial_fhir_package">tutorial</a>. Having those in place you could already simplify the above code to:</p>
+</div>
+<div id="source_medication_02" class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="type">var</span> medication = <span class="keyword">new</span> Medication();
+medication.getMeta().addProfile(KbvItaErpStructDef.MEDICATION_PZN.getVersionedUrl(KbvItaErpVersion.V1_1_0));
+medication.addExtension(StandardSize.N1.asExtension());
+medication.setCode(PZN.from(<span class="string"><span class="delimiter">&quot;</span><span class="content">03879429</span><span class="delimiter">&quot;</span></span>).asNamedCodeable(<span class="string"><span class="delimiter">&quot;</span><span class="content">Beloc-Zok® mite 47,5 mg, 30 Retardtabletten N1</span><span class="delimiter">&quot;</span></span>));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>But it gets even better!</p>
+</div>
+<div class="paragraph">
+<p>The <code>fhir-builder-brick</code> provides a simple interface to apply the <a href="https://en.wikipedia.org/wiki/Builder_pattern">Builder Pattern</a>, which significantly improves the readability of your code.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 1:</strong> implement the basic structure for a <code>MedicationBuilder</code> class:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="type">class</span> <span class="class">MedicationBuilder</span> <span class="directive">extends</span> ResourceBuilder&lt;Medication, MedicationBuilder&gt; {
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> Medication build() {
+      <span class="keyword">return</span> <span class="predefined-constant">null</span>;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Recap to <a href="#_resourcebuilder">ResourceBuilder</a> to learn more about those generics.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><strong>Step 2:</strong> implement the <code>build</code>-Method with the code from the <a href="#source_medication_01">first</a> or <a href="#source_medication_02">second</a> example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="type">class</span> <span class="class">MedicationBuilder</span> <span class="directive">extends</span> ResourceBuilder&lt;Medication, MedicationBuilder&gt; {
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> Medication build() {
+      <span class="type">var</span> medication = <span class="local-variable">this</span>.createResource(Medication::<span class="keyword">new</span>, KbvItaErpStructDef.BUNDLE, KbvItaErpVersion.V1_1_0);
+      medication.addExtension(StandardSize.N1.asExtension());
+      medication.setCode(PZN.from(<span class="string"><span class="delimiter">&quot;</span><span class="content">03879429</span><span class="delimiter">&quot;</span></span>).asNamedCodeable(<span class="string"><span class="delimiter">&quot;</span><span class="content">Beloc-Zok® mite 47,5 mg, 30 Retardtabletten N1</span><span class="delimiter">&quot;</span></span>));
+      <span class="keyword">return</span> medication;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Here the <code>ResourceBuilder</code> supports us with the <code>createResource</code>-method, which is a simple factory method to create a new resource instance and set the profile automatically. From the user perspective we already a nice and clean API to build a <code>Medication</code> resource:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">Medication medication = <span class="keyword">new</span> MedicationBuilder().build();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>But what about those hardcoded values like the PZN or the name of the medication? Do they stay fixed or can we do better and provide some sort of setters? That&#8217;s a perfect use case for the <a href="https://en.wikipedia.org/wiki/Builder_pattern">Builder Pattern</a>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 3:</strong> implement the <code>MedicationBuilder</code> with the Builder Pattern:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="type">class</span> <span class="class">MedicationBuilder</span> <span class="directive">extends</span> ResourceBuilder&lt;Medication, MedicationBuilder&gt; {
+
+    <span class="comment">// default values are optional but sometimes pretty handy</span>
+    <span class="directive">private</span> KbvItaErpVersion version = KbvItaErpVersion.V1_1_0;
+    <span class="directive">private</span> StandardSize size = StandardSize.N1;
+    <span class="directive">private</span> CodeableConcept medicationCode;
+
+    <span class="directive">public</span> <span class="directive">static</span> MedicationBuilder builder() {
+      <span class="keyword">return</span> <span class="keyword">new</span> MedicationBuilder();
+    }
+
+    <span class="directive">public</span> MedicationBuilder withVersion(KbvItaErpVersion version) {
+      <span class="local-variable">this</span>.version = version;
+      <span class="keyword">return</span> <span class="local-variable">this</span>;
+    }
+
+    <span class="directive">public</span> MedicationBuilder withStandardSize(StandardSize size) {
+      <span class="local-variable">this</span>.size = size;
+      <span class="keyword">return</span> <span class="local-variable">this</span>;
+    }
+
+    <span class="directive">public</span> MedicationBuilder withMedication(<span class="predefined-type">String</span> pzn, <span class="predefined-type">String</span> name) {
+      <span class="local-variable">this</span>.medicationCode = PZN.from(pzn).asNamedCodeable(name);
+      <span class="keyword">return</span> <span class="local-variable">this</span>;
+    }
+
+    <span class="directive">public</span> MedicationBuilder withMedication(PZN pzn, <span class="predefined-type">String</span> name) {
+      <span class="local-variable">this</span>.medicationCode = pzn.asNamedCodeable(name);
+      <span class="keyword">return</span> <span class="local-variable">this</span>;
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> Medication build() {
+      <span class="type">var</span> medication = <span class="local-variable">this</span>.createResource(Medication::<span class="keyword">new</span>, KbvItaErpStructDef.BUNDLE, version);
+      medication.addExtension(size.asExtension());
+      medication.setCode(medicationCode);
+      <span class="keyword">return</span> medication;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And from the user perspective:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="type">var</span> medication = MedicationBuilder.builder()
+    .setId(<span class="string"><span class="delimiter">&quot;</span><span class="content">47076fb4-dc5c-4f75-85f6-b200033b3280</span><span class="delimiter">&quot;</span></span>)
+    .withVersion(KbvItaErpVersion.V1_0_2)
+    .withStandardSize(StandardSize.N3)
+    .withMedication(<span class="string"><span class="delimiter">&quot;</span><span class="content">03879429</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Beloc-Zok® mite 47,5 mg, 30 Retardtabletten N1</span><span class="delimiter">&quot;</span></span>)
+    .build();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Much better, isn&#8217;t it? And because we are using <code>this.createResource</code> in our <code>MedicationBuilder</code> we could even leave out setting the <code>id</code> because a random UUID will be generated automatically. In fact, you never need to specify it explicitly unless you really need a specific one.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="type">var</span> medication = MedicationBuilder.builder()
+    .withStandardSize(StandardSize.N3)
+    .withMedication(<span class="string"><span class="delimiter">&quot;</span><span class="content">03879429</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Beloc-Zok® mite 47,5 mg, 30 Retardtabletten N1</span><span class="delimiter">&quot;</span></span>)
+    .build();</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Instantiating with <code>MedicationBuilder.builder()</code> is just a convention for the <a href="https://en.wikipedia.org/wiki/Builder_pattern">Builder Pattern</a>. As we already provide the information (<em>being a builder</em>) in the class name. You can repurpose this method freely, or just use the default constructor.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="fhir-codec-brick">FHIR Codec Brick</h3>
+<div class="paragraph">
+<p>So far we have only covered the creation and handling of FHIR objects. We have deliberately left out the aspect of serialisation. This is where the <code>fhir-codec-brick</code> comes into action.</p>
+</div>
+<div class="paragraph">
+<p>A <a href="https://en.wikipedia.org/wiki/Codec">codec</a> is a component that encodes and decodes a data stream or signal. And a <code>FhirCodec</code> in the <code>fhir-bricks</code> ecosystem is a component that can encode and decode FHIR objects.</p>
+</div>
+<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9nraazhmp0CnU_-53fkRBtiQ4Of50gzZRRixZbQwjMHWwoCbB7lFkKVMzhE9_7Upv8UzYgBOscgQF8fKEtOLL1oQkej7P63EF88Jt_CslcJAt4lvuYmKGLDHW7I8gk7U-muIGoK28q99CZlQi2hYw7edCqnC7mPqFCvQ7Zdat8a5lR2WSfxE-4XqGvp4sNEC-RKi4SBkx7wxqh8lNnZmbjA4HtDg9jz9_3R61zTpj0bMAS2_HZ3Isj7KOUqm-2sYY-ECxA5xL3qyaTETAdtnWCWUMrwUuTXwn7KoHs8ROrUi3YSQuNNtMhFX-KZN4Szp2zU0zEaBkDlkWM7yYYBvSNRMUqJiTHtC6Q5LEZt-G6ESyTM" /></div></div>
+<div class="paragraph">
+<p>In addition to a normal codec, the <code>FhirCodec</code> is able to validate the correctness of the FHIR objects by delegating a <code>ValidatorFhir</code>. This topic will be covered in the <a href="#fhir-validation-brick">FHIR Validation Brick</a>.</p>
+</div>
+<div class="sect3">
+<h4 id="tutorial_fhir_codec_init">Instantiating a FHIR Codec</h4>
+<div class="paragraph">
+<p>Where can we get one of these <code>FhirCodec</code>? Can we customise it and do we need a <code>fhir-coding-system-brick</code>?</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s find out!</p>
+</div>
+<div class="paragraph">
+<p>The simplest way to instantiate a simple <code>FhirCodec</code> is as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">FhirCodec fhirCodec = FhirCodec.forR4().andDummyValidator();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will instantiate a <code>FhirCodec</code> for the R4 version of FHIR and add a dummy validator to it. The dummy validator will always return <code>true</code> for any resource that is passed to it.</p>
+</div>
+<div class="paragraph">
+<p>It might be more appropriate to use a method name such as <code>andNoValidator()</code> or <code>withoutValidation()</code>. However, <code>andDummyValidator()</code> describes exactly its purpose: it will instantiate the <code>FhirCodec</code> with a <code>DummyValidator</code>.</p>
+</div>
+<div class="paragraph">
+<p>So basically what happens under the hood:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">FhirCodec fhirCodec = FhirCodec.forR4().andCustomValidator(<span class="keyword">new</span> DummyValidator(FhirContext.forR4()));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Slightly more code but the same result. Now we can look at the <code>andCustomValidator</code> method in more detail. As the name suggests, we can pass anything to this method that is a <code>ValidatorFhir</code>. Validation of FHIR resources is explained in more detail in the <a href="#fhir-validation-brick">FHIR Validation Brick</a>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="tutorial_type_hints">Decoding with Type Hints</h4>
+<div class="paragraph">
+<p>The following challenge arises when a decoder attempts to convert a raw string into a structured object. The <code>FhirCodec</code> also faces the same challenge. Try to put yourself in the decoder&#8217;s shoes to mentally understand the process.</p>
+</div>
+<div class="paragraph">
+<p>Given the following XML snippet, how would you decide on which Java type to use for this object?</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><table class="CodeRay"><tr>
+  <td class="line-numbers"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+</pre></td>
+  <td class="code"><pre><span class="tag">&lt;Medication</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://hl7.org/fhir</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+  <span class="tag">&lt;id</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">47076fb4-dc5c-4f75-85f6-b200033b3280</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+  <span class="tag">&lt;meta&gt;</span>
+    <span class="tag">&lt;profile</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_PZN|1.1.0</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+  <span class="tag">&lt;/meta&gt;</span>
+  <span class="tag">&lt;extension</span> <span class="attribute-name">url</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://fhir.de/StructureDefinition/normgroesse</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+    <span class="tag">&lt;valueCode</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">N1</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+  <span class="tag">&lt;/extension&gt;</span>
+  <span class="tag">&lt;code&gt;</span>
+    <span class="tag">&lt;coding&gt;</span>
+      <span class="tag">&lt;system</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://fhir.de/CodeSystem/ifa/pzn</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+      <span class="tag">&lt;code</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">03879429</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+    <span class="tag">&lt;/coding&gt;</span>
+    <span class="tag">&lt;text</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">Beloc-Zok® mite 47,5 mg, 30 Retardtabletten N1</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+  <span class="tag">&lt;/code&gt;</span>
+<span class="tag">&lt;/Medication&gt;</span></pre></td>
+</tr></table></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Roughly speaking, only the first line is enough. From this, the HAPI can directly deduce that it is decoding this object as <code>org.hl7.fhir.r4.model.Medication</code>. But the HAPI can do more. Did you notice that this <code>&lt;Medication&gt;</code> object contains a structure definition? The HAPI can analyse this profile and even offers the possibility to register <a href="https://hapifhir.io/hapi-fhir/docs/model/custom_structures.html">custom structures</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><table class="CodeRay"><tr>
+  <td class="line-numbers"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td>
+  <td class="code"><pre>FhirCodec codec = getFhirCodecFromSomewhere();
+<span class="predefined-type">String</span> content = readXmlExample();
+
+<span class="comment">// options to decode the Medication</span>
+Resource medication1 = fhirCodec.decode(content);
+Resource medication2 = fhirCodec.decode(<span class="predefined-constant">null</span>, content);
+Medication medication3 = fhirCodec.decode(Medication.class, content);
+KbvErpMedication medication4 = fhirCodec.decode(KbvErpMedication.class, content);
+
+<span class="comment">// where these will fail with a ClassCastException</span>
+Patient patient = fhirCodec.decode(Patient.class, content);</pre></td>
+</tr></table></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>These are the options we have, with the method to <code>medication1</code> being just a shortcut for <code>medication2</code>. Things get more exciting when you try to decode the others. Do you remember the first decoder challenge? The decoder overcomes this problem with your help. You literally tell the codec in the first argument what type of object to decode.</p>
+</div>
+<div class="paragraph">
+<p>Consequently, an <code>ClassCastException</code> will be thrown when you instruct the codec to decode the <code>&lt;Medication&gt;</code> as <code>org.hl7.fhir.r4.model.Patient</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="comment">// where these will fail with a ClassCastException</span>
+Patient patient = fhirCodec.decode(Patient.class, content);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>But what happens to composite FHIR resources? For example, when we decode a <code>&lt;Bundle&gt;</code>, we can specify the concrete type <code>KbvErpBundle</code>, but what happens to the resources it contains?  Basically the same as with any other object. The decoder has to decode every single resource. This is where the TypeHints come in.</p>
+</div>
+<div class="paragraph">
+<p>Imagine having the following (simplified) <code>&lt;Bundle&gt;</code> which want to decode and work with:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><table class="CodeRay"><tr>
+  <td class="line-numbers"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+</pre></td>
+  <td class="code"><pre><span class="tag">&lt;Bundle</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://hl7.org/fhir</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+  <span class="tag">&lt;id</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">1f339db0-9e55-4946-9dfa-f1b30953be9b</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+  <span class="tag">&lt;meta&gt;</span>
+    <span class="tag">&lt;lastUpdated</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">2022-05-20T08:30:00Z</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+    <span class="tag">&lt;profile</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Bundle|1.1.0</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+  <span class="tag">&lt;/meta&gt;</span>
+  <span class="tag">&lt;identifier&gt;</span>
+    <span class="tag">&lt;system</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+    <span class="tag">&lt;value</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">160.100.000.000.037.28</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+  <span class="tag">&lt;/identifier&gt;</span>
+  <span class="tag">&lt;type</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">document</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+  <span class="tag">&lt;timestamp</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">2022-05-20T08:30:00Z</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+  <span class="tag">&lt;entry&gt;</span>
+    <span class="tag">&lt;fullUrl</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://pvs.praxis.local/fhir/Medication/5ff1bd22-ce14-484e-be56-d2ba4adeac31</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+    <span class="tag">&lt;resource&gt;</span>
+      <span class="tag">&lt;Medication</span> <span class="attribute-name">xmlns</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://hl7.org/fhir</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+        <span class="tag">&lt;id</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">5ff1bd22-ce14-484e-be56-d2ba4adeac31</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+        <span class="tag">&lt;meta&gt;</span>
+          <span class="tag">&lt;profile</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_PZN|1.1.0</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+        <span class="tag">&lt;/meta&gt;</span>
+        <span class="tag">&lt;extension</span> <span class="attribute-name">url</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://fhir.de/StructureDefinition/normgroesse</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+          <span class="tag">&lt;valueCode</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">N1</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+        <span class="tag">&lt;/extension&gt;</span>
+        <span class="tag">&lt;code&gt;</span>
+          <span class="tag">&lt;coding&gt;</span>
+            <span class="tag">&lt;system</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">http://fhir.de/CodeSystem/ifa/pzn</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+            <span class="tag">&lt;code</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">03879429</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+          <span class="tag">&lt;/coding&gt;</span>
+          <span class="tag">&lt;text</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">Beloc-Zok® mite 47,5 mg, 30 Retardtabletten N1</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+        <span class="tag">&lt;/code&gt;</span>
+      <span class="tag">&lt;/Medication&gt;</span>
+    <span class="tag">&lt;/resource&gt;</span>
+  <span class="tag">&lt;/entry&gt;</span>
+<span class="tag">&lt;/Bundle&gt;</span></pre></td>
+</tr></table></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To decode this bundle, we can use the <code>KbvErpBundle</code> we created in <a href="#tutorial_custom_resources">Implementing a custom FHIR Resource</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="predefined-type">String</span> content = readXmlExample();
+
+KbvErpBundle prescription = fhirCodec.decode(KbvErpBundle.class, content);
+KbvErpMedication medication = prescription.getErpMedication(); <span class="comment">// throws ClassCastException</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>However, when we call the custom method <code>getErpMEdication()</code> we run into a <code>ClassCastException</code>.  Let me explain why this is the case. When calling the <code>decode</code> method, we can only tell the decoder to decode the outer FHIR resource as a <code>KbvErpBundle</code>. But you cannot tell the decoder directly how to decode the <code>&lt;Medication&gt;</code>. This is where the <code>TypeHint</code> comes in.</p>
+</div>
+<div class="paragraph">
+<p>A <code>TypeHint</code> allows you to tell the decoder in advance how to decode certain resources. This is basically the main purpose of the structure definition in the profile values.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;profile</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Bundle|1.1.0</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+
+<span class="tag">&lt;profile</span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_PZN|1.1.0</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>With a <code>TypeHint</code> we can tell the decoder that whenever it encounters this profile, it will decode it as <code>KbvErpMedication</code>. A <code>TypeHint</code> is given to the codec in advance. So we need to slightly modify the <a href="#tutorial_fhir_codec_init">instantiation</a> of our <code>FhirCodec</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="predefined-type">String</span> content = readXmlExample();
+
+FhirCodec fhirCodec = FhirCodec.forR4()
+          .withTypeHint(KbvStructDef.KBV_MEDICATION_PZN, KbvErpMedication.class)
+          .andDummyValidator();
+
+KbvErpBundle prescription = fhirCodec.decode(KbvErpBundle.class, content);
+KbvErpMedication medication = prescription.getErpMedication(); <span class="comment">// no more exceptions</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="fhir-configurator-brick">FHIR Configurator Brick</h3>
+<div class="paragraph">
+<p>The FHIR packages that we want to map with the HAPI are subject to the same development cycle as classic software. Bug fixes and refactorings are carried out, but new features are also added or old ones are dropped. This can lead to the point where you need to handle different versions of the same package. Remember when we sneakily introduced the <code>KbvItaErpVersion</code> in the <a href="#tutorial_resource_builder">ResourceBuilder Tutorial</a>?</p>
+</div>
+<div class="paragraph">
+<p>As this undertaking can be very tricky, the <code>fhir-configurator-brick</code> provides a structure to handle different versions of FHIR packages. It is designed to be easy to use and understand.</p>
+</div>
+<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9nrKi5gmp0ClUSh1Bkqsmfbbq8feP0I6Emm2EpkkMegwbZ1LWQbzD-dj2jTCiyd-xqdloVPwoWcIDUuB1x8joQO1kh0NVlgznX8ZBS8Bx_8rjY3gR6IeqCe5S4iee3NJLGEA-nrmW4yUymowqoCy1vuHmvZmNv7TNSLh5OmAPuVodAncC-dK96l7GhxF8TJ1hgUuAJnXEmPQfHxBR6Vz8QmX4g2barrbx98tBB1dUdSwB9_wy-Z1YeKKR-u4Vx9IDjRYClHi-00Q7Wx1AZs7B1Gk3f6mIOkuOsYhAwI_AB143YKv0J3Y1q7kWVf1p8m-i8GjRa1PhbfjULFXnzNDkLkZJuTMUCAPoYPZnkIsxp6j2PCllRZB52zbrcUc6MM6EyVVQzRez_gP_q6sYhlNW00" /></div></div>
+<div class="paragraph">
+<p>With this structure the <code>ProfilesConfigurator</code> can read your configuration which looks in yaml like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yaml">- <span class="string"><span class="content">id: &quot;1.4.0&quot;</span></span>
+  <span class="key">note</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">erp-workflow valid from 1.4.25</span><span class="delimiter">&quot;</span></span>
+  <span class="key">profiles</span>:
+    - <span class="string"><span class="content">name: &quot;kbv.ita.erp&quot;</span></span>
+      <span class="key">version</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">1.1.2</span><span class="delimiter">&quot;</span></span>
+      <span class="key">compatibleVersions</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">1.1.0</span><span class="delimiter">&quot;</span></span>
+      <span class="key">canonicalClaims</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">https://fhir.kbv.de/</span><span class="delimiter">&quot;</span></span>
+    - <span class="string"><span class="content">name: &quot;kbv.basis&quot;</span></span>
+      <span class="key">version</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">1.3.0</span><span class="delimiter">&quot;</span></span>
+      <span class="key">canonicalClaims</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">https://fhir.kbv.de/</span><span class="delimiter">&quot;</span></span>
+      <span class="key">omitProfiles</span>: <span class="string"><span class="content">[ &quot;KBV_VS_Base_Diagnosis_SNOMED_CT.json&quot;, &quot;KBV_VS_Base_Device_SNOMED_CT.json&quot; ]</span></span>
+    - <span class="string"><span class="content">name: &quot;de.gematik.erezept-workflow.r4&quot;</span></span>
+      <span class="key">version</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">1.4.0</span><span class="delimiter">&quot;</span></span>
+      <span class="key">compatibleVersions</span>: <span class="string"><span class="content">[ &quot;1.4&quot; ]</span></span>
+      <span class="key">canonicalClaims</span>: <span class="string"><span class="content">[ &quot;https://gematik.de/fhir&quot;, &quot;http://gematik.de/fhir&quot; ]</span></span>
+  <span class="key">errorFilter</span>:
+    - <span class="string"><span class="delimiter">&quot;</span><span class="content">^2 profiles found for contained resource.*</span><span class="delimiter">&quot;</span></span>
+  <span class="key">ignoreCodeSystems</span>:
+    - <span class="string"><span class="delimiter">&quot;</span><span class="content">http://fhir.de/CodeSystem/ask</span><span class="delimiter">&quot;</span></span>
+    - <span class="string"><span class="delimiter">&quot;</span><span class="content">http://fhir.de/CodeSystem/ifa/pzn</span><span class="delimiter">&quot;</span></span>
+    - <span class="string"><span class="delimiter">&quot;</span><span class="content">http://fhir.de/CodeSystem/bfarm/atc</span><span class="delimiter">&quot;</span></span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="fhir-validation-brick">FHIR Validation Brick</h3>
+<div class="paragraph">
+<p>In addition to <a href="#fhir-configurator-brick">configuring</a>, <a href="#fhir-builder-brick">building</a>  and <a href="#fhir-codec-brick">serializing</a>, the FHIR standard also allows us to validate the correctness of resources.</p>
+</div>
+<div class="paragraph">
+<p>Fortunately, the B<sup>2</sup>ric<sup>2</sup>s provides a simple and easy to use API for validating FHIR resources. The <code>fhir-validation-brick</code> provides a structured way to validate any FHIR resource. It is designed to be easy to use and to provide a clear and consistent API that can be used across projects and teams.</p>
+</div>
+<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9oLKx5Emp0KtFqLbbW0qGwC5QewG2M60ce42s8myIMnwZn7pqwX8FuTXwI5g2rgCpdlxjxpkvCdFYWETMc5y0j3bM9LofnTNTrI0JP1KGfv-GUiLBfGEPAmif3JM87m29BYmKSC2HfUS2p94OGm5C1P1EIJiaOtoBGmB3-5ZD-ohU4qTP57OIIJm8Roiz6QRXpDuMiR-do6TpMd6CbvTzedCVwdl6F2gtCMYdgidNtNn2yXH6gLz_A1NMOiz6OdQShAeem3V7_HJZ2Brp57g-uS7QsP8mE3FWuMNDTbkJg0BRhefSOmHnbzNWmPsRABicts6y7CwTgYyQndsSrxO9KsWrePslyEtP7IVTLqK_QghOoxk1wfwfn9e3Wj4eH_8cwIsnF1-S0Y2uFnTgRx50FjtkXNiDb8R5i_U3vXw0kjV07zqkcsF18Ja8wFy1kEfqfc" /></div></div>
+<div class="paragraph">
+<p>In addition, the <code>fhir-validation-brick</code> allows you to implement your own validation strategies or use those already in place.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Strategies already implemented are:</div>
+<ol class="arabic">
+<li>
+<p><code>DummyValidator</code> is a dummy validator that always returns <code>true</code> (which can be seen as an option to disable the validation).</p>
+</li>
+<li>
+<p><code>NonProfiledValidator</code> is a validator that only knows the basic FHIR rules, but no specific profiles.</p>
+</li>
+<li>
+<p><code>ProfiledValidator</code> is a validator that additionally knows a specific set of profiles in a single configuration.</p>
+</li>
+<li>
+<p><code>MultiProfiledValidator</code> is a composition of multiple <code>ProfiledValidators</code>. This allows you to validate resources against multiple versions of a set of profiles.</p>
+</li>
+<li>
+<p>Finally, the <code>ReferenzValidator</code> which is a wrapper around the <a href="https://fachportal.gematik.de/hersteller-anbieter/primaersysteme/referenzvalidator">Gematik Referenzvalidator</a></p>
+</li>
+</ol>
+</div>
+<div class="sect3">
+<h4 id="tutorial_validation_disabled">Disable FHIR Validation</h4>
+<div class="paragraph">
+<p>There is no way to explicitly disable FHIR validation. However, by using the <code>DummyValidator</code> we can achieve pretty much the same result. Since <code>DummyValidator</code> always returns <code>true</code>, you can always take the happy path in your code. This helps you to avoid a lot of conditionals and gives you other advantages inherited from the <a href="https://en.wikipedia.org/wiki/Null_object_pattern">Null Object Pattern</a>.</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s have a look at the following unit test to explore the capabilities of the <code>DummayValidator</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><table class="CodeRay"><tr>
+  <td class="line-numbers"><pre>1
+2
+3
+4
+5
+6
+</pre></td>
+  <td class="code"><pre><span class="annotation">@Test</span>
+<span class="type">void</span> shouldValidateSimpleString() {
+    <span class="predefined-type">String</span> content = <span class="string"><span class="delimiter">&quot;</span><span class="content">Hello Bbriccs!</span><span class="delimiter">&quot;</span></span>;
+    ValidatorFhir validator = <span class="keyword">new</span> DummyValidator(FhirContext.forR4());
+    assertTrue(validator.isValid(content));
+}</pre></td>
+</tr></table></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>So here we instantiate a <code>DummyValidator</code> in line 4 and use it to validate a simple string in line 5. It&#8217;s as simple as that. But we can also take a closer look at the <code>ValidationResult</code> that the <code>DummayValidator</code> produces</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><table class="CodeRay"><tr>
+  <td class="line-numbers"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre></td>
+  <td class="code"><pre><span class="annotation">@Test</span>
+<span class="type">void</span> shouldValidateSimpleString() {
+    <span class="predefined-type">String</span> content = <span class="string"><span class="delimiter">&quot;</span><span class="content">Hello Bbriccs!</span><span class="delimiter">&quot;</span></span>;
+    ValidatorFhir validator = <span class="keyword">new</span> DummyValidator(FhirContext.forR4());
+
+    ValidationResult vr = validator.validate(content);
+    assertTrue(vr.isSuccessful());
+    assertEquals(<span class="integer">1</span>, vr.getMessages().size());
+    assertEquals(ResultSeverityEnum.INFORMATION, vr.getMessages().get(<span class="integer">0</span>).getSeverity());
+
+    vr.getMessages().forEach(m -&gt; <span class="predefined-type">System</span>.out.println(m.getSeverity() + <span class="string"><span class="delimiter">&quot;</span><span class="content">: </span><span class="delimiter">&quot;</span></span> + m.getMessage()));
+}</pre></td>
+</tr></table></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And we will see, that the <code>DummyValidator</code> produces the following <code>INFORMATION</code> message. This is a good way to ensure that the validation is working as expected.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="shell"># output of the shouldValidateSimpleString unit test
+INFORMATION: Information provided by DummyValidator</code></pre>
+</div>
 </div>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_bricks_module"> 2. Bricks-Module</h2>
+<h2 id="_perimeter_bricks">Perimeter-Bricks</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Nach dem Baukaustenprinzip ist B<sup>2</sup>ric<sup>2</sup>s in mehrere separate Teile gruppiert&#8230;&#8203;</p>
+<p>A <em>perimeter</em> is a boundary that surrounds a particular area. In the context of TI, we also have a perimeter. It is the boundary that surrounds the TI and separates it from the outside world. The perimeter is the first line of defence against unauthorised access to the TI. This perimeter is usually crossed by a combination of a smart card, a card terminal and a Konnektor.</p>
 </div>
+<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9nDa4zhmp0CnU_-528xvp1eBpsCG5F3ReFsLdBG72qnjkKYAuTHzjsN_GcrJk-Xf_S3TKLHT4dHbE3vXe89N4wtpCHwriz88EGKUOfaZE4y4ZHlotlq3lgSq7C3J_skFreBTmFhN4jQ6ntAEFnv9KcUCVxRa9afQ9R1V6s55ugKK7s0L_uGB2fBq4NMQclxvzD-gxRevj4J5_qzhb3GYfzcRLzgtaDMwufVwIfGGU00ZVl9E2sDCHtnkBxg6vCcQ0O0" /></div></div>
 <div class="sect2">
-<h3 id="_configuration_bricks">2.1. Configuration-Bricks</h3>
+<h3 id="_smartcards_brick">Smartcards Brick</h3>
 <div class="paragraph">
-<p>TODO: Beschreibung what are Configuration-Bricks</p>
+<p>When testing the <a href="https://www.gematik.de/telematikinfrastruktur">Gematik Telematikinfrastruktur</a>, we often have to deal with smart cards. These are used in the TI for authorization, authentication and the creation of signatures, etc. With the goal of (test-)automation, we often pursue the approach of using “virtual images” of the smart cards. However, dealing with certificates and especially with the raw cryptography files can be really challenging. To simplify this process, we have created the Smartcards Brick.</p>
+</div>
+<div class="paragraph">
+<p>This brick provides a simple and easy-to-use API for loading and dealing with smart cards.</p>
+</div>
+<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9nraj5gmZ0KXk_p58VsRX3Or3agKjHA7s3UR4WlOdAieMbIJjEvCVRkg-YarYvt-V_l7Bv05hKNv9lIiBhGjX8aIf2kh9n5wpV-oo0GIYziRf0DCV3De3qh8OkSN6DLueoZ-Hm_FP8L9exX7OrnnpFcI27T8w-eXjTKJwEs3gDnz29sx8UnRLssmbAGuj9elYCjYmp2wJHDboF6h5C8mURAh4vz0E5wiaxIz2AxlVPBaWVzWLalxjyJ9A_tMWh_XxuzFqRT52wg_ojoWtlFuyxMirm6CmYQ6kk0tNl10oUT7sxdiWuuJDpu3iV0bJlQqrJ_AOmjqAhsI_m2Thws9000" /></div></div>
+<div class="sect3">
+<h4 id="_smartcards_api">Smartcards API</h4>
+<div class="paragraph">
+<p>For example, when dealing with raw .p12 files or <code>X509Certificates</code>, it is very easy to mix up the certificates.</p>
+</div>
+<div class="paragraph">
+<p>Imagine you have an API with the following signatures:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> <span class="type">byte</span><span class="type">[]</span> signData(<span class="predefined-type">X509Certificate</span> certificate, <span class="type">byte</span><span class="type">[]</span> data);
+<span class="directive">public</span> <span class="type">boolean</span> verifySignature(<span class="predefined-type">X509Certificate</span> certificate, <span class="type">byte</span><span class="type">[]</span> data, <span class="type">byte</span><span class="type">[]</span> signature);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When you encounter this API, you may ask yourself: <em>"Which certificate do I need to use for which operation?"</em> Wouldn&#8217;t it be nice to have a more structured way of dealing with certificates?
+To solve this kind of problem, the <code>smartcard-api-brick</code> introduces classes for each type of smartcard.</p>
+</div>
+<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9nzKy5kmZ0ClUShSjmEN7P44m8wD13RE9ITfv2Q4f4uLUAoTOX_NrfAQUcsN9m-FziljZls91pbHZE_LvW99mnFdSsp1Ux0AH8eWJym9ZQUd934fHRUyzY4A2bSme-CXwEaz3ZaCJc5QOL8SAIsIWe2F-GlojDZ4nHTVQEAd09DSbgfnD_Tr-JmCMAdNk45UbAK4rmLm1S19YrDnqlEDMWmWjH-aPHvM-g2SuOor2ZnO5fWIznTv8gCR5nu0bCc-EK1fSQpj5cwxslXZPZb0LrBnQcEccz44zL_7BkqMqx_Om7cvbfpNMHGrvqzBoixdqug6xz67zFcjboNwjdDI5UV2Ev9aAXpI6kCnJTXeDF2e45taLGTeC_pkSDRpBfKeFeEex7uf-CT5LqsfsASToMi0m1rehILGYigEc1cmshho2RTqjBcIAvepO5TXpNGiAN1gDlAjj-fTDSXDCqAVHo7yOG_wGTJzXs2" /></div></div>
+<div class="paragraph">
+<p>So, instead of dealing with the raw files, you can now treat your "virtual smartcards" as Java objects in your code. The first example could be refactored to something more intuitive like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> <span class="type">byte</span><span class="type">[]</span> signData(Hba hba, <span class="type">byte</span><span class="type">[]</span> data);
+<span class="directive">public</span> <span class="type">boolean</span> verifySignature(Smartcard smartcard, <span class="type">byte</span><span class="type">[]</span> data, <span class="type">byte</span><span class="type">[]</span> signature);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>From a user perspective, you can provide a clean API for smartcard-related operations without worrying about which certificate to use.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">Egk egk; <span class="comment">// we will get there soon</span>
+Hba hba; <span class="comment">// we will get there soon</span>
+<span class="type">byte</span><span class="type">[]</span> data; <span class="comment">// coming from somewhere else</span>
+
+<span class="type">var</span> signature = signData(hba, data);
+<span class="type">var</span> isValid = verifySignature(egk, data, signature);
+
+<span class="comment">// the compiler will prevent you from doing this</span>
+<span class="type">var</span> s = signData(ega, data);
+<span class="comment">// but not from this</span>
+<span class="type">var</span> v = verifySignature(hba, data, signature);</code></pre>
+</div>
+</div>
 </div>
 <div class="sect3">
-<h4 id="_feature_toggle">2.1.1. Feature-Toggle</h4>
+<h4 id="_smartcard_archiv">Smartcard-Archiv</h4>
 <div class="paragraph">
-<p>Ein Feature-Toggle-Modul ermöglicht es Entwicklern, bestimmte Funktionen oder Codeabschnitte in einer Anwendung ein- oder auszuschalten. Dies ist besonders nützlich für die schrittweise Einführung neuer Features. Besonders bei Testsuiten haben wir oftmals den Fall, dass bestimmte Features unterschiedliche Stages durchlaufen und in unterschiedlichen Umgebungen aktiviert oder deaktiviert werden müssen.</p>
+<p>Imagine having an archive of all the virtual smartcards you might need, with a simple API to retrieve them easily. That&#8217;s exactly what the <code>SmartcardArchive</code> does.</p>
+</div>
+<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9nrKK5Emp0GlFiL-u56WYD2KQ5GzS0jBrWxcyGqzaRUfH92_1t7JI5IX4_Mp7XcThqNnQGVOJH22X43oOIE6femeNA2o96CSIEAG1Eorc5gvIcvmLy8lWpa8y7P0xg17k3DYpusmJtNXHaihecJnIjE_NcDl_RdsdnlOexeSeNF9SLnx7mllncBw53W5-NYiAsugpU6PfF0k-JxGRFs7IzOUQwEVinpHrO2oweSWBlj0agnW15x4i3OWfkdaWBhG7apjmU6CZlR_MzwQrU6JOIQFLS6Cpn7Z8ojG3NTtKENIru9Yq8jS2ofowR-8lVvbl_u1sYffva0" /></div></div>
+<div class="paragraph">
+<p>Before we can use the <code>SmartcardArchive</code>, we need to initialise it with the smartcards file we want.
+You can do this by loading your own smartcards from the file system:</p>
+</div>
+<div id="sca_file" class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="type">var</span> smartcardsImage = <span class="keyword">new</span> <span class="predefined-type">File</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">your/path/to/smartcards.json</span><span class="delimiter">&quot;</span></span>);
+<span class="type">var</span> sca = SmartcardArchive.from(smartcardsImage);</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>Das <code>feature-toggle-brick</code> bietet eine flexible Lösung, indem es ermöglicht, Funktionen über die System-Properties und Umgebungsvariablen zu aktivieren oder zu deaktivieren.</p>
+<p>Alternatively, we can save the smartcards file as Java resources (<code>resources/smartcards/smartcards.json</code>) and then load them into the <code>SmartcardArchive</code> as follows:</p>
+</div>
+<div id="sca_resources" class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="type">var</span> sca = SmartcardArchive.fromResources();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>By convention, <code>resources/smartcards/smartcards.json</code> is the default location for the smartcards file.</p>
+</div>
+<div class="paragraph">
+<p>The smartcards can then be loaded from the <code>SmartcardArchive</code> using various criteria:</p>
+</div>
+<div id="sca_load_explicit_smartcards" class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">Egk egk0 = sca.getEgk(<span class="integer">0</span>);
+Egk egk1 = sca.getEgkByICCSN(<span class="string"><span class="delimiter">&quot;</span><span class="content">80276883110000113311</span><span class="delimiter">&quot;</span></span>);
+Egk egk2 = sca.getEgkByKvnr(<span class="string"><span class="delimiter">&quot;</span><span class="content">X110407071</span><span class="delimiter">&quot;</span></span>);
+
+Hba hba0 = sca.getHba(<span class="integer">0</span>);
+Hba hba1 = sca.getHbaByICCSN(<span class="string"><span class="delimiter">&quot;</span><span class="content">80276001011699901501</span><span class="delimiter">&quot;</span></span>);
+
+SmcB smcb0 = sca.getSmcB(<span class="integer">0</span>);
+SmcB smcb1 = sca.getSmcBByICCSN(<span class="string"><span class="delimiter">&quot;</span><span class="content">80276001011699900861</span><span class="delimiter">&quot;</span></span>);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>SmartcardArchive</code> also offers the option of loading a smartcard based on the specific type and ICCSN:</p>
+</div>
+<div id="sca_load_typed_smartcards" class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">Egk egk1       = sca.getByICCSN(Egk.class, <span class="string"><span class="delimiter">&quot;</span><span class="content">80276883110000113311</span><span class="delimiter">&quot;</span></span>);
+Smartcard egk2 = sca.getSmartcardByICCSN(SmartcardType.EGK, <span class="string"><span class="delimiter">&quot;</span><span class="content">80276883110000113311</span><span class="delimiter">&quot;</span></span>);
+
+Hba hba1       = sca.getByICCSN(Hba.class, <span class="string"><span class="delimiter">&quot;</span><span class="content">80276001011699901501</span><span class="delimiter">&quot;</span></span>);
+Smartcard hba2 = sca.getSmartcardByICCSN(SmartcardType.HBA, <span class="string"><span class="delimiter">&quot;</span><span class="content">80276001011699901501</span><span class="delimiter">&quot;</span></span>);
+
+SmcB smcb0     = sca.getByICCSN(SmcB.class, <span class="string"><span class="delimiter">&quot;</span><span class="content">80276001011699900861</span><span class="delimiter">&quot;</span></span>);
+Smartcard hba2 = sca.getSmartcardByICCSN(SmartcardType.SMC_B, <span class="string"><span class="delimiter">&quot;</span><span class="content">80276001011699900861</span><span class="delimiter">&quot;</span></span>);</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+When called via <code>getSmartcardByICCSN</code>, the smartcard is returned as the base class <code>Smartcard</code> because the concrete type of the smartcard is not syntactically known here. Whenever possible, the concrete and typed methods should be used in order to maintain type safety.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>However, the <code>SmartcardArchive</code> can of course only load and issue smartcards that are configured.
+This means that the following two calls lead to errors at runtime:</p>
+</div>
+<div id="sca_load_unknown_smartcards" class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="comment">// exeeding index</span>
+assertThrows(<span class="exception">IndexOutOfBoundsException</span>.class, () -&gt; sca.getEgk(<span class="integer">100</span>));
+
+<span class="comment">// unknown ICCSN</span>
+assertThrows(SmartcardNotFoundException.class, () -&gt; sca.getEgkByICCSN(<span class="string"><span class="delimiter">&quot;</span><span class="content">123</span><span class="delimiter">&quot;</span></span>));</code></pre>
+</div>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+We strongly advise against using the loading of smartcards via the index as the standard method.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Both error cases can be handled at runtime as follows:</p>
+</div>
+<div id="sca_load_unknown_smartcards_safely" class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="comment">// gives you the amount of known EGK smartcards</span>
+<span class="type">int</span> idx = <span class="integer">100</span>;
+<span class="type">int</span> amountEgks = sca.getConfigsFor(SmartcardType.EGK).size();
+<span class="keyword">if</span> (amountEgks &lt;= idx) {
+    <span class="comment">// do something about it</span>
+}
+
+<span class="comment">// gives you an empty optional because ICCSN &quot;123&quot; is unknown</span>
+Optional&lt;Smartcard&gt; opt = sca.getByICCSN(<span class="string"><span class="delimiter">&quot;</span><span class="content">123</span><span class="delimiter">&quot;</span></span>);
+<span class="keyword">if</span> (opt.isEmpty()) {
+    <span class="comment">// do something about it</span>
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_konnektor">Konnektor</h3>
+<div class="paragraph">
+<p>The "Konnektor" is basically the gateway into the TI. It is a hardware device that is connected to the practice&#8217;s network and is used to communicate with the TI. The Konnektor is the central point of the practice&#8217;s network and is responsible for the secure transmission of data to the TI.</p>
+</div>
+<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9oLb4zF0Z4GnU_z54qyDo4S3I4WGc8yI8AUZ8VI7TPc-y_fBCOOlhi5T-EoK9Kzx67crzVtPYSxYIIHQcjOhBGB4gNbojlW7JXQqOS1Zg18kj80EyVmJyRJSoDLLQAlNJ7pnkDef1q1Ecd6OturdSy6j_FpN33IEIZwcCS2y1HPB8R3mO3j6FinSEzJjoAFZPNdgYs8zoXaq6ADMbKll6kgJogZarP3VZUZtr02H0JSQWLv5GJh2Vv2TymbYgCkNudxJTxcTIVHwc6wvDFbNJVlJ6Bn26XrqcqZgrGJr1GxOasN1Fgrf-EKl3FPLeNY2NCKWKcrj_MKWhBzYmi36nBZx2XJcZf2RE13-3sTyzlYBAidwd1yNNzu26-rngIHb_YF3IkTB0zECdjmOgIVEw3VwW8YRmwo_A9ShiNEVQn6vfTKsWO3DXr9uybinKKYZ4t05UdtyGMe_du5" /></div></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_configuration_bricks">Configuration-Bricks</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Configuration is crucial for most types of software, including test suites. It is a way of adapting the behaviour of the software to different environments, or changing the behaviour of the software without changing the code. Configuration can be done in many ways, for example using environment variables, system properties or configuration files. The <code>configuration-bricks</code> are designed to help you deal with common problems.</p>
+</div>
+<div class="sect2">
+<h3 id="conf-feature-toggle-brick">Feature-Toggle</h3>
+<div class="paragraph">
+<p>A feature toggle module allows developers to enable or disable certain functions or code sections in an application. This is particularly useful for the gradual introduction of new features. Especially in test suites, we often have the case that certain features go through different stages and need to be activated or deactivated in different environments.</p>
+</div>
+<div class="paragraph">
+<p>The <code>feature-toggle-brick</code> offers a flexible solution by allowing functions to be enabled or disabled via system properties and environment variables.</p>
 </div>
 <div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9njaSjgmq0CHVVp5KEwQIc1V809UO1tXL9tqwLiAyPaB1cDtDQa_VVA3zoKPbOQwUXUZMON5KIx9hXuhga5WSONtBHCI9ff7z0B5WfK1NIt67zntiu1YdCbt55vvC2I9FYfA0HXk_Ll609_J1XBYV8VUS7IVJjN18ZHhx8-AZOh3z77CHnD7YlKP-4MHVlxXpc1z6xnRskAe9tWaUbKLvs0raoZqCaAXMNznM1NarcVeC2buvKhU-A4wW3DWWVcW41NvVow_DJF_Pc2BY9t-tsQRZQsi6dyPBrU1d1EkVNAFcTLRdnP3mksCPtv_W67-vSbSbt2MtPkXrJQ3_u0KZ6TAW00" /></div></div>
 <div class="paragraph">
-<p>Um die Wartbarkeit im Code zu erhöhen, bietet das <code>feature-toggle-brick</code> eine Abstraktion mit einer einfachen API an Feature-Toggles aus dem System auszulesen ohne dabei direkt auf System-Properties oder Umgebungsvariablen. Dadurch lässt sich die Abhängigkeit zum jeweiligen "Key" (sei es ein System-Property oder eine Umgebungsvariable) auf ein Minimum reduzieren. Dabei wird nicht nur die Abstraktion von System-Properties/Umgebungsvariablen fokussiert, sondern auch ein Konzept angeboten, um die Feature-Toggles sowohl über System-Properties als auch über Umgebungsvariablen gleichzeitig zu konfigurieren.</p>
+<p>To increase maintainability in the code, the <code>feature-toggle-brick</code> offers an abstraction with a simple API to read feature toggles from the system without directly accessing system properties or environment variables. This reduces the dependency on the respective "key" (whether it is a system property or an environment variable) to a minimum. It not only focuses on the abstraction of system properties/environment variables but also offers a concept to configure feature toggles simultaneously via system properties and environment variables.</p>
 </div>
-<div class="sect4">
-<h5 id="_feature_toggles_setzen">Feature-Toggles setzen</h5>
+<div class="ulist">
+<div class="title">Use it when:</div>
+<ul>
+<li>
+<p>You have many feature toggles in your application</p>
+</li>
+<li>
+<p>You have to use specific feature toggles in many different places of your code</p>
+</li>
+<li>
+<p>You need to use SystemProperties and EnvironmentVariables simultaneously to control your feature toggles</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Don&#8217;t use it when:</div>
+<ul>
+<li>
+<p>You have only a few feature toggles in your application and the <code>feature-toggle-brick</code> is not already in your classpath</p>
+</li>
+</ul>
+</div>
+<div class="sect3">
+<h4 id="tutorial_feature_toggle_create">Using basic Feature-Toggles</h4>
 <div class="paragraph">
-<p>Ein entscheidender Vorteil des <code>feature-toggle-brick</code> ist es, dass Feature-Toggle sowohl über System-Properties als auch über Umgebungsvariablen gesetzt werden können. Dabei wird die Konfiguration über System-Properties bevorzugt, falls diese nicht gesetzt sind, wird auf die Umgebungsvariablen zurückgegriffen und im aller letzten Fall (wenn weder System-Properties noch Umgebungsvariablen gesetzt sind) wird der Default-Wert verwendet.</p>
+<p>A decisive advantage of the <code>feature-toggle-brick</code> is that feature toggles can be set both via system properties and via environment variables. The configuration via system properties is preferred, if these are not set, the environment variables are used and in the very last case (if neither system properties nor environment variables are set) the default value is used.</p>
 </div>
 <div class="paragraph">
-<p>Angenommen wir haben die Applikation <code>MyApplication</code> die ein Boolean-Toggle benötigt:</p>
+<p>Let&#8217;s assume we have the application <code>MyApplication</code> which requires a Boolean toggle:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -448,7 +2091,7 @@ the following uses are recommended depending on the situation:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Nun können wir das Feature-Toggle über System-Properties oder Umgebungsvariablen setzen und die Applikation starten:</p>
+<p>Now we can set the feature toggle via system properties or environment variables and start the application:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -473,69 +2116,75 @@ java -DmyFeature.isActive=false MyApplication
 </div>
 </div>
 <div class="paragraph">
-<p>Mit diesem kleinen Demonstrator werden bereits die Grundlagen des <code>feature-toggle-brick</code> demonstriert:</p>
+<p>This small demonstrator already shows the basics of the <code>feature-toggle-brick</code>:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Feature-Toggles können über System-Properties und Umgebungsvariablen gesetzt werden</p>
+<p>Feature toggles can be set via system properties and environment variables</p>
 </li>
 <li>
-<p>Die Konfiguration über System-Properties hat Vorrang vor der Konfiguration über Umgebungsvariablen</p>
+<p>Configuration via system properties has priority over configuration via environment variables</p>
 </li>
 <li>
-<p>Der Default-Wert wird verwendet, wenn weder System-Properties noch Umgebungsvariablen gesetzt sind. Damit werden unerwartete Fehler vermieden und wir können die Applikation immer in einem definierten Zustand ohne zusätzliche Konfigurationen starten.</p>
+<p>The default value is used if neither system properties nor environment variables are set. This avoids unexpected errors and we can always start the application in a defined state without additional configurations.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Dann wäre da noch die Nomenklatur der Toggles selbst. Das <code>feature-toggle-brick</code> sorgt dafür, dass die Feature-Toggles stets aus einer einheitlichen Bildungsregel abgeleitet werden und immer einem festen Schema folgen.</p>
+<p>Then there is the nomenclature of the toggles themselves. The <code>feature-toggle-brick</code> ensures that the feature toggles are always derived from a uniform formation rule and always follow a fixed scheme.</p>
 </div>
 <div class="paragraph">
-<p>Dabei gelten die folgenden Ableitungsregeln für die System-Properties und Umgebungsvariablen:</p>
+<p>The following derivation rules apply to the system properties and environment variables:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>das Feature-Toggle <code>myFeature.isActive</code> wird als System-Property mit <code>-DmyFeature.isActive=true</code> gesetzt und hat damit exakt den gleichen Namen</p>
+<p>the feature toggle <code>myFeature.isActive</code> is set as a system property with <code>-DmyFeature.isActive=true</code> and therefore has exactly the same name</p>
 </li>
 <li>
-<p>das Feature-Toggle <code>myFeature.isActive</code> wird als Umgebungsvariable mit <code>MYFEATURE_ISACTIVE=YES</code> und wird dabei über <code>key.toUpperCase().replace(".", "_")</code> gebildet.</p>
+<p>the feature toggle <code>myFeature.isActive</code> is set as an environment variable with <code>MYFEATURE_ISACTIVE=YES</code> and is formed via <code>key.toUpperCase().replace(“.”, “_”)</code>.</p>
 </li>
 <li>
-<p>über die API der <code>FeatureConfiguration</code> wird ein Feature-Toggle (wenn über einen String abgefragt) immer über den Namen (z.B. <code>myFeature.isActive</code>) abgefragt.</p>
+<p>A feature toggle (if queried via a string) is always queried via the name (e.g. <code>myFeature.isActive</code>) via the API of the <code>FeatureConfiguration</code>.</p>
 </li>
 </ul>
 </div>
 </div>
-<div class="sect4">
-<h5 id="_benutzerdefinierte_feature_toggles">Benutzerdefinierte Feature-Toggles</h5>
+<div class="sect3">
+<h4 id="_implementing_custom_feature_toggles">Implementing custom Feature-Toggles</h4>
 <div class="paragraph">
-<p>Im letzten Beispiel haben wir gesehen, wie man ein Feature-Toggle über seinen Namen abfragen kann. Dabei wird der Name des Feature-Toggles als String übergeben und die <code>FeatureConfiguration</code> kümmert sich um die Auflösung und das konkrete Mapping zum jeweiligen Datentypen des Feature-Toggles. So sind z.B. auch weitere gängige Datentypen wie <code>Integer</code>, <code>Double</code>, <code>String</code> oder auch allgemein für Enumerationen bereits implementiert.</p>
+<p>In the <a href="#tutorial_feature_toggle_create">last tutorial</a> we saw how a feature toggle can be queried via its name. The name of the feature toggle is passed as a string and the <code>FeatureConfiguration</code> takes care of the resolution and the specific mapping to the respective data types of the feature toggle. Other common data types such as <code>Integer</code>, <code>Double</code>, <code>String</code> or generally for enumerations are already implemented and can be used directly.</p>
 </div>
 <div class="paragraph">
-<p>Damit können wir zwar schon die konsistente Nomenklatur der Feature-Toggles gewährleisten, haben aber weiterhin das Problem, dass Feature-Toggles tendenziell(wenn über String abgefragt), extrem schlecht wartbar sind. Diese Art der Abfrage ist daher nur empfehlenswert, wenn ein Feature-Toggle nur an einer einzigen Stelle abgefragt wird. Für komplexere Feature-Toggles, oder solche die an vielen Stellen verwendet werden müssen, bietet das <code>feature-toggle-brick</code> auch die Möglichkeit, benutzerdefinierte Feature-Toggles zu erstellen. Damit kann der tatsächliche Name eines Toggles in einer einzigen Stelle gekapselt werden, wodurch die Wartbarkeit und Lesbarkeit des Codes deutlich erhöht wird.</p>
+<p>Although this allows us to ensure a consistent nomenclature of feature toggles, we still have the problem that feature toggles are usually extremely difficult to maintain (if they are queried by string). This type of query is therefore only recommended if a feature toggle is only queried at a single point. For more complex feature toggles, or those that are to be used in many places, the <code>feature-toggle-brick</code> also offers the option of creating user-defined feature toggles. This allows the actual name of a toggle to be encapsulated in a single place, which significantly improves the maintainability and readability of the code.</p>
 </div>
 <div class="paragraph">
-<p>Angenommen wir haben ein Feature-Toggle mir mehreren Zuständen mit dem Namen <code>myFeature.state</code> welches zusätzlich an vielen Stellen benötigt wird. Der Zustand dafür kann über eine Enumeration <code>MyFeatureState</code> abgebildet werden und folgendermaßen abgefragt werden:</p>
+<p><strong>Task:</strong> Suppose we have a feature toggle with multiple states called <code>myFeature.state</code> which is also needed in many places.</p>
+</div>
+<div class="paragraph">
+<p>This is the ideal use case for a user-defined feature toggle.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 1:</strong> implement an enumaration <code>MyFeatureState</code> to represent the states of the feature toggle.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="type">class</span> <span class="class">MyApplication</span> {
   <span class="directive">public</span> <span class="directive">static</span> <span class="type">void</span> main(<span class="predefined-type">String</span><span class="type">[]</span> args){
     val featureConf = <span class="keyword">new</span> FeatureConfiguration();
-    MyFeatureStateToggle isFeatureActive = featureConf.getEnumToggle(<span class="string"><span class="delimiter">&quot;</span><span class="content">myFeature.state</span><span class="delimiter">&quot;</span></span>, MyFeatureStateToggle.class, MyFeatureStateToggle.STATE_ONE);
+    MyFeatureStateToggle isFeatureActive = featureConf.getEnumToggle(<span class="string"><span class="delimiter">&quot;</span><span class="content">myFeature.state</span><span class="delimiter">&quot;</span></span>, MyFeatureState.class, MyFeatureState.STATE_ONE);
     <span class="predefined-type">System</span>.out.println(<span class="string"><span class="delimiter">&quot;</span><span class="content">Feature state is: </span><span class="delimiter">&quot;</span></span> + isFeatureActive.getState());
   }
 
-  <span class="type">enum</span> MyFeatureStateToggle {
+  <span class="type">enum</span> MyFeatureState {
     STATE_ONE(<span class="string"><span class="delimiter">&quot;</span><span class="content">first</span><span class="delimiter">&quot;</span></span>),
     STATE_TWO(<span class="string"><span class="delimiter">&quot;</span><span class="content">second</span><span class="delimiter">&quot;</span></span>),
     STATE_THREE(<span class="string"><span class="delimiter">&quot;</span><span class="content">third</span><span class="delimiter">&quot;</span></span>);
 
     <span class="directive">private</span> <span class="directive">final</span> <span class="predefined-type">String</span> state;
 
-    MyFeatureStateToggle(<span class="predefined-type">String</span> state){
+    MyFeatureState(<span class="predefined-type">String</span> state){
       <span class="local-variable">this</span>.state = state;
     }
 
@@ -547,7 +2196,7 @@ java -DmyFeature.isActive=false MyApplication
 </div>
 </div>
 <div class="paragraph">
-<p>Dann können wir das Feature-Toggle bereits so auch im einfachsten Fall direkt nutzen:</p>
+<p>Then we can use the feature toggle directly in the simplest case:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -556,7 +2205,10 @@ java -DmyFeature.isActive=false MyApplication
 </div>
 </div>
 <div class="paragraph">
-<p>Allerdings besteht hier weiterhin das Problem der Wartbarkeit mit der "String-Adressierung". Diese lässt sich durch die Verwendung eines benutzerdefinierten Feature-Toggles lösen und darüber hinaus lässt sich das Feature-Toggle auch mit zusätzlicher Funktionalität versehen:</p>
+<p>However, there is still the problem of maintainability with “string addressing”. This can be solved by using a user-defined feature toggle and the feature toggle can also be provided with additional functionality.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: implement the class <code>MyFeatureStateToggle</code> which implements the <code>FeatureToggle</code> interface for the feature toggle <code>MyFeatureState</code>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -616,7 +2268,7 @@ java -DmyFeature.isActive=false MyApplication
 </div>
 </div>
 <div class="paragraph">
-<p>Mit dieser Implementierung ist das gesamte FeatureToggle in einer einzigen Klasse gekapselt und kann an beliebiger Stelle abgefragt werden. Dabei wird die Nomenklatur der Feature-Toggles beibehalten und die Wartbarkeit des Codes deutlich erhöht. Darüber hinaus kann das Feature-Toggle auch mit zusätzlicher Funktionalität versehen werden, wie z.B. die Umwandlung von numerischen Werten in Enumerationen oder auch die Verwendung von sprechenden Werten (anstatt der Enumerationsnamen):</p>
+<p>With this implementation, the entire feature toggle is encapsulated in a single class and can be queried at any point.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -638,180 +2290,18 @@ java -DmyFeature.state=42 MyApplication
 </div>
 </div>
 <div class="paragraph">
-<p>Mit diesem Konzept lassen sich sowohl einfache als auch extrem komplexe und vor allem wiederverwendbare Feature-Toggles bauen.
-&lt;&lt;&lt;
-:leveloffset: -1</p>
-</div>
-<div style="page-break-after: always;"></div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_fhir_bricks">2.1.2. FHIR-Bricks</h4>
-<div class="paragraph">
-<p>Mit <a href="https://fhir.org/">HL7 FHIR</a></p>
+<p>The nomenclature of the feature toggles is retained and the maintainability of the code is significantly increased. Furthermore, the feature toggle can also be provided with additional functionality, such as the conversion of numerical values into enumerations or the use of descriptive values (instead of enumeration names):</p>
 </div>
 <div class="paragraph">
-<p>TODO: Beschreibung what is FHIR-Bricks</p>
-</div>
-<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9oDKyjEmp0GlFihLkMAAv3WXYf4sWXkg9nGb8DhRn8hZZVQE8M2-7SSNcgRLC877-pPcPrP-xOBYaFVED7LrhUALGEQcfOy-l0KTWw1KGVbIuV2OH4W4B0jgm363ZUMl9YgXNS1STqfNPTClJS9EUAR6tmDo5wvnGAUqJbw-OOH6-GnP8r6V0ZXoI3C4ceQyl38L5Y7tGpEbbVB94r_fBAYiYnxtJTomrRN-TwfGRbHdUtQhrh9Lx-GF_Bq_c4DgTBMsR2Br6cwl5nT7r1lbRD63Ox70ZgIwF5nfLehY_xjpVfoMZ8XnYYNH1-hYmCvJRwmPSyg44yA3fpThWiuONZJMnSJtTFC3CvBR6B_zPons0uRCdgDFxwYYhER7FO74CiEWib1zgrSGFRNUowoexb4ZA4NVuGIuvn03Wzgm9s8zxJJezAfg4wGWipE6CsvKLs59Xye_XcC4BVeJVmgd-cu5nK0" /></div></div>
-<div class="sect4">
-<h5 id="_fhir_validator">FHIR-Validator</h5>
-<div class="paragraph">
-<p>Was ist der FHIR-Validator und wie funktionieren die Implementierungen&#8230;&#8203; TODO</p>
-</div>
-<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9oLayzBmp0SnU_vAm9UfjWTF0uP0tNWOIehUX4FiNbjmz9lIfBEJV5_Drt3Vh0DjvwQxtkV97sFZfmNrZULPipD5DN2YeeNrZJr8vMmoWlAm6-sn5faCr4WzKiDFWuJC0VFARoue255w_F6SZ84nXHvs3m8_4re9LjbN2hBVnWFJm5_Pu9ZuNkN0zuASRbIvns1NjOEoGzuwgsY8bZZPihG5AxHdL-vrVY0_TCO3K7ibp6MQU4SVx4cLnfoVIkkgbgZ2fpRlMe49k4KTJRrPEXiPeeS5lHzCd3VLDNo13UBvN69Ve4gn3VhM-JpM4QtsIRPYP6DHflPJcGF2sz5rXxKOUZMKJqG_dFTxYRqRJSPngvUgOx9f10sArFuVvexKi5Lef7xPBZVwJ4YaUQBDi3wYzX-zCdxXOMybiALa1-Hsyk8ZK0o_4P__g4qC000" /></div></div>
-<div style="page-break-after: always;"></div>
-<div style="page-break-after: always;"></div>
+<p>This concept can be used to build both simple and extremely complex and, above all, reusable feature toggles.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_perimeter_bricks">2.1.3. Perimeter-Bricks</h4>
-<div class="paragraph">
-<p>Was sind die TI-Perimeter-Bricks&#8230;&#8203; TODO</p>
-</div>
-<div class="imageblock text-center">
-<div class="content">
-<img src="./images/intro_perimeter_bricks.png" alt="intro perimeter bricks">
 </div>
 </div>
-<div class="sect4">
-<h5 id="_smartcards_brick">Smartcards-Brick</h5>
-<div class="paragraph">
-<p>Smartcards mittels <code>smartcard-brick</code>&#8230;&#8203;. TODO</p>
 </div>
-<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9nraj5gWp0KXk_FKuHwDmZOGXs38bMh3x3UR9HUPCcf3SP4ZkcwCVRkixGKwpIN-Rzp-7uuwzOBygVQG5jfsmWIDPEkRfn5wxV-so0Zb5xOqY2CCUm7MFTI8QkItCcgp1b7gnL-UIGhJ1opTpJ6dQ-O8uNq7tb5DRwccI-wE4ZoBDpay0kmQ-jEM0fIN1hDFqZBQi-2A2gAP05WdK8sszwPz9BFM50Kctc-lCdkxdb2ygW_iLjGvCzH6WxYgVyCoUk3bi8FHz-MuSj3UgimhSuD7ZoFUzklqdiOqNpYfClZ8zu7nuc-44oquCgTxMLgs01WZLPr5_87FRkuW000" /></div></div>
-<div class="sect5">
-<h6 id="_smartcards">Smartcards</h6>
-<div class="paragraph">
-<p>Die Smartcards sind folgendermaßen aufgebaut:</p>
-</div>
-<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9nzKy5kmZ0ClUShSjmEN7P44m8wD13RE9ITfv2Q4f4uLUAoTOX_NrfAQUcsN9m-FziljZls91pbHZE_LvW99mnFdSsp1Ux0AH8eWJym9ZQUd934fHRUyzY4A2bSme-CXwEaz3ZaCJc5QOL8SAIsIWe2F-GlojDZ4nHTVQEAd09DSbgfnD_Tr-JmCMAdNk45UbAK4rmLm1S19YrDnqlEDMWmWjH-aPHvM-g2SuOor2ZnO5fWIznTv8gCR5nu0bCc-EK1fSQpj5cwxslXZPZb0LrBnQcEccz44zL_7BkqMqx_Om7cvbfpNMHGrvqzBoixdqug6xz67zFcjboNwjdDI5UV2Ev9aAXpI6kCnJTXeDF2e45taLGTeC_pkSDRpBfKeFeEex7uf-CT5LqsfsASToMi0m1rehILGYigEc1cmshho2RTqjBcIAvepO5TXpNGiAN1gDlAjj-fTDSXDCqAVHo7yOG_wGTJzXs2" /></div></div>
-</div>
-<div class="sect5">
-<h6 id="_smartcard_archiv">Smartcard-Archiv</h6>
-<div class="paragraph">
-<p>Das <code>SmartcardArchive</code> ist ein Archiv, in dem die Smartcards verwaltet werden.</p>
-</div>
-<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9nrKK5Emp0GlFiL-u56WYD2KQ5GzS0jBrWxcyGqzaRUfH92_1t7JI5IX4_Mp7XcThqNnQGVOJH22X43oOIE6femeNA2o96CSIEAG1Eorc5gvIcvmLy8lWpa8y7P0xg17k3DYpusmJtNXHaihecJnIjE_NcDl_RdsdnlOexeSeNF9SLnx7mllncBw53W5-NYiAsugpU6PfF0k-JxGRFs7IzOUQwEVinpHrO2oweSWBlj0agnW15x4i3OWfkdaWBhG7apjmU6CZlR_MzwQrU6JOIQFLS6Cpn7Z8ojG3NTtKENIru9Yq8jS2ofowR-8lVvbl_u1sYffva0" /></div></div>
-<div class="paragraph">
-<p>Bevor man das <code>SmartcardArchive</code> nutzen kann, muss dieses zunächst mit den gewünschten Smartcards initialisiert werden.
-Hierfür hat man die Möglichkeit eigene Smartcards aus dem Dateisystem zu laden:</p>
-</div>
-<div id="sca_file" class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="type">var</span> smartcardsImage = <span class="keyword">new</span> <span class="predefined-type">File</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">your/path/to/smartcards.json</span><span class="delimiter">&quot;</span></span>);
-<span class="type">var</span> sca = SmartcardArchive.from(smartcardsImage);</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Alternativ ist es auch möglich, die Smartcard Images als Java-Resources (<code>resources/smartcards/smartcards.json</code>) zu speichern und diese dann folgendermaßen in das <code>SmartcardArchive</code> zu laden:</p>
-</div>
-<div id="sca_resources" class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="type">var</span> sca = SmartcardArchive.fromResources();</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Anschließend können die Smartcards aus dem <code>SmartcardArchive</code> anhand unterschiedlicher Kriterien geladen werden:</p>
-</div>
-<div id="sca_load_explicit_smartcards" class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="type">var</span> egk0 = sca.getEgk(<span class="integer">0</span>);
-<span class="type">var</span> egk1 = sca.getEgkByICCSN(<span class="string"><span class="delimiter">&quot;</span><span class="content">80276883110000113311</span><span class="delimiter">&quot;</span></span>);
-<span class="type">var</span> egk2 = sca.getEgkByKvnr(<span class="string"><span class="delimiter">&quot;</span><span class="content">X110407071</span><span class="delimiter">&quot;</span></span>);
-
-<span class="type">var</span> hba0 = sca.getHba(<span class="integer">0</span>);
-<span class="type">var</span> hba1 = sca.getHbaByICCSN(<span class="string"><span class="delimiter">&quot;</span><span class="content">80276001011699901501</span><span class="delimiter">&quot;</span></span>);
-
-<span class="type">var</span> smcb0 = sca.getSmcB(<span class="integer">0</span>);
-<span class="type">var</span> smcb1 = sca.getSmcBByICCSN(<span class="string"><span class="delimiter">&quot;</span><span class="content">80276001011699900861</span><span class="delimiter">&quot;</span></span>);</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Das <code>SmartcardArchive</code> bietet darüber hinaus auch die Möglichkeit eine Smartcard anhand des konkreten Typs und der ICCSN zu laden:</p>
-</div>
-<div id="sca_load_typed_smartcards" class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">Egk egk1       = sca.getByICCSN(Egk.class, <span class="string"><span class="delimiter">&quot;</span><span class="content">80276883110000113311</span><span class="delimiter">&quot;</span></span>);
-Smartcard egk2 = sca.getSmartcardByICCSN(SmartcardType.EGK, <span class="string"><span class="delimiter">&quot;</span><span class="content">80276883110000113311</span><span class="delimiter">&quot;</span></span>);
-
-Hba hba1       = sca.getByICCSN(Hba.class, <span class="string"><span class="delimiter">&quot;</span><span class="content">80276001011699901501</span><span class="delimiter">&quot;</span></span>);
-Smartcard hba2 = sca.getSmartcardByICCSN(SmartcardType.HBA, <span class="string"><span class="delimiter">&quot;</span><span class="content">80276001011699901501</span><span class="delimiter">&quot;</span></span>);
-
-SmcB smcb0     = sca.getByICCSN(SmcB.class, <span class="string"><span class="delimiter">&quot;</span><span class="content">80276001011699900861</span><span class="delimiter">&quot;</span></span>);
-Smartcard hba2 = sca.getSmartcardByICCSN(SmartcardType.SMC_B, <span class="string"><span class="delimiter">&quot;</span><span class="content">80276001011699900861</span><span class="delimiter">&quot;</span></span>);</code></pre>
-</div>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Hinweis"></i>
-</td>
-<td class="content">
-Bei dem Aufruf über <code>getSmartcardByICCSN</code> wird die Smartcard als Basis-Klasse <code>Smartcard</code> zurückgegeben, weil hier der konkrete Typ der Smartcard syntaktisch nicht bekannt ist. Es sollen, wenn immer möglich, die konkreten und typisierten Methoden verwendet werden umd die Typsicherheit zu bewahren.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Das <code>SmartcardArchive</code> kann natürlich aber nur Smartcards laden und herausgeben, die konfiguriert sind.
-Das bedeutet, dass die folgenden beiden Aufrufe zur Laufzeit zu Fehlern führen:</p>
-</div>
-<div id="sca_load_unknown_smartcards" class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="comment">// exeeding index</span>
-assertThrows(<span class="exception">IndexOutOfBoundsException</span>.class, () -&gt; sca.getEgk(<span class="integer">100</span>));
-
-<span class="comment">// unknown ICCSN</span>
-assertThrows(SmartcardNotFoundException.class, () -&gt; sca.getEgkByICCSN(<span class="string"><span class="delimiter">&quot;</span><span class="content">123</span><span class="delimiter">&quot;</span></span>));</code></pre>
-</div>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warnung"></i>
-</td>
-<td class="content">
-Grundsätzlich wird dringend davon abgeraten, das Laden der Smartcards über den Index als Standardmethode zu verwenden.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Beide Fehlerfälle können zur Laufzeit in etwa folgendermaßen behandelt werden:</p>
-</div>
-<div id="sca_load_unknown_smartcards_safely" class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="comment">// gives you the amount of known EGK smartcards</span>
-<span class="type">int</span> idx = <span class="integer">100</span>;
-<span class="type">int</span> amountEgks = sca.getConfigsFor(SmartcardType.EGK).size();
-<span class="keyword">if</span> (amountEgks &lt;= idx) {
-    <span class="comment">// do something about it</span>
-}
-
-<span class="comment">// gives you an empty optional because ICCSN &quot;123&quot; is unknown</span>
-Optional&lt;Smartcard&gt; opt = sca.getByICCSN(<span class="string"><span class="delimiter">&quot;</span><span class="content">123</span><span class="delimiter">&quot;</span></span>);
-<span class="keyword">if</span> (opt.isEmpty()) {
-    <span class="comment">// do something about it</span>
-}</code></pre>
-</div>
-</div>
-<div style="page-break-after: always;"></div>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_konnektor">Konnektor</h5>
-<div class="paragraph">
-<p>Der Konnektor-Client ist über mehrere Module aufgebaut&#8230;&#8203; TODO</p>
-</div>
-<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9oLb4zF0Z4GnU_z54qyDo4S3I4WGc8yI8AUZ8VI7TPc-y_fBCOOlhi5T-EoK9Kzx67crzVtPYSxYIIHQcjOhBGB4gNbojlW7JXQqOS1Zg18kj80EyVmJyRJSoDLLQAlNJ7pnkDef1q1Ecd6OturdSy6j_FpN33IEIZwcCS2y1HPB8R3mO3j6FinSEzJjoAFZPNdgYs8zoXaq6ADMbKll6kgJogZarP3VZUZtr02H0JSQWLv5GJh2Vv2TymbYgCkNudxJTxcTIVHwc6wvDFbNJVlJ6Bn26XrqcqZgrGJr1GxOasN1Fgrf-EKl3FPLeNY2NCKWKcrj_MKWhBzYmi36nBZx2XJcZf2RE13-3sTyzlYBAidwd1yNNzu26-rngIHb_YF3IkTB0zECdjmOgIVEw3VwW8YRmwo_A9ShiNEVQn6vfTKsWO3DXr9uybinKKYZ4t05UdtyGMe_du5" /></div></div>
-<div style="page-break-after: always;"></div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_restful_bricks">2.1.4. RESTful-Bricks</h4>
+<div class="sect1">
+<h2 id="_restful_bricks">RESTful-Bricks</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Was sind die RESTful-Bricks?</p>
 </div>
@@ -821,28 +2311,47 @@ Optional&lt;Smartcard&gt; opt = sca.getByICCSN(<span class="string"><span class=
 </div>
 </div>
 <div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9oLL5rB8p4KVS-l2FhYmeuexBuiKjIsW_icLHUaz25ERgUX-HYJJ5La_xjtqanDdPc2XLAukVUSSyyzzD9vPdsj975heIjccQA5KPNHeFsTVvD0BHIUwL82wUkXxuJYvzfO3dPifB4N5ykLiDcJ5SNQZKPq1Znf2PXVMoRChTekLgnBQshD8nYyUh2QIMnx12dDIvSlQMd8_XEY3GTwbD_ydT7PzEx-Y1xd-UHy-ZkgdIzv5XGKKk0EMo6B-1JgE5_4ClsYDcdRC2auyyBeeTwTbaO67HkbQYsAC8AY9hycupnlHLbmlbN4Ah6dQiFgFh7fIAmZ8zcTBF60tigw5DeXxHX9fsUHzkG7lG66PbBcqBxd6Y6tXLjhDW9_jrHEOL0APdacU9LL0UoJCs7yT_NGuKhVUyKGCkTmMe92QzQdoD1yusQDgvydnixUwz6CcnUTPQCX8-aVMZjmW-FpOmly9mzHN4XO-WQgcuOTIkTb7o6e6Gq69S8Cgh6YN0K5lITPu60d4ZIhguFh2rL9K5X6-TtaV6UybxtrB0d0WWp1nGN3XaaWSE10q5g9WvuSdDqxpyxVuTYHIz0S_ne_0Euultq0" /></div></div>
-<div style="page-break-after: always;"></div>
 </div>
-<div class="sect3">
-<h4 id="_cli_bricks">2.1.5. CLI-Bricks</h4>
+</div>
+<div class="sect1">
+<h2 id="_utility_bricks">Utility-Bricks</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>TODO: Beschreibung what are CLI-Bricks</p>
+<p><em>TODO: descreibe the</em> <code>utility-bricks</code> <em>here</em></p>
 </div>
-<div style="page-break-after: always;"></div>
 </div>
-<div class="sect3">
-<h4 id="_utility_bricks">2.1.6. Utility-Bricks</h4>
+</div>
+<div class="sect1">
+<h2 id="_cli_bricks">CLI-Bricks</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>TODO: Beschreibung what are Utility-Bricks</p>
+<p><em>TODO: descreibe the</em> <code>cli-tooling-bricks</code> <em>here</em></p>
 </div>
 <div style="page-break-after: always;"></div>
-<div style="page-break-after: always;"></div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_release_notes">Appendix A: Release Notes</h3>
-<h4 id="_release_0_1_10" class="discrete">Release 0.1.10</h4>
-<h5 id="_fhir_bricks_2" class="discrete">FHIR-Bricks</h5>
+<div class="sect1">
+<h2 id="_release_notes">Appendix A: Release Notes</h2>
+<div class="sectionbody">
+<h3 id="_release_0_2_0" class="discrete">Release 0.2.0</h3>
+<h4 id="_fhir_bricks_2" class="discrete">FHIR-Bricks</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Extend <code>fhir-bricks</code> for integration with <code>erp-e2e-testsuite</code></p>
+</li>
+</ul>
+</div>
+<h4 id="_utility_bricks_2" class="discrete">Utility-Bricks</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Implement the <code>vsdm-check-digit-brick</code> for validating VSDM++ check digits</p>
+</li>
+</ul>
+</div>
+<h3 id="_release_0_1_10" class="discrete">Release 0.1.10</h3>
+<h4 id="_fhir_bricks_3" class="discrete">FHIR-Bricks</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -850,7 +2359,7 @@ Optional&lt;Smartcard&gt; opt = sca.getByICCSN(<span class="string"><span class=
 </li>
 </ul>
 </div>
-<h5 id="_restful_bricks_2" class="discrete">RESTful-Bricks</h5>
+<h4 id="_restful_bricks_2" class="discrete">RESTful-Bricks</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -858,7 +2367,7 @@ Optional&lt;Smartcard&gt; opt = sca.getByICCSN(<span class="string"><span class=
 </li>
 </ul>
 </div>
-<h5 id="_configuration_bricks_2" class="discrete">Configuration-Bricks</h5>
+<h4 id="_configuration_bricks_2" class="discrete">Configuration-Bricks</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -866,7 +2375,7 @@ Optional&lt;Smartcard&gt; opt = sca.getByICCSN(<span class="string"><span class=
 </li>
 </ul>
 </div>
-<h4 id="_release_0_1_8" class="discrete">Release 0.1.8</h4>
+<h3 id="_release_0_1_8" class="discrete">Release 0.1.8</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -877,10 +2386,9 @@ Optional&lt;Smartcard&gt; opt = sca.getByICCSN(<span class="string"><span class=
 </div>
 </div>
 </div>
-</div>
 <div id="footer">
 <div id="footer-text">
-Version 0.1.10<br>
+Version 0.2.0<br>
 </div>
 </div>
 </body>
