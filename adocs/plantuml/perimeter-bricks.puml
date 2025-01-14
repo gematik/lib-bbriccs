@@ -1,0 +1,19 @@
+@startuml
+skinparam componentStyle rectangle
+
+
+node "Public Domain" #D4DCFF {
+    [smartcard]
+    [terminal]
+    [konnektor]
+}
+
+node "Telematik Infrastruktur" #FFD1E5 {
+    [Fachdienst]
+}
+
+[smartcard] -right-> [terminal]
+[terminal] -right-> [konnektor]
+[konnektor] -right-> [Fachdienst] : "connects"
+
+@enduml

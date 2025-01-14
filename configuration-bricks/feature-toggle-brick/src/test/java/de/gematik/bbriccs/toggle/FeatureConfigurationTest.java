@@ -29,17 +29,15 @@ class FeatureConfigurationTest {
 
   @Test
   void shouldNotHaveUndefinedToggles() {
-    val fc = new FeatureConfiguration();
-    assertFalse(fc.hasToggle("hello.world"));
-    assertEquals("Default Value", fc.getStringToggle("hello.world", "Default Value"));
+    assertFalse(FeatureToggle.hasToggle("hello.world"));
+    assertEquals("Default Value", FeatureToggle.getStringToggle("hello.world", "Default Value"));
   }
 
   @Test
   @SetSystemProperty(key = "hello.world", value = "Toggle Config")
   void shouldHaveSimpleToggle() {
-    val fc = new FeatureConfiguration();
-    assertTrue(fc.hasToggle("hello.world"));
-    assertEquals("Toggle Config", fc.getStringToggle("hello.world", "Default Value"));
+    assertTrue(FeatureToggle.hasToggle("hello.world"));
+    assertEquals("Toggle Config", FeatureToggle.getStringToggle("hello.world", "Default Value"));
   }
 
   @Test
@@ -59,8 +57,7 @@ class FeatureConfigurationTest {
   @Test
   @SetSystemProperty(key = "hello.boolean", value = "False")
   void shouldHaveDefaultBooleanToggle() {
-    val fc = new FeatureConfiguration();
-    assertTrue(fc.getBooleanToggle("hello.boolean2", true));
+    assertTrue(FeatureToggle.getBooleanToggle("hello.boolean2", true));
   }
 
   @Test
@@ -81,7 +78,7 @@ class FeatureConfigurationTest {
   void shouldHaveDefaultIntegerToggles() {
     val fc = new FeatureConfiguration();
     assertEquals(0, fc.getIntegerToggle("hello.integer"));
-    assertEquals(10, fc.getIntegerToggle("hello.integer", 10));
+    assertEquals(10, FeatureToggle.getIntegerToggle("hello.integer", 10));
   }
 
   @Test

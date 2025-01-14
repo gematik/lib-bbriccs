@@ -22,64 +22,121 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import de.gematik.bbriccs.fhir.conf.exceptions.InvalidConfigurationException;
+import de.gematik.bbriccs.fhir.conf.exceptions.FhirConfigurationException;
+import de.gematik.bbriccs.toggle.FeatureToggle;
 import de.gematik.bbriccs.utils.ResourceLoader;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.FilenameUtils;
 
+@Slf4j
 @Getter
 public class ProfilesConfigurator {
 
-  private static final String ENV_TOGGLE = "BBRICCS_FHIR_PROFILE";
-  private static final String SYS_PROP_TOGGLE = "bbriccs.fhir.profile";
-  private static final String CONFIG_FILE_NAME = "fhir/configuration.yaml";
-  private static ProfilesConfigurator instance;
+  private static final String DEFAULT_SYS_PROP_TOGGLE = "bbriccs.fhir.profile";
+  private static final String DEFAULT_RND_SYS_PROP_TOGGLE =
+      String.valueOf(System.currentTimeMillis());
+  private static final String DEFAULT_CONFIG_FILE_NAME = "fhir/configuration.yaml";
+
+  private static final Map<String, ProfilesConfigurator> configCache = new HashMap<>();
+
   private final List<ProfileSettingsDto> profileConfigurations;
-  private final ProfileSettingsDto defaultProfile;
+  private final String featureToggleName;
+  private ProfileSettingsDto defaultProfile;
 
   private ProfilesConfigurator(
-      List<ProfileSettingsDto> profileConfigurations, ProfileSettingsDto defaultProfile) {
+      List<ProfileSettingsDto> profileConfigurations, String featureToggleName) {
     this.profileConfigurations = profileConfigurations;
-    this.defaultProfile = defaultProfile;
+    this.featureToggleName = featureToggleName;
+
+    // calculate the initial default profile
+    // Note: the default profile can be changed by changing the system property at runtime
+    this.defaultProfile = initializeDefaultProfile();
+  }
+
+  private ProfileSettingsDto initializeDefaultProfile() {
+    val externalConfiguration = FeatureToggle.getStringToggle(featureToggleName);
+
+    return externalConfiguration
+        .map(
+            cfg ->
+                this.profileConfigurations.stream()
+                    .filter(config -> config.getId().equalsIgnoreCase(cfg))
+                    .findFirst()
+                    .orElseThrow(
+                        () ->
+                            new FhirConfigurationException(
+                                format(
+                                    "Configured Profile Setting {0} is not found within {1}",
+                                    cfg,
+                                    this.profileConfigurations.stream()
+                                        .map(ProfileSettingsDto::getId)
+                                        .collect(Collectors.joining(", "))))))
+        .orElse(this.profileConfigurations.get(0));
+  }
+
+  public ProfileSettingsDto getDefaultProfile() {
+    val externalConfiguration = FeatureToggle.getStringToggle(featureToggleName);
+    externalConfiguration
+        .filter(cfg -> !cfg.equalsIgnoreCase(defaultProfile.getId()))
+        .ifPresent(cfg -> this.defaultProfile = initializeDefaultProfile());
+    return defaultProfile;
+  }
+
+  public static ProfilesConfigurator getConfiguration(String name) {
+    // use the random toggle which is guaranteed to never match a real feature toggle
+    return getConfiguration(name, DEFAULT_RND_SYS_PROP_TOGGLE);
   }
 
   @SneakyThrows
-  public static ProfilesConfigurator getInstance() {
-    if (instance == null) {
+  public static ProfilesConfigurator getConfiguration(String name, String featureToggleName) {
+    val cfgFile =
+        Optional.of(name)
+            .map(rawName -> rawName.startsWith("fhir/") ? rawName : format("fhir/{0}", rawName))
+            .map(
+                rawName ->
+                    FilenameUtils.isExtension(rawName, "yaml", "yml")
+                        ? rawName
+                        : format("{0}.yaml", rawName))
+            .orElseThrow(); // NOSONAR will always contain a value here
 
-      val profilesConfig = ResourceLoader.readFileFromResource(CONFIG_FILE_NAME);
+    // calculate a key depending on filename and the name of the feature-toggle
+    val configuratorKey = format("{0}-{1}", cfgFile, featureToggleName);
+    return configCache.computeIfAbsent(
+        configuratorKey, key -> createConfigurator(cfgFile, featureToggleName));
+  }
 
-      val mapper =
-          new ObjectMapper(new YAMLFactory())
-              .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
-      val configuredProfiles =
-          mapper.readValue(profilesConfig, new TypeReference<List<ProfileSettingsDto>>() {});
-      val externalConfiguration = System.getProperty(SYS_PROP_TOGGLE, System.getenv(ENV_TOGGLE));
+  public static ProfilesConfigurator getDefaultConfiguration(String featureToggleName) {
+    return getConfiguration(DEFAULT_CONFIG_FILE_NAME, featureToggleName);
+  }
 
-      ProfileSettingsDto defaultConfig;
-      if (externalConfiguration != null) {
-        defaultConfig =
-            configuredProfiles.stream()
-                .filter(config -> config.getId().equalsIgnoreCase(externalConfiguration))
-                .findFirst()
-                .orElseThrow(
-                    () ->
-                        new InvalidConfigurationException(
-                            format(
-                                "Configured Profile Setting {0} is not found within {1}",
-                                externalConfiguration,
-                                configuredProfiles.stream()
-                                    .map(ProfileSettingsDto::getId)
-                                    .collect(Collectors.joining(", ")))));
-      } else {
-        defaultConfig = configuredProfiles.get(0);
-      }
-      instance = new ProfilesConfigurator(configuredProfiles, defaultConfig);
-    }
+  public static ProfilesConfigurator getDefaultConfiguration() {
+    return getConfiguration(DEFAULT_CONFIG_FILE_NAME, DEFAULT_SYS_PROP_TOGGLE);
+  }
 
-    return instance;
+  public static Optional<ProfileDto> getVirtualDefaultProfile(String profileName) {
+    return configCache.entrySet().stream()
+        .flatMap(entry -> entry.getValue().getDefaultProfile().getProfiles().stream())
+        .filter(profile -> profile.getName().equalsIgnoreCase(profileName))
+        .findFirst();
+  }
+
+  @SneakyThrows
+  private static ProfilesConfigurator createConfigurator(String cfgFile, String featureToggleName) {
+    val profilesConfig = ResourceLoader.readFileFromResource(cfgFile);
+    val mapper =
+        new ObjectMapper(new YAMLFactory())
+            .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+    val configuredProfiles =
+        mapper.readValue(profilesConfig, new TypeReference<List<ProfileSettingsDto>>() {});
+
+    return new ProfilesConfigurator(configuredProfiles, featureToggleName);
   }
 }

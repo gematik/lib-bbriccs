@@ -7,10 +7,11 @@
     <parent>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>fhir-bricks</artifactId>
-        <version>0.1.10</version>
+        <version>0.2.0</version>
     </parent>
 
     <artifactId>fhir-configurator-brick</artifactId>
+    <packaging>jar</packaging>
     <name>FHIR Profil-Konfigurator Brick</name>
 
     <dependencies>
@@ -21,6 +22,10 @@
         <dependency>
             <groupId>de.gematik.bbriccs</groupId>
             <artifactId>resource-loader-brick</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.gematik.bbriccs</groupId>
+            <artifactId>feature-toggle-brick</artifactId>
         </dependency>
     </dependencies>
 

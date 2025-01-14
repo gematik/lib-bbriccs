@@ -26,7 +26,7 @@ import lombok.val;
 public class TelematikID extends SemanticValue<String, DeBasisProfilNamingSystem> {
 
   private TelematikID(String telematikId) {
-    super(DeBasisProfilNamingSystem.SID_TELEMATIK_ID, telematikId);
+    super(DeBasisProfilNamingSystem.TELEMATIK_ID_SID, telematikId);
   }
 
   public static TelematikID random() {

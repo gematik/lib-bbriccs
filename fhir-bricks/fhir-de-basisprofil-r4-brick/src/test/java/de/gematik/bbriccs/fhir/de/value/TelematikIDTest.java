@@ -27,7 +27,7 @@ class TelematikIDTest {
   @Test
   void shouldGenerateRandomTelematikId() {
     val tid = TelematikID.random();
-    assertEquals(DeBasisProfilNamingSystem.SID_TELEMATIK_ID, tid.getSystem());
+    assertEquals(DeBasisProfilNamingSystem.TELEMATIK_ID_SID, tid.getSystem());
     assertNotNull(tid.getValue());
   }
 }

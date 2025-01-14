@@ -2,7 +2,7 @@ include::../attributes-sections.adoc[]
 
 
 == Utility-Bricks
-TODO: Beschreibung what are Utility-Bricks
+_TODO: descreibe the_ `utility-bricks` _here_
 
 
 

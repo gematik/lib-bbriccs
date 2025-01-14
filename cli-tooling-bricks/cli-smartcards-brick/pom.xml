@@ -4,7 +4,7 @@
     <parent>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>cli-tooling-bricks</artifactId>
-        <version>0.1.10</version>
+        <version>0.2.0</version>
     </parent>
 
     <artifactId>cli-smartcards-brick</artifactId>

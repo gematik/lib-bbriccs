@@ -1,8 +1,7 @@
 include::../attributes-sections.adoc[]
 
 == Konnektor
-
-Der Konnektor-Client ist über mehrere Module aufgebaut... TODO
+The "Konnektor" is basically the gateway into the TI. It is a hardware device that is connected to the practice's network and is used to communicate with the TI. The Konnektor is the central point of the practice's network and is responsible for the secure transmission of data to the TI.
 
 [plantuml, "{pumldir}/konnektor-overview", svg]
 .Konnektor-Overview

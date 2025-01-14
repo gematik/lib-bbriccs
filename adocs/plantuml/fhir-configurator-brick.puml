@@ -1,0 +1,29 @@
+@startuml
+skinparam groupInheritance 2
+skinparam packageStyle Frame
+set namespaceSeparator none
+
+class ProfilesConfigurator << (C,#FF7700) Singleton>> {
+    + {static} getConfiguration(name : String) : ProfilesConfigurator
+    + {static} getDefaultConfiguration() : ProfilesConfigurator
+}
+
+class ProfileSettingsDto {
+    id: String
+    note: String
+    mode: String
+    ignoreCodeSystems: List<String>
+    errorFilter: List<String>
+}
+
+class ProfileDto {
+    name: String
+    version: String
+    compatibleVersions: List<String>
+    canonicalClaims: List<String>
+    omitProfiles: List<String>
+ }
+
+ProfilesConfigurator *-right-> ProfileSettingsDto
+ProfileSettingsDto *-right-> ProfileDto
+@enduml

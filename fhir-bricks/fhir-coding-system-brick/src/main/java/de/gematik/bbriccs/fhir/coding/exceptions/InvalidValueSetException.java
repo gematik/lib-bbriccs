@@ -18,11 +18,11 @@ package de.gematik.bbriccs.fhir.coding.exceptions;
 
 import static java.text.MessageFormat.format;
 
-import de.gematik.bbriccs.fhir.coding.ProfileValueSet;
+import de.gematik.bbriccs.fhir.coding.FromValueSet;
 
 public class InvalidValueSetException extends RuntimeException {
 
-  public InvalidValueSetException(Class<? extends ProfileValueSet> valuesetClass, String value) {
+  public InvalidValueSetException(Class<? extends FromValueSet> valuesetClass, String value) {
     super(
         format(
             "Given value {0} is invalid for ValueSet {1}", value, valuesetClass.getSimpleName()));

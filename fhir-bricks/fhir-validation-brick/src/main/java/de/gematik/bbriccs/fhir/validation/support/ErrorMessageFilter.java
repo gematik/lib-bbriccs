@@ -58,9 +58,9 @@ public class ErrorMessageFilter implements IValidatorModule {
     val ignore = ignoreMessages.stream().anyMatch(message::matches);
     if (ignore) {
       log.trace(
-          format(
-              "Ignored validation message: ''{0}'' at {1}",
-              message, validationMessage.getLocationString()));
+          "Ignored validation message: ''{}'' at {}",
+          message,
+          validationMessage.getLocationString());
     }
 
     return ignore;

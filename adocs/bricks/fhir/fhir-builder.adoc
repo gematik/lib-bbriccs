@@ -1,0 +1,75 @@
+include::fhir-commons.adoc[]
+
+[#fhir-builder-brick]
+== FHIR Builder Brick
+{brick-intro-01}
+
+To solve this issue, the {brick-fhir-builder} provides a simple concept based on the {link-pattern-builder}. This allows you to build FHIR resources in a structured and type-safe way.
+
+[plantuml, "{pumldir}/fhir-builder-brick", svg]
+.FHIR Coding System Brick
+----
+include::{pumldir}/fhir-builder-brick.puml[]
+----
+
+The {brick-fhir-builder} provides basically a set of base classes which need to be extended and implemented for your own needs. The architecture will guide you through the process of building FHIR resources in a structured and flexible way.
+
+Wondering why you should use the {brick-fhir-builder}? Here are some reasons for and against using it.
+
+.Use it if:
+* You are new to FHIR. You want to get started quickly. The `fhir-bricks` will guide you on your journey.
+* You are tired of constantly having to deal with the system urls of the elements and structures.
+* You want to have a more structured and type-safe way to working with FHIR
+* You are working on a project that requires interoperability with other projects and teams.
+
+.Use it optionally if:
+* You have a small project that doesn't require a lot of complex FHIR resources.
+* You don't have an implementation of {brick-fhir-coding-system}.
+
+.Don't use it if:
+* You already have your own implementation of the {link-pattern-builder} that is too complex to refactor.
+
+=== ResourceBuilder
+The `ResourceBuilder` is designed to simplify and standardise the process of creating {link-hl7-fhir-resources}. This base class has the following signature:
+
+[source,java]
+----
+public abstract class ResourceBuilder<R extends Resource, B extends ResourceBuilder<R, B>> {
+  // we'll cover this later
+  public abstract R build();
+}
+----
+
+.The `ResourceBuilder` does so by:
+1. providing some common methods which are used in every builder
+2. enforcing the `build()`-method, making the builders uniform and intuitively to use
+
+.But why those generics?
+1. `R` defines the builder to be specific for this special kind of `Resource`
+2. the builder MUST generate native HL7/HAPI resources or {link-hapi-docs-custom-structs}
+3. `B` on the other hand tells the `ResourceBuilder` to return the specific builder instance on common functions
+
+=== ElementBuilder
+The `ResourceBuilder` is designed to simplify and standardize the building of {link-hl7-fhir-types}.
+
+[source,java]
+----
+public abstract class ElementBuilder<E extends Element, B extends ElementBuilder<E, B>> {
+  // we'll cover this later
+  public abstract R build();
+}
+----
+
+.The `ElementBuilder` does so by:
+1. providing some common methods which are used in every builder
+2. enforcing the `build()`-method, making the builders uniform and intuitively to use
+
+.But why those generics?
+1. `E` defines the builder to be specific for this special kind of `Element`
+2. the builder MUST generate native HL7/HAPI resources or {link-hapi-docs-custom-structs}
+3. `B` on the other hand tells the `ElementBuilder` to return the specific builder instance on common functions
+
+=== FakerBrick
+When dealing with test data, it is often necessary to generate random or fake data. The `FakerBrick` provides a set of classes and interfaces that allow you to generate fake data for FHIR resources in a structured and extensible way.
+
+include::tutorial-resource-builder.adoc[leveloffset=+1]

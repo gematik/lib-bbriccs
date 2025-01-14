@@ -1,0 +1,133 @@
+include::../attributes-sections.adoc[]
+
+== Implementing custom Feature-Toggles
+In the <<tutorial_feature_toggle_create,last tutorial>> we saw how a feature toggle can be queried via its name. The name of the feature toggle is passed as a string and the `FeatureConfiguration` takes care of the resolution and the specific mapping to the respective data types of the feature toggle. Other common data types such as `Integer`, `Double`, `String` or generally for enumerations are already implemented and can be used directly.
+
+Although this allows us to ensure a consistent nomenclature of feature toggles, we still have the problem that feature toggles are usually extremely difficult to maintain (if they are queried by string). This type of query is therefore only recommended if a feature toggle is only queried at a single point. For more complex feature toggles, or those that are to be used in many places, the `feature-toggle-brick` also offers the option of creating user-defined feature toggles. This allows the actual name of a toggle to be encapsulated in a single place, which significantly improves the maintainability and readability of the code.
+
+*Task:* Suppose we have a feature toggle with multiple states called `myFeature.state` which is also needed in many places.
+
+This is the ideal use case for a user-defined feature toggle.
+
+*Step 1:* implement an enumaration `MyFeatureState` to represent the states of the feature toggle.
+
+[source,java]
+----
+class MyApplication {
+  public static void main(String[] args){
+    val featureConf = new FeatureConfiguration();
+    MyFeatureStateToggle isFeatureActive = featureConf.getEnumToggle("myFeature.state", MyFeatureState.class, MyFeatureState.STATE_ONE);
+    System.out.println("Feature state is: " + isFeatureActive.getState());
+  }
+
+  enum MyFeatureState {
+    STATE_ONE("first"),
+    STATE_TWO("second"),
+    STATE_THREE("third");
+
+    private final String state;
+
+    MyFeatureState(String state){
+      this.state = state;
+    }
+
+    public String getState(){
+      return state;
+    }
+  }
+}
+----
+
+Then we can use the feature toggle directly in the simplest case:
+
+[source,shell]
+----
+java -DmyFeature.state=STATE_THREE MyApplication
+>> Feature state is: third
+----
+
+However, there is still the problem of maintainability with “string addressing”. This can be solved by using a user-defined feature toggle and the feature toggle can also be provided with additional functionality.
+
+*Step 2*: implement the class `MyFeatureStateToggle` which implements the `FeatureToggle` interface for the feature toggle `MyFeatureState`.
+
+[source,java]
+----
+class MyApplication {
+  public static void main(String[] args){
+    val featureConf = new FeatureConfiguration();
+    MyFeatureState isFeatureActive = featureConf.getToggle(new MyFeatureStateToggle());
+    System.out.println("Feature state is: " + isFeatureActive.getState());
+  }
+
+  public static class MyFeatureStateToggle implements FeatureToggle<MyFeatureState> {
+
+    @Override
+    public String getKey() {
+      return "myFeature.state";
+    }
+
+    @Override
+    public Function<String, MyFeatureState> getConverter() {
+      return this::mapState;
+    }
+
+    public MyFeatureState mapState(String value) {
+      if (StringUtils.isNumeric(value)) {
+        val index = Integer.parseInt(value) % MyFeatureState.values().length;
+        return MyFeatureState.values()[index];
+      } else {
+        return Arrays.stream(MyFeatureState.values())
+            .filter(e -> e.getState().equalsIgnoreCase(value) || e.name().equalsIgnoreCase(value))
+            .findFirst()
+            .orElse(getDefaultValue());
+      }
+    }
+
+    @Override
+    public MyFeatureState getDefaultValue() {
+      return MyFeatureState.STATE_ONE;
+    }
+  }
+
+  enum MyFeatureState {
+    STATE_ONE("first"),
+    STATE_TWO("second"),
+    STATE_THREE("third");
+
+    private final String state;
+
+    MyFeatureState(String state){
+      this.state = state;
+    }
+
+    public String getState(){
+      return state;
+    }
+  }
+}
+----
+
+With this implementation, the entire feature toggle is encapsulated in a single class and can be queried at any point.
+
+[source,shell]
+----
+# mapping über den Enumerationsnamen
+java -DmyFeature.state=STATE_THREE MyApplication
+>> Feature state is: third
+
+# mapping über den State-Wert der Enumeration
+java -DmyFeature.state=second MyApplication
+>> Feature state is: second
+
+# mapping über den Enumerationsindex
+java -DmyFeature.state=2 MyApplication
+>> Feature state is: third
+
+# mapping über einen rollenden Enumerationsindex (Überlauf mit modulo)
+java -DmyFeature.state=42 MyApplication
+>> Feature state is: first
+----
+
+The nomenclature of the feature toggles is retained and the maintainability of the code is significantly increased. Furthermore, the feature toggle can also be provided with additional functionality, such as the conversion of numerical values into enumerations or the use of descriptive values (instead of enumeration names):
+
+This concept can be used to build both simple and extremely complex and, above all, reusable feature toggles.

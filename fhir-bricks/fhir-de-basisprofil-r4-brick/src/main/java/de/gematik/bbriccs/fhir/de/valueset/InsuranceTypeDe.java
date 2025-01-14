@@ -16,10 +16,11 @@
 
 package de.gematik.bbriccs.fhir.de.valueset;
 
-import de.gematik.bbriccs.fhir.coding.ProfileValueSet;
+import de.gematik.bbriccs.fhir.coding.FromValueSet;
 import de.gematik.bbriccs.fhir.de.DeBasisProfilCodeSystem;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.hl7.fhir.r4.model.Coding;
 
 /**
  * <a
@@ -27,7 +28,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Getter
 @RequiredArgsConstructor
-public enum InsuranceTypeDe implements ProfileValueSet {
+public enum InsuranceTypeDe implements FromValueSet {
   GKV("GKV", "gesetzliche Krankenversicherung"),
   PKV("PKV", "private Krankenversicherung"),
   BG("BG", "Berufsgenossenschaft"),
@@ -39,9 +40,6 @@ public enum InsuranceTypeDe implements ProfileValueSet {
 
   public static final DeBasisProfilCodeSystem CODE_SYSTEM =
       DeBasisProfilCodeSystem.VERSICHERUNGSART_DE_BASIS;
-  public static final String DESCRIPTION =
-      "ValueSet zur Codierung der Versicherungsart in Deutschland";
-  public static final String PUBLISHER = "HL7 Deutschland e.V. (Technisches Komitee FHIR)";
 
   private final String code;
   private final String display;
@@ -51,7 +49,11 @@ public enum InsuranceTypeDe implements ProfileValueSet {
     return CODE_SYSTEM;
   }
 
+  public static InsuranceTypeDe fromCode(Coding coding) {
+    return fromCode(coding.getCode());
+  }
+
   public static InsuranceTypeDe fromCode(String code) {
-    return ProfileValueSet.fromCode(InsuranceTypeDe.class, code);
+    return FromValueSet.fromCode(InsuranceTypeDe.class, code);
   }
 }

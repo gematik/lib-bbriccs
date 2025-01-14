@@ -1,0 +1,123 @@
+include::fhir-commons.adoc[]
+
+[#tutorial_match_resources]
+== Matching FHIR Resources and Elements
+Have you noticed how we have implemented the `getStandardSize()` method in the <<code_kbv_erp_medication_01, KbvErpMedication>> from <<tutorial_custom_resources, this tutorial>>? We have used a `filter` method to extract the `StandardSize` from the `Extension`-List of the `Medication`.
+
+This is a very common pattern when dealing with FHIR. Imagine a FHIR resource containing a list of extensions. If you want to select a particular one of them, the system url is your buddy here.
+
+
+If you have completed <<tutorial_fhir_package,this tutorial>> you already have everything you need to match the systems of your package in.
+And once you start using <<tutorial_custom_resources,custom resources>> you will quickly find that you need to filter your items out of HAPI lists quite often.
+
+Let's have a closer look at the example from the <<tutorial_custom_resources,custom resources tutorial>>.
+
+[source,java,line]
+----
+Bundle bundle = getBundleFromSomewhere();
+Medication medication = bundle.getEntry().stream()
+    .filter(entry -> entry.getResource().getResourceType().equals(ResourceType.Medication))
+    .filter(KbvStructDef.KBV_MEDICATION_PZN::matches)
+    .map(entry -> (Medication)entry.getResource())
+    .findFirst()
+    .orElseThrow();
+----
+
+To understand what's going on here, let's look at an example bundle in plain xml:
+
+[source,xml,line]
+----
+<Bundle xmlns="http://hl7.org/fhir">
+  ...
+  <entry>
+    <resource>
+      <Composition>
+        <meta>
+          <profile value="https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Composition|1.1.0" />
+        </meta>
+        ...
+      </Composition>
+    </resource>
+  </entry>
+  <entry>
+    <resource>
+      <MedicationRequest>
+        <meta>
+          <profile value="https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Prescription|1.1.0" />
+        </meta>
+        ...
+      </MedicationRequest>
+    </resource>
+  </entry>
+  <entry>
+    <resource>
+      <Medication>
+        <meta>
+          <profile value="https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_PZN|1.1.0" />
+        </meta>
+        ...
+      </Medication>
+    </resource>
+  </entry>
+  <entry>
+    <resource>
+      <Patient>
+        <meta>
+          <profile value="https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Patient|1.1.0" />
+        </meta>
+        ...
+      </Patient>
+    </resource>
+  </entry>
+  <entry>
+    <resource>
+      <Practitioner>
+        <meta>
+          <profile value="https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Practitioner|1.1.0" />
+        </meta>
+        ...
+      </Practitioner>
+    </resource>
+  </entry>
+  <entry>
+    <resource>
+      <Organization>
+        <meta>
+          <profile value="https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Organization|1.1.0" />
+        </meta>
+        ...
+      </Organization>
+    </resource>
+  </entry>
+  <entry>
+    <resource>
+      <Coverage>
+        <meta>
+          <profile value="https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Coverage|1.1.0" />
+        </meta>
+        ...
+      </Coverage>
+    </resource>
+  </entry>
+</Bundle>
+----
+
+.In general, we have at least two ways of finding a particular resource from the entries in a bundle:
+1. we use the `ResourceType` to filter the entries
+2. we use the `meta.profile` (system url) to filter the entries
+
+In the original code, we used both approaches simultaneously, which is perfectly fine, but shouldn't be necessary in most cases. The `meta.profile` is the more specific way to filter the entries, as it is unique for each resource type. The `ResourceType` is more general and can be used to filter out all resources of a certain type. So when we apply the following filter, we know implicitly from the structure definition that this resource must be of the desired `ResourceType`:
+
+[source,java,line]
+----
+Bundle bundle = getBundleFromSomewhere();
+Medication medication = bundle.getEntry().stream()
+    .filter(KbvStructDef.KBV_MEDICATION_PZN::matches)
+    .map(entry -> (Medication)entry.getResource())
+    .findFirst()
+    .orElseThrow();
+----
+
+What the filter does is basically compare the given system url of a specific `WithSystem` object with the `meta.profile` of a resource.
+
+Having such a powerful mechanism makes <<tutorial_custom_resources,custom resources tutorial>> easier to implement, easier to test and more robust.

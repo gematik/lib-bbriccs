@@ -18,7 +18,7 @@ package de.gematik.bbriccs.fhir.coding.exceptions;
 
 import static java.text.MessageFormat.format;
 
-import de.gematik.bbriccs.fhir.coding.ProfileValueSet;
+import de.gematik.bbriccs.fhir.coding.FromValueSet;
 import de.gematik.bbriccs.fhir.coding.WithSystem;
 import java.util.Arrays;
 import java.util.List;
@@ -34,12 +34,12 @@ public class MissingFieldException extends RuntimeException {
         Arrays.stream(fields).map(WithSystem::getCanonicalUrl).collect(Collectors.joining(" | ")));
   }
 
-  public MissingFieldException(Class<? extends Resource> clazz, ProfileValueSet... valueSets) {
+  public MissingFieldException(Class<? extends Resource> clazz, FromValueSet... valueSets) {
     this(clazz, Arrays.stream(valueSets).toList());
   }
 
   public MissingFieldException(
-      Class<? extends Resource> clazz, List<? extends ProfileValueSet> fields) {
+      Class<? extends Resource> clazz, List<? extends FromValueSet> fields) {
     this(
         clazz,
         fields.stream()

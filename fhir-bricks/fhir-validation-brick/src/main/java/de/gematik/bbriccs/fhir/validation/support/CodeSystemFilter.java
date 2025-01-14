@@ -20,6 +20,7 @@ import static java.text.MessageFormat.format;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.support.ConceptValidationOptions;
+import ca.uhn.fhir.context.support.IValidationSupport;
 import ca.uhn.fhir.context.support.ValidationSupportContext;
 import java.util.*;
 import javax.annotation.Nonnull;
@@ -58,7 +59,7 @@ public class CodeSystemFilter extends BaseValidationSupport {
       String theValueSetUrl) {
 
     if (isCodeSystemSupported(theValidationSupportContext, theCodeSystem)) {
-      val result = new CodeValidationResult();
+      val result = new IValidationSupport.CodeValidationResult();
       result.setSeverity(IssueSeverity.INFORMATION);
       result.setCodeSystemName(theCodeSystem);
       result.setCode(theCode);

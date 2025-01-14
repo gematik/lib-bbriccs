@@ -1,0 +1,43 @@
+include::fhir-commons.adoc[]
+
+[#tutorial_validation_disabled]
+== Disable FHIR Validation
+There is no way to explicitly disable FHIR validation. However, by using the `DummyValidator` we can achieve pretty much the same result. Since `DummyValidator` always returns `true`, you can always take the happy path in your code. This helps you to avoid a lot of conditionals and gives you other advantages inherited from the {link-pattern-null-object}.
+
+Let's have a look at the following unit test to explore the capabilities of the `DummayValidator`
+
+[source,java,linenums]
+----
+@Test
+void shouldValidateSimpleString() {
+    String content = "Hello Bbriccs!";
+    ValidatorFhir validator = new DummyValidator(FhirContext.forR4());
+    assertTrue(validator.isValid(content));
+}
+----
+
+So here we instantiate a `DummyValidator` in line 4 and use it to validate a simple string in line 5. It's as simple as that. But we can also take a closer look at the `ValidationResult` that the `DummayValidator` produces
+
+[source,java,linenums]
+----
+@Test
+void shouldValidateSimpleString() {
+    String content = "Hello Bbriccs!";
+    ValidatorFhir validator = new DummyValidator(FhirContext.forR4());
+
+    ValidationResult vr = validator.validate(content);
+    assertTrue(vr.isSuccessful());
+    assertEquals(1, vr.getMessages().size());
+    assertEquals(ResultSeverityEnum.INFORMATION, vr.getMessages().get(0).getSeverity());
+
+    vr.getMessages().forEach(m -> System.out.println(m.getSeverity() + ": " + m.getMessage()));
+}
+----
+
+And we will see, that the `DummyValidator` produces the following `INFORMATION` message. This is a good way to ensure that the validation is working as expected.
+
+[source,shell]
+----
+# output of the shouldValidateSimpleString unit test
+INFORMATION: Information provided by DummyValidator
+----

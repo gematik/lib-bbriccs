@@ -1,0 +1,34 @@
+include::fhir-commons.adoc[]
+
+[#fhir-coding-system-brick]
+== FHIR Coding System Brick
+{brick-intro-01}
+
+The {brick-fhir-coding-system} introduce an additional layer of abstraction on top of HAPI, which makes it easier to work with FHIR resources in a consistent and maintainable way. The {brick-fhir-coding-system} is a set of classes and interfaces that provide a more structured and type-safe way to work with elements of any FHIR resources. It is designed to be easy to use, and to provide a clear and consistent API that can be used across different projects and teams.
+
+Wondering why you should use the {brick-fhir-coding-system}? Here are some reasons for and against using it.
+
+.Use it if:
+* You are a complete beginner with FHIR. You want to get started quickly.
+* You are tired of constantly having to deal with system urls of the elements and structures.
+* You would like to have a more structured and type-safe way of working with FHIR resources.
+* You are working on a project that requires interoperability with other projects and teams.
+
+.Don't use it when:
+* You are working on a small project that doesn't require a lot of complex FHIR resources.
+
+=== Architecture
+The {brick-fhir-coding-system} provides basically a set interfaces that represent the different elements and structures of a FHIR resource. These interfaces are designed to be easy to use, and to provide a clear and consistent API that can be used across different projects and teams:
+
+
+[plantuml, "{pumldir}/fhir-coding-system-brick", svg]
+.FHIR Coding System Brick
+----
+include::{pumldir}/fhir-coding-system-brick.puml[]
+----
+
+The base {link-hl7-fhir} specification describes only a set of base resources, while https://www.hl7.org/fhir/profiling.html[profiling FHIR] allows to tailor the standard to different jurisdictions and domains and published as packages. Let's take for example the https://simplifier.net/basisprofil-de-r4[Basisprofile DE (R4)] package and see how the {brick-fhir-coding-system} can be used to implement it.
+
+include::tutorial-fhir-package.adoc[leveloffset=+1]
+include::tutorial-custom-structures.adoc[leveloffset=+1]
+include::tutorial-matching-resources.adoc[leveloffset=+1]

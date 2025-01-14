@@ -3,4 +3,4 @@
   profiles:
     - name: "de.ihe-d.terminology"
       version: "3.0.0"
-      omitProfiles: "invalid.txt"
+      omitProfiles: ["invalid.txt", "invalid.json"]

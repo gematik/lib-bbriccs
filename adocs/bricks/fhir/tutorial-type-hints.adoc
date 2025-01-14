@@ -1,0 +1,131 @@
+include::fhir-commons.adoc[]
+
+[#tutorial_type_hints]
+== Decoding with Type Hints
+The following challenge arises when a decoder attempts to convert a raw string into a structured object. The `FhirCodec` also faces the same challenge. Try to put yourself in the decoder's shoes to mentally understand the process.
+
+Given the following XML snippet, how would you decide on which Java type to use for this object?
+
+[source,xml,linenums]
+----
+<Medication xmlns="http://hl7.org/fhir">
+  <id value="47076fb4-dc5c-4f75-85f6-b200033b3280" />
+  <meta>
+    <profile value="https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_PZN|1.1.0" />
+  </meta>
+  <extension url="http://fhir.de/StructureDefinition/normgroesse">
+    <valueCode value="N1" />
+  </extension>
+  <code>
+    <coding>
+      <system value="http://fhir.de/CodeSystem/ifa/pzn" />
+      <code value="03879429" />
+    </coding>
+    <text value="Beloc-Zok® mite 47,5 mg, 30 Retardtabletten N1" />
+  </code>
+</Medication>
+----
+
+Roughly speaking, only the first line is enough. From this, the HAPI can directly deduce that it is decoding this object as `org.hl7.fhir.r4.model.Medication`. But the HAPI can do more. Did you notice that this `<Medication>` object contains a structure definition? The HAPI can analyse this profile and even offers the possibility to register {url-hapi-docs-custom-structs}[custom structures].
+
+[source,java,linenums]
+----
+FhirCodec codec = getFhirCodecFromSomewhere();
+String content = readXmlExample();
+
+// options to decode the Medication
+Resource medication1 = fhirCodec.decode(content);
+Resource medication2 = fhirCodec.decode(null, content);
+Medication medication3 = fhirCodec.decode(Medication.class, content);
+KbvErpMedication medication4 = fhirCodec.decode(KbvErpMedication.class, content);
+
+// where these will fail with a ClassCastException
+Patient patient = fhirCodec.decode(Patient.class, content);
+----
+
+These are the options we have, with the method to `medication1` being just a shortcut for `medication2`. Things get more exciting when you try to decode the others. Do you remember the first decoder challenge? The decoder overcomes this problem with your help. You literally tell the codec in the first argument what type of object to decode.
+
+Consequently, an `ClassCastException` will be thrown when you instruct the codec to decode the `<Medication>` as `org.hl7.fhir.r4.model.Patient`.
+
+[source,java]
+----
+// where these will fail with a ClassCastException
+Patient patient = fhirCodec.decode(Patient.class, content);
+----
+
+But what happens to composite FHIR resources? For example, when we decode a `<Bundle>`, we can specify the concrete type `KbvErpBundle`, but what happens to the resources it contains?  Basically the same as with any other object. The decoder has to decode every single resource. This is where the TypeHints come in.
+
+Imagine having the following (simplified) `<Bundle>` which want to decode and work with:
+
+[source,xml,linenums]
+----
+<Bundle xmlns="http://hl7.org/fhir">
+  <id value="1f339db0-9e55-4946-9dfa-f1b30953be9b" />
+  <meta>
+    <lastUpdated value="2022-05-20T08:30:00Z" />
+    <profile value="https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Bundle|1.1.0" />
+  </meta>
+  <identifier>
+    <system value="https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId" />
+    <value value="160.100.000.000.037.28" />
+  </identifier>
+  <type value="document" />
+  <timestamp value="2022-05-20T08:30:00Z" />
+  <entry>
+    <fullUrl value="http://pvs.praxis.local/fhir/Medication/5ff1bd22-ce14-484e-be56-d2ba4adeac31" />
+    <resource>
+      <Medication xmlns="http://hl7.org/fhir">
+        <id value="5ff1bd22-ce14-484e-be56-d2ba4adeac31" />
+        <meta>
+          <profile value="https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_PZN|1.1.0" />
+        </meta>
+        <extension url="http://fhir.de/StructureDefinition/normgroesse">
+          <valueCode value="N1" />
+        </extension>
+        <code>
+          <coding>
+            <system value="http://fhir.de/CodeSystem/ifa/pzn" />
+            <code value="03879429" />
+          </coding>
+          <text value="Beloc-Zok® mite 47,5 mg, 30 Retardtabletten N1" />
+        </code>
+      </Medication>
+    </resource>
+  </entry>
+</Bundle>
+----
+
+To decode this bundle, we can use the `KbvErpBundle` we created in <<tutorial_custom_resources>>.
+
+[source,java]
+----
+String content = readXmlExample();
+
+KbvErpBundle prescription = fhirCodec.decode(KbvErpBundle.class, content);
+KbvErpMedication medication = prescription.getErpMedication(); // throws ClassCastException
+----
+
+However, when we call the custom method `getErpMEdication()` we run into a `ClassCastException`.  Let me explain why this is the case. When calling the `decode` method, we can only tell the decoder to decode the outer FHIR resource as a `KbvErpBundle`. But you cannot tell the decoder directly how to decode the `<Medication>`. This is where the `TypeHint` comes in.
+
+A `TypeHint` allows you to tell the decoder in advance how to decode certain resources. This is basically the main purpose of the structure definition in the profile values.
+
+[source,xml]
+----
+<profile value="https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Bundle|1.1.0" />
+
+<profile value="https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_PZN|1.1.0" />
+----
+
+With a `TypeHint` we can tell the decoder that whenever it encounters this profile, it will decode it as `KbvErpMedication`. A `TypeHint` is given to the codec in advance. So we need to slightly modify the <<tutorial_fhir_codec_init,instantiation>> of our `FhirCodec`.
+
+[source,java]
+----
+String content = readXmlExample();
+
+FhirCodec fhirCodec = FhirCodec.forR4()
+          .withTypeHint(KbvStructDef.KBV_MEDICATION_PZN, KbvErpMedication.class)
+          .andDummyValidator();
+
+KbvErpBundle prescription = fhirCodec.decode(KbvErpBundle.class, content);
+KbvErpMedication medication = prescription.getErpMedication(); // no more exceptions
+----

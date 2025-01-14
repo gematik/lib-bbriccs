@@ -80,6 +80,10 @@ public class FakerBrick {
     return Double.parseDouble(PRICE_FORMAT.format(price));
   }
 
+  public String streetName() {
+    return faker.address().streetAddress();
+  }
+
   /**
    * Get a random value from a given Enum
    *

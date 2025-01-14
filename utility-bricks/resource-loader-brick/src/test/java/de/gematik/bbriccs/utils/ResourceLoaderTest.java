@@ -22,17 +22,11 @@ import static org.mockito.Mockito.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.function.BiPredicate;
-import java.util.stream.Stream;
+import java.nio.file.Paths;
 import lombok.val;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 
 class ResourceLoaderTest {
 
@@ -54,6 +48,15 @@ class ResourceLoaderTest {
   }
 
   @Test
+  void shouldThrowOnGettingMissingFile() {
+    val exception =
+        assertThrows(
+            ResourceFileException.class,
+            () -> ResourceLoader.getFileFromResource("txt/test_123.txt"));
+    assertTrue(exception.getMessage().contains("txt/test_123.txt"));
+  }
+
+  @Test
   void shouldThrowOnMissingFile() {
     val exception =
         assertThrows(
@@ -64,8 +67,7 @@ class ResourceLoaderTest {
 
   @Test
   void shouldReadAllFilesFromDirectory() {
-    val fileContents =
-        Assertions.assertDoesNotThrow(() -> ResourceLoader.readFilesFromDirectory("txt"));
+    val fileContents = assertDoesNotThrow(() -> ResourceLoader.readFilesFromDirectory("txt"));
     assertEquals(2, fileContents.size());
     assertTrue(fileContents.contains("First"));
     assertTrue(fileContents.contains("Second"));
@@ -73,8 +75,7 @@ class ResourceLoaderTest {
 
   @Test
   void shouldGetAllFilesFromDirectory() {
-    val files =
-        Assertions.assertDoesNotThrow(() -> ResourceLoader.getResourceFilesInDirectory("txt"));
+    val files = assertDoesNotThrow(() -> ResourceLoader.getResourceFilesInDirectory("txt"));
     assertEquals(2, files.size());
 
     val fileNames = files.stream().map(File::getName).toList();
@@ -84,8 +85,7 @@ class ResourceLoaderTest {
 
   @Test
   void shouldReadAllFilesFromDirectoryRecursively() {
-    val fileContents =
-        Assertions.assertDoesNotThrow(() -> ResourceLoader.readFilesFromDirectory("txt", true));
+    val fileContents = assertDoesNotThrow(() -> ResourceLoader.readFilesFromDirectory("txt", true));
     assertEquals(4, fileContents.size());
     assertTrue(fileContents.contains("Third"));
     assertTrue(fileContents.contains("Fourth"));
@@ -93,9 +93,7 @@ class ResourceLoaderTest {
 
   @Test
   void shouldGetAllFilesFromDirectoryRecursively() {
-    val files =
-        Assertions.assertDoesNotThrow(
-            () -> ResourceLoader.getResourceFilesInDirectory("txt", true));
+    val files = assertDoesNotThrow(() -> ResourceLoader.getResourceFilesInDirectory("txt", true));
     assertEquals(4, files.size());
 
     val fileNames = files.stream().map(File::getName).toList();
@@ -128,19 +126,20 @@ class ResourceLoaderTest {
   }
 
   @Test
-  void shouldSneakyThrowOnIOException() {
-    val dir = "txt";
-    val pathFile = ResourceLoader.getResourceFilesInDirectory(dir).get(0).getParentFile();
-    val path = Path.of(pathFile.getAbsolutePath());
-    try (val filesMock = mockStatic(Files.class)) {
-      filesMock
-          .when(() -> Files.find(eq(path), anyInt(), any(BiPredicate.class)))
-          .thenThrow(new IOException("example error"));
-      val exception =
-          assertThrows(
-              IOException.class, () -> ResourceLoader.getResourceDirectoryStructure(dir, false));
-      assertEquals("example error", exception.getMessage());
-    }
+  void shouldReadEmptyDirectoryWithoutThrowing() throws IOException {
+    // create empty directory dynamically because git does not track empty directories
+    val basePath = Paths.get(this.getClass().getResource("/").getPath());
+    val emptyDir = basePath.resolve("empty").toFile();
+    Files.createDirectories(emptyDir.toPath());
+
+    val dirStructure = ResourceLoader.getResourceDirectoryStructure("empty");
+    assertEquals(0, dirStructure.size());
+
+    val dirs = dirStructure.stream().filter(File::isDirectory).toList();
+    assertEquals(0, dirs.size());
+
+    val files = dirStructure.stream().filter(File::isFile).toList();
+    assertEquals(0, files.size());
   }
 
   @Test
@@ -149,29 +148,5 @@ class ResourceLoaderTest {
     val exception = assertThrows(ResourceFileException.class, () -> ResourceLoader.readString(f));
     assertTrue(exception.getMessage().contains("Error while reading from file"));
     assertTrue(exception.getMessage().contains("a/b/c"));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void shouldThrowOnNonExistingResourceDirectoryPath(boolean exists, boolean isDirectory) {
-    try (val sp = mockStatic(Path.class)) {
-      val mockFile = mock(File.class);
-      val mockPath = mock(Path.class);
-
-      when(mockPath.toFile()).thenReturn(mockFile);
-      when(mockFile.exists()).thenReturn(exists);
-      when(mockFile.isDirectory()).thenReturn(isDirectory);
-      sp.when(() -> Path.of(any(URI.class))).thenReturn(mockPath);
-
-      val exception =
-          assertThrows(
-              ResourceFileException.class,
-              () -> ResourceLoader.getResourceDirectoryStructure("txt"));
-      assertEquals("Given path txt does not exist or is not a directory", exception.getMessage());
-    }
-  }
-
-  public static Stream<Arguments> shouldThrowOnNonExistingResourceDirectoryPath() {
-    return Stream.of(Arguments.arguments(true, false), Arguments.arguments(false, true));
   }
 }

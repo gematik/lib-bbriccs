@@ -213,9 +213,7 @@ public class FuzzingContextImpl implements FuzzingContext {
               try {
                 return mutator.apply(this, typeValue);
               } catch (Throwable throwable) {
-                log.warn(
-                    "Caught throwable {} while applying mutator",
-                    throwable.getClass().getSimpleName());
+                log.warn("Caught {} while applying mutator", throwable.getClass().getSimpleName());
                 return FuzzingLogEntry.error(throwable);
               }
             })
@@ -247,7 +245,7 @@ public class FuzzingContextImpl implements FuzzingContext {
     typeFuzzers.addAll(superMatches);
 
     if (typeFuzzers.isEmpty()) {
-      log.warn("No Fuzzers found for requested Type {}", tClass.getSimpleName());
+      log.info("No Fuzzers found for requested Type {}", tClass.getSimpleName());
     }
 
     return typeFuzzers;
@@ -288,7 +286,7 @@ public class FuzzingContextImpl implements FuzzingContext {
     resourceFuzzers.addAll(hierarchyFuzzers);
 
     if (resourceFuzzers.isEmpty()) {
-      log.warn("No Fuzzers found for requested Resource {}", rClass.getSimpleName());
+      log.info("No Fuzzers found for requested Resource {}", rClass.getSimpleName());
     }
 
     return resourceFuzzers;
@@ -306,7 +304,7 @@ public class FuzzingContextImpl implements FuzzingContext {
             .toList();
 
     if (fuzzers.isEmpty()) {
-      log.warn("No Fuzzers found for requested primitive type {}", pType);
+      log.info("No Fuzzers found for requested primitive type {}", pType);
     }
 
     return fuzzers;

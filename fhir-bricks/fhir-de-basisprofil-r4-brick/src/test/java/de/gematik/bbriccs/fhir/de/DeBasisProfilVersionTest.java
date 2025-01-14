@@ -19,21 +19,16 @@ package de.gematik.bbriccs.fhir.de;
 import static org.junit.jupiter.api.Assertions.*;
 
 import de.gematik.bbriccs.fhir.conf.ProfilesConfigurator;
-import de.gematik.bbriccs.utils.SingletonUtil;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junitpioneer.jupiter.SetSystemProperty;
 
 class DeBasisProfilVersionTest {
 
-  @BeforeEach
-  void clearProfileSingleton() {
-    SingletonUtil.resetSingleton(ProfilesConfigurator.class);
-  }
-
   @Test
   void shouldGetDefault() {
+    // prepares the virtual default configuration
+    val profiles = ProfilesConfigurator.getDefaultConfiguration();
     val dv = DeBasisProfilVersion.getDefaultVersion();
     assertEquals(DeBasisProfilVersion.V1_4_0, dv);
   }
@@ -45,8 +40,11 @@ class DeBasisProfilVersionTest {
   }
 
   @Test
-  @SetSystemProperty(key = "bbriccs.fhir.profile", value = "1.3.2")
+  @SetSystemProperty(key = "bbriccs.fhir.profile.de.basis.test", value = "1.3.2")
   void shouldGetDefaultVersionFromSysProp() {
+    val toggleName = "bbriccs.fhir.profile.de.basis.test";
+    // prepares the virtual default configuration
+    val profiles = ProfilesConfigurator.getDefaultConfiguration(toggleName);
     val dv = DeBasisProfilVersion.getDefaultVersion();
     assertEquals(DeBasisProfilVersion.V1_3_2, dv);
   }

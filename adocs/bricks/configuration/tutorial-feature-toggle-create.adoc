@@ -1,0 +1,62 @@
+
+[#tutorial_feature_toggle_create]
+== Using basic Feature-Toggles
+A decisive advantage of the `feature-toggle-brick` is that feature toggles can be set both via system properties and via environment variables. The configuration via system properties is preferred, if these are not set, the environment variables are used and in the very last case (if neither system properties nor environment variables are set) the default value is used.
+
+Let's assume we have the application `MyApplication` which requires a Boolean toggle:
+
+[source,java]
+----
+class MyApplication {
+  public static void main(String[] args){
+    val featureConf = new FeatureConfiguration();
+    boolean isFeatureActive = featureConf.getBooleanToggle("myFeature.isActive");
+    // Alternative mit meinem eigenen Default-Wert: false ist der Default-Wert für den Default-Wert
+    // boolean isFeatureActive = featureConf.getBooleanToggle("hello.boolean", false);
+
+    if(isFeatureActive){
+      System.out.println("Feature is active");
+    } else {
+      System.out.println("Feature is NOT active");
+    }
+  }
+}
+----
+
+Now we can set the feature toggle via system properties or environment variables and start the application:
+
+[source,shell]
+----
+# verwendet den Default-Wert weil kein Feature-Toggle gesetzt ist
+java MyApplication
+>> Feature is NOT active
+
+# setze das Feature-Toggle über System-Properties
+java -DmyFeature.isActive=true MyApplication
+>> Feature is active
+
+# setze das Feature-Toggle über Umgebungsvariablen
+export MYFEATURE_ISACTIVE=YES
+java MyApplication
+>> Feature is active
+
+# Umgebungsvariable weiterhin gesetzt
+# das Feature-Toggle wird über System-Properties überschrieben
+echo $MYFEATURE_ISACTIVE
+java -DmyFeature.isActive=false MyApplication
+>> Feature is NOT active
+----
+
+This small demonstrator already shows the basics of the `feature-toggle-brick`:
+
+* Feature toggles can be set via system properties and environment variables
+* Configuration via system properties has priority over configuration via environment variables
+* The default value is used if neither system properties nor environment variables are set. This avoids unexpected errors and we can always start the application in a defined state without additional configurations.
+
+Then there is the nomenclature of the toggles themselves. The `feature-toggle-brick` ensures that the feature toggles are always derived from a uniform formation rule and always follow a fixed scheme.
+
+The following derivation rules apply to the system properties and environment variables:
+
+* the feature toggle `myFeature.isActive` is set as a system property with `-DmyFeature.isActive=true` and therefore has exactly the same name
+* the feature toggle `myFeature.isActive` is set as an environment variable with `MYFEATURE_ISACTIVE=YES` and is formed via `key.toUpperCase().replace(“.”, “_”)`.
+* A feature toggle (if queried via a string) is always queried via the name (e.g. `myFeature.isActive`) via the API of the `FeatureConfiguration`.

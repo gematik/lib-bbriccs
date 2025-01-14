@@ -1,3 +1,42 @@
 
+// ********************
+// HL7 urls and links
 :url-hl7-fhir: https://fhir.org/
-:link-hl7-fhir: {url-hl7-fhir}[HL7 FHIR]
+:url-hl7-fhir-types: https://hl7.org/fhir/r4/datatypes.html
+:url-hl7-fhir-resources: https://hl7.org/fhir/r4/resourcelist.html
+
+:link-hl7-fhir: {url-hl7-fhir}[FHIR]
+:link-hl7-fhir-types: {url-hl7-fhir-types}[FHIR Types]
+:link-hl7-fhir-resources: {url-hl7-fhir-resources}[FHIR Resources]
+
+// ********************
+// HAPI urls and links
+:url-hapi: https://hapifhir.io/
+:url-hapi-docs: https://hapifhir.io/hapi-fhir/docs
+:url-hapi-docs-stucts: https://hapifhir.io/hapi-fhir/apidocs/hapi-fhir-structures-r4/
+:url-hapi-docs-custom-structs: https://hapifhir.io/hapi-fhir/docs/model/custom_structures.html
+
+:link-hapi: {url-hapi}[HAPI]
+:link-hapi-docs: {url-hapi-docs}[HAPI FHIR]
+:link-hapi-docs-stucts: {url-hapi-docs-stucts}[HAPI FHIR Structures R4]
+:link-hapi-docs-custom-structs: {url-hapi-docs-custom-structs}[HAPI FHIR Custom Structures]
+
+// ********************
+// Design Patterns and Principles
+:url-pattern-builder: https://en.wikipedia.org/wiki/Builder_pattern
+:url-pattern-null-object: https://en.wikipedia.org/wiki/Null_object_pattern
+
+:link-pattern-builder: {url-pattern-builder}[Builder Pattern]
+:link-pattern-null-object: {url-pattern-null-object}[Null Object Pattern]
+
+
+// ********************
+:url-android-fhir: https://github.com/google/android-fhir/blob/master/buildSrc/build.gradle.kts
+:link-android-fhir: {url-android-fhir}[Android FHIR]
+
+:url-gematik-ti: https://www.gematik.de/telematikinfrastruktur
+:url-gematik-refval: https://fachportal.gematik.de/hersteller-anbieter/primaersysteme/referenzvalidator
+
+:link-gematik-ti: {url-gematik-ti}[Gematik Telematikinfrastruktur]
+:link-gematik-refval: {url-gematik-refval}[Gematik Referenzvalidator]
+

@@ -16,8 +16,6 @@
 
 package de.gematik.bbriccs.fhir.validation.support;
 
-import static java.text.MessageFormat.format;
-
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.support.IValidationSupport;
 import ca.uhn.fhir.context.support.ValidationSupportContext;
@@ -53,16 +51,15 @@ public class ProfileValidationSupport implements IValidationSupport {
       Map<String, CodeSystem> codeSystems,
       Map<String, ValueSet> valueSets) {
 
-    log.trace(format("Instantiate ValidationSupport for {0}", profile));
+    log.trace("Instantiate ValidationSupport for {}", profile);
     this.ctx = ctx;
     this.profile = profile;
 
-    if (this.profile.getCanonicalClaims() == null) {
-      this.profile.setCanonicalClaims(List.of());
+    if (this.profile.getCanonicalClaims().isEmpty()) {
       log.warn(
-          format(
-              "No canonical claims provided for {0}-{1}",
-              this.profile.getName(), this.profile.getVersion()));
+          "No canonical claims provided for {}-{}",
+          this.profile.getName(),
+          this.profile.getVersion());
     }
 
     if (this.profile.getCompatibleVersions() == null) {
@@ -139,7 +136,11 @@ public class ProfileValidationSupport implements IValidationSupport {
     if (matched) {
       val em = exactVersionMatch ? "with exact version" : "without version";
       log.trace(
-          format("Matched {0} in profile {1} {2}", resourceUrl, this.profile.getVersion(), em));
+          "Matched {} in profile {}:{} {}",
+          resourceUrl,
+          this.profile.getName(),
+          this.profile.getVersion(),
+          em);
     }
 
     return resource;
@@ -155,8 +156,7 @@ public class ProfileValidationSupport implements IValidationSupport {
 
   private boolean matchesVersion(String version) {
     val myVersion = this.profile.getVersion();
-    return myVersion.equals(version)
-        || VersionUtil.areEqual(myVersion, version)
-        || this.profile.getCompatibleVersions().contains(version);
+    return this.profile.getAllVersions().contains(version)
+        || VersionUtil.areEqual(myVersion, version);
   }
 }

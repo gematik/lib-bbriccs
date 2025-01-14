@@ -66,9 +66,9 @@ public abstract class FhirValidatingTest {
                           m.getLocationLine()))
               .collect(Collectors.joining("\n\t"));
       log.warn(
-          format(
-              "--- Found Validation Messages after validation: {0} ---\n\t{1}\n------",
-              result.getMessages().stream().filter(messageFilter).count(), r));
+          "--- Found Validation Messages after validation: {} ---\n\t{}\n------",
+          result.getMessages().stream().filter(messageFilter).count(),
+          r);
     }
   }
 }

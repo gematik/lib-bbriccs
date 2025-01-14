@@ -33,4 +33,13 @@ class InsuranceTypeDeTest {
     assertNotNull(code.getDisplay());
     assertEquals(DeBasisProfilCodeSystem.VERSICHERUNGSART_DE_BASIS, code.getCodeSystem());
   }
+
+  @ParameterizedTest
+  @EnumSource(value = InsuranceTypeDe.class)
+  void shouldCreateFromCoding(InsuranceTypeDe insuranceTypeDe) {
+    val fromCode = InsuranceTypeDe.fromCode(insuranceTypeDe.asCoding());
+    assertEquals(insuranceTypeDe, fromCode);
+    assertNotNull(fromCode.getDisplay());
+    assertEquals(DeBasisProfilCodeSystem.VERSICHERUNGSART_DE_BASIS, fromCode.getCodeSystem());
+  }
 }

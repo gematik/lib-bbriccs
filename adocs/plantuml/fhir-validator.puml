@@ -5,9 +5,10 @@ skinparam packageStyle Frame
 set namespaceSeparator none
 
 interface ValidatorFhir {
-    getContext(): FhirContext
     validate(content: String): ValidationResult
+    validate(resource: Resource): ValidationResult
     isValid(content: String): boolean
+    isValid(resource: Resource): boolean
 }
 
 

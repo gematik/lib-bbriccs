@@ -16,7 +16,6 @@
 
 package de.gematik.bbriccs.fhir.validation;
 
-import static java.text.MessageFormat.format;
 import static org.junit.jupiter.api.Assertions.*;
 
 import de.gematik.bbriccs.fhir.validation.utils.FhirValidatingTest;
@@ -24,6 +23,7 @@ import de.gematik.bbriccs.utils.ResourceLoader;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.hl7.fhir.r4.model.Bundle;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -32,27 +32,38 @@ import org.junit.jupiter.params.provider.MethodSource;
 @Slf4j
 class NonProfiledValidatorTest extends FhirValidatingTest {
 
+  private static final ValidatorFhir MY_VALIDATOR = new NonProfiledValidator();
+
   @Override
   protected void initialize() {
-    this.fhirValidator = new NonProfiledValidator();
+    this.fhirValidator = MY_VALIDATOR;
   }
 
   @ParameterizedTest(name = "[{index}] Should not throw on invalid File ''{0}''")
   @MethodSource
-  void shouldValidateInvalidResources(String file, String content) {
-    log.trace(format("Validate invalid file: {0}", file));
+  void shouldValidateInvalidResourceContents(String file, String content) {
+    log.trace("Validate invalid file: {}", file);
     assertFalse(this.fhirValidator.isValid(content));
   }
 
-  static Stream<Arguments> shouldValidateInvalidResources() {
+  static Stream<Arguments> shouldValidateInvalidResourceContents() {
     val files = ResourceLoader.getResourceFilesInDirectory("examples/invalid", true);
     return files.stream().map(f -> Arguments.arguments(f.getName(), ResourceLoader.readString(f)));
+  }
+
+  @Test
+  void shouldValidateInvalidResources() {
+    val resource = new Bundle();
+    assertFalse(this.fhirValidator.isValid(resource));
+
+    val vr = this.fhirValidator.validate(resource);
+    assertFalse(vr.getMessages().isEmpty());
   }
 
   @ParameterizedTest(name = "[{index}] Should validate valid example {0}")
   @MethodSource
   void shouldValidateValidResources(String file, String content) {
-    log.debug(format("Validate valid file: {0}", file));
+    log.debug("Validate valid file: {}", file);
     assertTrue(this.fhirValidator.isValid(content));
   }
 

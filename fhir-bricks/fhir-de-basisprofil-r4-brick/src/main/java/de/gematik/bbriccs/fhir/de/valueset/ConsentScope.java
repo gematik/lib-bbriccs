@@ -16,13 +16,16 @@
 
 package de.gematik.bbriccs.fhir.de.valueset;
 
-import de.gematik.bbriccs.fhir.coding.ProfileValueSet;
+import de.gematik.bbriccs.fhir.coding.FromValueSet;
 import de.gematik.bbriccs.fhir.de.HL7CodeSystem;
 import lombok.Getter;
 
-/** https://terminology.hl7.org/2.1.0/CodeSystem-consentscope.html */
+/**
+ * <a
+ * href="https://terminology.hl7.org/2.1.0/CodeSystem-consentscope.html">CodeSystem-consentscope</a>
+ */
 @Getter
-public enum ConsentScope implements ProfileValueSet {
+public enum ConsentScope implements FromValueSet {
   RESEARCH(
       "research",
       "Research",
@@ -34,8 +37,6 @@ public enum ConsentScope implements ProfileValueSet {
   TREATMENT("treatment", "Treatment", "Consent to undergo a specific treatment");
 
   public static final HL7CodeSystem CODE_SYSTEM = HL7CodeSystem.CONSENT_SCOPE;
-  public static final String DESCRIPTION = "The Scope of a Consent";
-  public static final String PUBLISHER = "HL7 / CBCC";
 
   private final String code;
   private final String display;
@@ -53,6 +54,6 @@ public enum ConsentScope implements ProfileValueSet {
   }
 
   public static ConsentScope fromCode(String code) {
-    return ProfileValueSet.fromCode(ConsentScope.class, code);
+    return FromValueSet.fromCode(ConsentScope.class, code);
   }
 }

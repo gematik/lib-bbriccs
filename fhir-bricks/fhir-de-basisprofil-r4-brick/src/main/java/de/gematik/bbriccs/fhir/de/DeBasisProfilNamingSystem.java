@@ -25,14 +25,16 @@ import lombok.ToString;
 @RequiredArgsConstructor
 @ToString
 public enum DeBasisProfilNamingSystem implements WithNamingSystem {
-  ARGE_IKNR("http://fhir.de/NamingSystem/arge-ik/iknr"),
-  SID_IKNR("http://fhir.de/sid/arge-ik/iknr"),
+  IKNR("http://fhir.de/NamingSystem/arge-ik/iknr"),
+  IKNR_SID("http://fhir.de/sid/arge-ik/iknr"),
   KVID("http://fhir.de/NamingSystem/gkv/kvid-10"),
-  SID_KVID_GKV("http://fhir.de/sid/gkv/kvid-10"),
-  SID_KVID_PKV("http://fhir.de/sid/pkv/kvid-10"),
-  SID_TELEMATIK_ID("https://gematik.de/fhir/sid/telematik-id"),
+  KVID_GKV_SID("http://fhir.de/sid/gkv/kvid-10"),
+  KVID_PKV_SID("http://fhir.de/sid/pkv/kvid-10"),
+  TELEMATIK_ID_SID("https://gematik.de/fhir/sid/telematik-id"),
+  STANDORTNUMMER("http://fhir.de/sid/dkgev/standortnummer"),
   KZBV_ZAHNARZTNUMMER("http://fhir.de/NamingSystem/kzbv/zahnarztnummer"),
   KZBV_KZVA_ABRECHNUNGSNUMMER("http://fhir.de/NamingSystem/kzbv/kzvabrechnungsnummer"),
+  KZBV_KZVA_ABRECHNUNGSNUMMER_SID("http://fhir.de/sid/kzbv/kzvabrechnungsnummer"),
   ASV_TEAMNUMMER("http://fhir.de/NamingSystem/asv/teamnummer");
 
   private final String canonicalUrl;

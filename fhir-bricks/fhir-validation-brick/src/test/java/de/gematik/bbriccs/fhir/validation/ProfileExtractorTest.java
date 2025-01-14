@@ -67,8 +67,8 @@ class ProfileExtractorTest {
   @ParameterizedTest(name = "Should not fail on missing profile/meta tags in collections on {0}")
   @ValueSource(
       strings = {
-        "examples/fhir/invalid/empty_root_profile_collection.xml",
-        "examples/fhir/invalid/missing_root_profile_collection.xml"
+        "examples/fhir/edgecases/empty_root_profile_collection.xml",
+        "examples/fhir/edgecases/missing_root_profile_collection.xml"
       })
   void shouldFindProfileFromCollectionChildren(String filePath) {
     val content = ResourceLoader.readFileFromResource(filePath);

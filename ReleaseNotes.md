@@ -1,5 +1,13 @@
 # Release Notes $B^2riC^2s$
 
+## Release 0.2.0
+
+### FHIR-Bricks
+- Extend `fhir-bricks` for integration with `erp-e2e-testsuite`
+
+### Utility-Bricks
+- Implement the `vsdm-check-digit-brick` for validating VSDM++ check digits
+
 ## Release 0.1.10
 
 ### FHIR-Bricks

@@ -2,7 +2,7 @@ include::../attributes-sections.adoc[]
 
 
 == CLI-Bricks
-TODO: Beschreibung what are CLI-Bricks
+_TODO: descreibe the_ `cli-tooling-bricks` _here_
 
 
 

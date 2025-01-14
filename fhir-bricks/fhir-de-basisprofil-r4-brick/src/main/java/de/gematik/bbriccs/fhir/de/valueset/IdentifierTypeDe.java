@@ -16,7 +16,7 @@
 
 package de.gematik.bbriccs.fhir.de.valueset;
 
-import de.gematik.bbriccs.fhir.coding.ProfileValueSet;
+import de.gematik.bbriccs.fhir.coding.FromValueSet;
 import de.gematik.bbriccs.fhir.de.DeBasisProfilCodeSystem;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Getter
 @RequiredArgsConstructor
-public enum IdentifierTypeDe implements ProfileValueSet {
+public enum IdentifierTypeDe implements FromValueSet {
   GKV("GKV", "Gesetzliche Krankenversicherung"),
   PKV("PKV", "Private Krankenversicherung"),
   LANR("LANR", "Lebenslange Arztnummer"),
@@ -43,8 +43,6 @@ public enum IdentifierTypeDe implements ProfileValueSet {
 
   public static final DeBasisProfilCodeSystem CODE_SYSTEM =
       DeBasisProfilCodeSystem.IDENTIFIER_TYPE_DE_BASIS;
-  public static final String DESCRIPTION = "ValueSet zur Codierung des Identifier-Typs";
-  public static final String PUBLISHER = "HL7 Deutschland e.V. (Technisches Komitee FHIR)";
 
   private final String code;
   private final String display;
@@ -55,6 +53,6 @@ public enum IdentifierTypeDe implements ProfileValueSet {
   }
 
   public static IdentifierTypeDe fromCode(String code) {
-    return ProfileValueSet.fromCode(IdentifierTypeDe.class, code);
+    return FromValueSet.fromCode(IdentifierTypeDe.class, code);
   }
 }

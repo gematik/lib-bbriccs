@@ -22,7 +22,7 @@ public class ResourceFileException extends RuntimeException {
    *
    * @param message
    */
-  public ResourceFileException(final String message) {
+  public ResourceFileException(String message) {
     super(message);
   }
 }

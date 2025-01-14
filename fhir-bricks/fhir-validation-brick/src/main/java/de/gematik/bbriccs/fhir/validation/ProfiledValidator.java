@@ -24,15 +24,18 @@ import ca.uhn.fhir.validation.ValidationResult;
 import de.gematik.bbriccs.fhir.validation.support.ErrorMessageFilter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.annotation.Nullable;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hl7.fhir.common.hapi.validation.support.InMemoryTerminologyServerValidationSupport;
 import org.hl7.fhir.common.hapi.validation.support.SnapshotGeneratingValidationSupport;
 import org.hl7.fhir.common.hapi.validation.support.ValidationSupportChain;
 import org.hl7.fhir.common.hapi.validation.validator.FhirInstanceValidator;
 
-public class ProfiledValidator implements ValidatorFhir {
+@Slf4j
+public class ProfiledValidator extends ValidatorFhirBase {
 
   @Getter private final String id;
   private final FhirContext ctx;
@@ -65,7 +68,6 @@ public class ProfiledValidator implements ValidatorFhir {
     // create support chain for validation
     // create support validators for custom profiles
     val validationSupports = new ArrayList<>(customProfileSupports);
-
     validationSupports.add(ctx.getValidationSupport());
     validationSupports.add(new InMemoryTerminologyServerValidationSupport(ctx));
     validationSupports.add(new SnapshotGeneratingValidationSupport(ctx));
@@ -91,7 +93,8 @@ public class ProfiledValidator implements ValidatorFhir {
 
   @Override
   public ValidationResult validate(String content) {
-    return this.validator.validateWithResult(content);
+    val nullSafeContent = Objects.requireNonNullElse(content, "");
+    return this.validateSafely(() -> this.validator.validateWithResult(nullSafeContent));
   }
 
   protected boolean doesSupport(String url) {

@@ -2,12 +2,7 @@ include::../attributes-sections.adoc[]
 
 
 == Configuration-Bricks
-TODO: Beschreibung what are Configuration-Bricks
+Configuration is crucial for most types of software, including test suites. It is a way of adapting the behaviour of the software to different environments, or changing the behaviour of the software without changing the code. Configuration can be done in many ways, for example using environment variables, system properties or configuration files. The `configuration-bricks` are designed to help you deal with common problems.
 
-:leveloffset: +1
-include::feature-toggle.adoc[]
-<<<
-:leveloffset: -1
-
-
+include::feature-toggle.adoc[leveloffset=+1]
 

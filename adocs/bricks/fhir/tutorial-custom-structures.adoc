@@ -1,0 +1,83 @@
+include::fhir-commons.adoc[]
+
+[#tutorial_custom_resources]
+== Implementing a custom FHIR Resource
+When working with native HAPI resources, you often have to deal with extracting certain values. Due to the 'general purpose' nature of HAPI, you need to extract your objects from the FHIR data model.
+
+The call looks something like this:
+
+[source,java]
+----
+Bundle bundle = getBundleFromSomewhere();
+Medication medication = bundle.getEntry().stream()
+    .filter(entry -> entry.getResource().getResourceType().equals(ResourceType.Medication))
+    .filter(KbvStructDef.KBV_MEDICATION_PZN::matches)
+    .map(entry -> (Medication)entry.getResource())
+    .findFirst()
+    .orElseThrow();
+----
+
+This is not only extremely time-consuming, but also difficult to maintain. This is where {url-hapi-docs-custom-structs}[custom resources] come into play. Let's take a look at how a 'KbvErpBundle' can make our lives a lot easier:
+
+[source,java]
+----
+public class KbvErpBundle extends Bundle {
+    public Medication getErpMedication() {
+      return this.getEntry().stream()
+          .filter(entry -> entry.getResource().getResourceType().equals(ResourceType.Medication))
+          .filter(KbvStructDef.KBV_MEDICATION_PZN::matches)
+          .map(entry -> (Medication)entry.getResource())
+          .findFirst()
+          .orElseThrow();
+    }
+}
+----
+
+So now whenever we have a `KbvErpBundle` object, and we need to extract the medication object, we can just do that:
+
+[source,java]
+----
+KbvErpBundle bundle = getKbvErpBundleFromSomewhere();
+Medication medication = bundle.getErpMedication();
+----
+
+And we can implement this concept with all the other FHIR resources you need to work with. And we can implement this concept with all the other FHIR resources you need to work with. Let's have a look at what a `KbvErpMedication` might look like.
+
+[#code_kbv_erp_medication_01]
+[source,java]
+----
+private static class KbvErpMedication extends Medication {
+  public StandardSize getStandardSize() {
+    return this.getExtension().stream()
+        .filter(DeBasisProfilStructDef.NORMGROESSE::matches)
+        .map(ext -> StandardSize.fromCode(ext.getValue().castToCoding(ext.getValue()).getCode()))
+        .findFirst()
+        .orElse(StandardSize.KA);
+  }
+}
+----
+
+[source,java]
+----
+public class KbvErpBundle extends Bundle {
+    public KbvErpMedication getErpMedication() {
+      return this.getEntry().stream()
+          .filter(entry -> entry.getResource().getResourceType().equals(ResourceType.Medication))
+          .filter(KbvStructDef.KBV_MEDICATION_PZN::matches)
+          .map(entry -> (KbvErpMedication)entry.getResource())
+          .findFirst()
+          .orElseThrow();
+    }
+}
+----
+
+And now we can really treat our own FHIR objects as plain old Java objects:
+
+[source,java]
+----
+KbvErpBundle bundle = getKbvErpBundleFromSomewhere();
+KbvErpMedication medication = bundle.getErpMedication();
+StandardSize size = medication.getStandardSize();
+----
+
+Unfortunately, that is only half the story. The <<tutorial_type_hints,next tutorial>> will show you how to use a `TypeHint`.

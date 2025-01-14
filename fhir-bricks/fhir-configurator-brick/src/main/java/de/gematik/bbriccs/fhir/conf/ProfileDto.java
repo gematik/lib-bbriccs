@@ -18,19 +18,27 @@ package de.gematik.bbriccs.fhir.conf;
 
 import static java.text.MessageFormat.format;
 
+import java.util.LinkedList;
 import java.util.List;
 import lombok.Data;
+import lombok.val;
 
 @Data
 public class ProfileDto {
   private String name;
   private String version;
-  private List<String> compatibleVersions;
-  private List<String> canonicalClaims;
+  private List<String> compatibleVersions = List.of();
+  private List<String> canonicalClaims = List.of();
   private List<String> omitProfiles = List.of();
 
   @Override
   public String toString() {
     return format("{0}-{1}", name, version);
+  }
+
+  public List<String> getAllVersions() {
+    val allVersions = new LinkedList<>(this.compatibleVersions);
+    allVersions.addFirst(this.getVersion());
+    return allVersions;
   }
 }
