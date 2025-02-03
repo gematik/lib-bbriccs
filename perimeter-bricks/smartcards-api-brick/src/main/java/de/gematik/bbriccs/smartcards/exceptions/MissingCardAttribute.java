@@ -14,26 +14,17 @@
  * limitations under the License.
  */
 
-package de.gematik.bbriccs.vsdm;
+package de.gematik.bbriccs.smartcards.exceptions;
 
-import de.gematik.bbriccs.vsdm.types.*;
-import java.time.Instant;
+import static java.text.MessageFormat.format;
 
-public interface VsdmCheckDigitV1 {
+import de.gematik.bbriccs.smartcards.Smartcard;
 
-  VsdmPatient getPatient();
-
-  VsdmVendorIdentifier getIdentifier();
-
-  VsdmCheckDigitVersion getVersion();
-
-  VsdmIssuedAtTimestamp getIatTimestamp();
-
-  VsdmCheckDigitV1 setIatTimestamp(Instant iatTimestamp);
-
-  VsdmUpdateReason getUpdateReason();
-
-  VsdmCheckDigitV1 setUpdateReason(VsdmUpdateReason reason);
-
-  String sign(VsdmKey key);
+public class MissingCardAttribute extends RuntimeException {
+  public MissingCardAttribute(Smartcard card, String attribute) {
+    super(
+        format(
+            "Card {0} with ICCSN {1} is missing attribute {2}",
+            card.getType(), card.getIccsn(), attribute));
+  }
 }

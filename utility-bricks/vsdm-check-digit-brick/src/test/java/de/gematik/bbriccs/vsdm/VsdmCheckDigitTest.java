@@ -24,6 +24,7 @@ import de.gematik.bbriccs.vsdm.types.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
@@ -82,7 +83,27 @@ class VsdmCheckDigitTest {
   @Test
   void shouldEncryptCheckDigitV2() {
     val now = Instant.now().truncatedTo(ChronoUnit.SECONDS);
-    val checkDigit = VsdmCheckDigitFactory.createV2("X123456789", 'A').setIatTimestamp(now);
+    val patient =
+        new VsdmPatient(VsdmKvnr.from("X123456789"), true, LocalDate.now(), "ExampleStreet");
+    val checkDigit = VsdmCheckDigitFactory.createV2(patient, 'A').setIatTimestamp(now);
+    Assertions.assertAll(
+        () -> Assertions.assertDoesNotThrow(() -> checkDigit.encrypt(KEY_V2)),
+        () -> Assertions.assertEquals("X123456789", checkDigit.getPatient().getKvnr()),
+        () -> Assertions.assertEquals(now, checkDigit.getIatTimestamp().getTimestamp()));
+
+    val checkDigit2 = VsdmCheckDigit.decrypt(KEY_V2, checkDigit.encrypt(KEY_V2));
+    Assertions.assertAll(
+        () -> Assertions.assertEquals("X123456789", checkDigit2.getPatient().getKvnr()),
+        () ->
+            Assertions.assertEquals(0, checkDigit2.getIatTimestamp().compareIatTimestampWith(now)));
+  }
+
+  @Test
+  void shouldCreate() {
+    val now = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+    val patient =
+        new VsdmPatient(VsdmKvnr.from("X123456789"), false, LocalDate.now(), "ExampleStreet");
+    val checkDigit = VsdmCheckDigitFactory.createV2(patient, 'A').setIatTimestamp(now);
     Assertions.assertAll(
         () -> Assertions.assertDoesNotThrow(() -> checkDigit.encrypt(KEY_V2)),
         () -> Assertions.assertEquals("X123456789", checkDigit.getPatient().getKvnr()),
@@ -106,10 +127,8 @@ class VsdmCheckDigitTest {
             Assertions.assertEquals(
                 "A123456789", checkDigit.getPatient().getKvnr(), "Kvnr is not the same"),
         () ->
-            Assertions.assertEquals(
-                false,
-                checkDigit.getPatient().isEgkRevoked().orElse(null),
-                "EgkRevoked is not the same"),
+            Assertions.assertFalse(
+                checkDigit.getPatient().isEgkRevoked(), "EgkRevoked is not the same"),
         () ->
             Assertions.assertEquals(
                 'X', checkDigit.getIdentifier().identifier(), "Identifier is not the same"),
@@ -139,6 +158,20 @@ class VsdmCheckDigitTest {
     Assertions.assertEquals(V1, checksum.getVersion());
     Assertions.assertEquals(VsdmVendorIdentifier.from('C', V1), checksum.getIdentifier());
     Assertions.assertEquals(VsdmUpdateReason.UFS_UPDATE, checksum.getUpdateReason());
+  }
+
+  @Test
+  void shouldThrowIllegalArgumentExceptionForInvalidChecksumLength() {
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            VsdmCheckDigit.parse(
+                "WTc4NTcyODA3MTE2ODU0NDA4MzdVQzEpQdKViiyA4SGBIjm49UxaEsPo4HCCAg=="));
+  }
+
+  @Test
+  void testCreateV2() {
+    Assertions.assertDoesNotThrow(() -> VsdmCheckDigitFactory.createV2("X123456789", 'A'));
   }
 
   @Test

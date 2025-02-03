@@ -36,6 +36,7 @@ class DummyEgkTest {
     assertEquals(SmartcardType.EGK, egk.getType());
     assertEquals(List.of(Oid.OID_EGK_AUT, Oid.OID_EGK_AUT_ALT), egk.getAutOids());
     assertNotNull(egk.getOwnerData());
+    assertNotNull(egk.getInsuranceStartDate());
     assertTrue(egk.getOwnerData().getCommonName().contains(config.getOwnerName()));
 
     assertNull(egk.getAutCertificate());

@@ -17,6 +17,7 @@
 package de.gematik.bbriccs.smartcards;
 
 import de.gematik.bbriccs.crypto.certificate.Oid;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface Egk extends Smartcard {
@@ -25,4 +26,6 @@ public interface Egk extends Smartcard {
   List<Oid> getAutOids();
 
   String getKvnr();
+
+  LocalDate getInsuranceStartDate();
 }

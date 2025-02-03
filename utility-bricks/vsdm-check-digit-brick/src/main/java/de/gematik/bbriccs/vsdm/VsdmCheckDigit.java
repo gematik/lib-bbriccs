@@ -41,10 +41,6 @@ public class VsdmCheckDigit implements VsdmCheckDigitV1, VsdmCheckDigitV2 {
 
   private VsdmUpdateReason updateReason = VsdmUpdateReason.UFS_UPDATE;
 
-  protected VsdmCheckDigit(VsdmPatient patient, VsdmCheckDigitVersion version) {
-    this(patient, null, version);
-  }
-
   protected VsdmCheckDigit(VsdmPatient patient, VsdmVendorIdentifier identifier) {
     this(patient, identifier, identifier.version());
   }
@@ -77,7 +73,8 @@ public class VsdmCheckDigit implements VsdmCheckDigitV1, VsdmCheckDigitV2 {
 
     val plain =
         concatenate(
-            List.of(patient.generateField1(), iatTimestamp.generate(), patient.generateKvnr()));
+            List.of(
+                patient.generateField1(), iatTimestamp.generate(), patient.getKvnrAsByteArray()));
     val aesGcm = new AesGcm(12, 16);
     val encrypt = aesGcm.encrypt(key.getKeyForVersion2(), plain);
 
@@ -138,7 +135,7 @@ public class VsdmCheckDigit implements VsdmCheckDigitV1, VsdmCheckDigitV2 {
     val data =
         concatenate(
             List.of(
-                patient.generateKvnr(),
+                patient.getKvnrAsByteArray(),
                 iatTimestamp.generate(),
                 updateReason.generate(),
                 identifier.generate(),

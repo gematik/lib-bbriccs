@@ -17,15 +17,14 @@
 package de.gematik.bbriccs.vsdm.types;
 
 import de.gematik.bbriccs.vsdm.VsdmCheckDigitVersion;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.text.MessageFormat;
-import java.time.Instant;
-import java.time.ZoneOffset;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.Optional;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -33,39 +32,26 @@ import lombok.val;
 @RequiredArgsConstructor
 public class VsdmPatient {
   // Example 2018-01-11T07:00:00
-  private static final DateTimeFormatter DATE_FORMATTER =
-      DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+  private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
 
   private final VsdmKvnr kvnr;
-  private final Boolean isEgkRevoked;
-  private final Instant insuranceStartDate;
-  private final String street;
+  @Getter private final boolean isEgkRevoked;
+  @Getter private final LocalDate insuranceStartDate;
+  @Getter private final String street;
 
   public VsdmPatient(VsdmKvnr kvnr) {
-    this(kvnr, null, null, null);
+    this(kvnr, LocalDate.now());
   }
 
-  public VsdmPatient(VsdmKvnr kvnr, Instant insuranceStartDate) {
-    this(kvnr, false, insuranceStartDate.atOffset(ZoneOffset.UTC).toInstant(), null);
+  public VsdmPatient(VsdmKvnr kvnr, LocalDate insuranceStartDate) {
+    this(kvnr, false, insuranceStartDate, "");
   }
 
   public String getKvnr() {
     return kvnr.kvnr();
   }
 
-  public Optional<Boolean> isEgkRevoked() {
-    return Optional.ofNullable(isEgkRevoked);
-  }
-
-  public Optional<Instant> getInsuranceStartDate() {
-    return Optional.ofNullable(insuranceStartDate);
-  }
-
-  public Optional<String> getStreet() {
-    return Optional.ofNullable(street);
-  }
-
-  public byte[] generateKvnr() {
+  public byte[] getKvnrAsByteArray() {
     return kvnr.generate();
   }
 
@@ -77,7 +63,7 @@ public class VsdmPatient {
   public byte[] generateField1() {
     val hash = generateHash(insuranceStartDate, street);
     // Determine S based on eGK status
-    byte s = (isEgkRevoked != null && isEgkRevoked) ? (byte) 128 : 0;
+    byte s = isEgkRevoked ? (byte) 128 : 0;
     hash[0] = (byte) (hash[0] | s);
     return hash;
   }
@@ -90,15 +76,26 @@ public class VsdmPatient {
    * @return - The generated hash check value as a byte array with a length of 5.
    */
   @SneakyThrows
-  public byte[] generateHash(Instant insuranceStartDate, String street) {
+  public static byte[] generateHash(LocalDate insuranceStartDate, String street) {
     Objects.requireNonNull(insuranceStartDate, "Insurance start date is required");
     Objects.requireNonNull(street, "Street is required");
 
     val digest = MessageDigest.getInstance("SHA-256");
-    val plain =
-        MessageFormat.format(
-            "{0}{1}", DATE_FORMATTER.format(insuranceStartDate.atOffset(ZoneOffset.UTC)), street);
-    val hash = digest.digest(plain.getBytes(StandardCharsets.UTF_8));
+
+    val insuranceStartDateAsByteArray =
+        DATE_FORMATTER.format(insuranceStartDate).getBytes(StandardCharsets.UTF_8);
+    val streetAsByteArray = street.trim().getBytes(Charset.forName("ISO-8859-15"));
+    val plain = new byte[insuranceStartDateAsByteArray.length + streetAsByteArray.length];
+    System.arraycopy(
+        insuranceStartDateAsByteArray, 0, plain, 0, insuranceStartDateAsByteArray.length);
+    System.arraycopy(
+        streetAsByteArray,
+        0,
+        plain,
+        insuranceStartDateAsByteArray.length,
+        streetAsByteArray.length);
+
+    val hash = digest.digest(plain);
     val hash40 = Arrays.copyOfRange(hash, 0, 5);
     // Set the MSB of the first byte to 0
     hash40[0] &= 0x7F;

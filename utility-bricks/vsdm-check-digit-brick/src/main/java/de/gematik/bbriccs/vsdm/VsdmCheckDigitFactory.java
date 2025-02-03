@@ -19,8 +19,7 @@ package de.gematik.bbriccs.vsdm;
 import de.gematik.bbriccs.vsdm.types.VsdmKvnr;
 import de.gematik.bbriccs.vsdm.types.VsdmPatient;
 import de.gematik.bbriccs.vsdm.types.VsdmVendorIdentifier;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDate;
 import lombok.val;
 
 public class VsdmCheckDigitFactory {
@@ -38,7 +37,7 @@ public class VsdmCheckDigitFactory {
   public static VsdmCheckDigitV2 createV2(String kvnr, char identifier) {
     val patient =
         new VsdmPatient(
-            VsdmKvnr.from(kvnr), false, Instant.now().minus(365, ChronoUnit.DAYS), "ExampleStreet");
+            VsdmKvnr.from(kvnr), false, LocalDate.now().minusDays(365), "ExampleStreet");
     return createV2(patient, identifier);
   }
 
