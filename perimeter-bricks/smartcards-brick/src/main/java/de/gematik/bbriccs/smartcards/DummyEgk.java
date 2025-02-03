@@ -22,6 +22,7 @@ import de.gematik.bbriccs.crypto.certificate.Oid;
 import de.gematik.bbriccs.smartcards.cfg.SmartcardConfigDto;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -101,5 +102,10 @@ public class DummyEgk implements Egk {
   @Override
   public String getKvnr() {
     return this.config.getIdentifier();
+  }
+
+  @Override
+  public LocalDate getInsuranceStartDate() {
+    return LocalDate.now();
   }
 }

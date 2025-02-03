@@ -18,9 +18,12 @@ package de.gematik.bbriccs.smartcards;
 
 import static java.text.MessageFormat.format;
 
+import de.gematik.bbriccs.crypto.CryptoSystem;
 import de.gematik.bbriccs.crypto.certificate.Oid;
 import de.gematik.bbriccs.smartcards.cfg.SmartcardConfigDto;
 import de.gematik.bbriccs.smartcards.exceptions.InvalidCertificateException;
+import de.gematik.bbriccs.smartcards.exceptions.MissingCardAttribute;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.regex.Pattern;
 import lombok.EqualsAndHashCode;
@@ -50,5 +53,16 @@ public class EgkP12 extends SmartcardP12 implements Egk {
   @Override
   public List<Oid> getAutOids() {
     return List.of(Oid.OID_EGK_AUT, Oid.OID_EGK_AUT_ALT);
+  }
+
+  @Override
+  public LocalDate getInsuranceStartDate() {
+    // Normally, the date is read from the common insured data of the Egk. The issue date of the AUT
+    // certificate is a work a round.
+    return getAutCertificate(CryptoSystem.ECC_256)
+        .or(() -> getAutCertificate(CryptoSystem.RSA_2048))
+        .map(it -> it.getX509Certificate().getNotBefore().toInstant())
+        .map(it -> LocalDate.ofEpochDay(it.getEpochSecond()))
+        .orElseThrow(() -> new MissingCardAttribute(this, "Insurance Start Date"));
   }
 }

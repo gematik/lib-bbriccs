@@ -17,13 +17,15 @@
 package de.gematik.bbriccs.smartcards;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.*;
 
 import de.gematik.bbriccs.crypto.CryptoSystem;
 import de.gematik.bbriccs.smartcards.cfg.SmartcardConfigDto;
 import de.gematik.bbriccs.smartcards.exceptions.InvalidCertificateException;
+import de.gematik.bbriccs.smartcards.exceptions.MissingCardAttribute;
 import de.gematik.bbriccs.utils.ResourceLoader;
 import java.util.List;
+import java.util.Optional;
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -75,5 +77,22 @@ class EgkP12Test {
       config.setType(SmartcardType.EGK);
       assertThrows(InvalidCertificateException.class, () -> new EgkP12(config, certificates));
     }
+  }
+
+  @Test
+  void shouldGetInsuranceStartDate() {
+    archive
+        .getICCSNsFor(SmartcardType.EGK)
+        .forEach(
+            egk -> assertDoesNotThrow(() -> archive.getEgkByICCSN(egk).getInsuranceStartDate()));
+  }
+
+  @Test
+  void shouldThrowOnMissingInsuranceStartDate() {
+    val egk = mock(EgkP12.class);
+    when(egk.getAutCertificate(CryptoSystem.ECC_256)).thenReturn(Optional.empty());
+    when(egk.getAutCertificate(CryptoSystem.RSA_2048)).thenReturn(Optional.empty());
+    doCallRealMethod().when(egk).getInsuranceStartDate();
+    assertThrows(MissingCardAttribute.class, egk::getInsuranceStartDate);
   }
 }
