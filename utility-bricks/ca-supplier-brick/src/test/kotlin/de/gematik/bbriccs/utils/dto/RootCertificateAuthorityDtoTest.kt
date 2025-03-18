@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025 gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,38 +29,42 @@ import java.security.cert.X509Certificate
 import javax.security.auth.x500.X500Principal
 
 class RootCertificateAuthorityDtoTest {
-  private lateinit var certificate: X509Certificate
   private lateinit var rootCertificateAuthorityDto: RootCertificateAuthorityDto
+  private lateinit var crossCertificateAuthorityDto: RootCertificateAuthorityDto
 
   @BeforeEach
   fun setup() {
-    certificate = mock(X509Certificate::class.java)
-    rootCertificateAuthorityDto = RootCertificateAuthorityDto(certificate, "http://test.url")
+    val rootCA = mock(X509Certificate::class.java)
+    `when`(rootCA.subjectX500Principal).thenReturn(X500Principal("CN=GEM.RCA1"))
+    `when`(rootCA.issuerX500Principal).thenReturn(X500Principal("CN=GEM.RCA1"))
+
+    val crossCA = mock(X509Certificate::class.java)
+    `when`(crossCA.subjectX500Principal).thenReturn(X500Principal("CN=GEM.RCA2"))
+    `when`(crossCA.issuerX500Principal).thenReturn(X500Principal("CN=GEM.RCA1"))
+
+    rootCertificateAuthorityDto = RootCertificateAuthorityDto(rootCA)
+    crossCertificateAuthorityDto = RootCertificateAuthorityDto(crossCA)
   }
 
   @Test
-  fun `isCrossCa should return true when url contains CROSS`() {
-    rootCertificateAuthorityDto = RootCertificateAuthorityDto(certificate, "http://GEM.RCA3_TEST-ONLY-CROSS-GEM.RCA4_TEST-ONLY.der")
-    val isCrossCa = rootCertificateAuthorityDto.isCrossCa()
-    assertTrue(isCrossCa)
+  fun `isCrossCa should return false when subject and issuer are equals`() {
+    assertFalse(rootCertificateAuthorityDto.isCrossCa())
   }
 
   @Test
-  fun `isCrossCa should return false when url does not contain CROSS`() {
-    val isCrossCa = rootCertificateAuthorityDto.isCrossCa()
-    assertFalse(isCrossCa)
+  fun `isCrossCa should return true when subject and issuer are not equals`() {
+    assertTrue(crossCertificateAuthorityDto.isCrossCa())
   }
 
   @Test
   fun `getCaNumber should return correct number when CN contains digits`() {
-    `when`(certificate.subjectX500Principal).thenReturn(X500Principal("CN=GEM.RCA7 TEST-ONLY"))
     val caNumber = rootCertificateAuthorityDto.getCaNumber()
-    assertEquals(7, caNumber)
+    assertEquals(1, caNumber)
   }
 
   @Test
   fun `getCaNumber should return 0 when CN does not contain digits`() {
-    `when`(certificate.subjectX500Principal).thenReturn(X500Principal("CN=TestSubject"))
+    `when`(rootCertificateAuthorityDto.cert.subjectX500Principal).thenReturn(X500Principal("CN=TestSubject"))
     assertThrows(MissingRootCertificateAuthorityNumber::class.java) { rootCertificateAuthorityDto.getCaNumber() }
   }
 }

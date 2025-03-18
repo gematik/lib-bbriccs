@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025 gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ interface TrustedEnvironmentAnchor {
   fun getCaDownloadPath(type: CaType = CaType.ROOT_CA, algorithm: CryptographySpecification = CryptographySpecification.ECC): String
   fun getUrl(useInternet: Boolean = true): String
 }
-
 enum class TiTrustedEnvironmentAnchor(private val internet: String, private val ti: String) : TrustedEnvironmentAnchor {
   TU("https://download-test.tsl.ti-dienste.de", "http://download-test.tsl.telematik-test"),
   RU("https://download-ref.tsl.ti-dienste.de", "http://download-ref.tsl.telematik-test"),
@@ -32,7 +31,12 @@ enum class TiTrustedEnvironmentAnchor(private val internet: String, private val 
   override fun getCaDownloadPath(
     type: CaType,
     algorithm: CryptographySpecification,
-  ) = "/${algorithm.name.uppercase()}/$type/"
+  ): String {
+    return when (type) {
+      CaType.ROOT_CA -> "/${algorithm.name.uppercase()}/ROOT-CA/roots.json"
+      CaType.SUB_CA -> "/${algorithm.name.uppercase()}/SUB-CA/"
+    }
+  }
 
   override fun getUrl(useInternet: Boolean) = when {
     useInternet -> internet

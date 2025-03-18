@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025 gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,5 +55,28 @@ class SemanticValueTest {
     assertNotNull(identifier);
     assertEquals("123", identifier.getValue());
     assertEquals(TEST_VALUE_SYSTEM, identifier.getSystem());
+  }
+
+  @Test
+  void shouldEncodeAsCoding() {
+    val value = new TestValue("123");
+    val coding = value.asCoding();
+
+    assertNotNull(coding);
+    assertEquals("123", coding.getCode());
+    assertEquals(TEST_VALUE_SYSTEM, value.getSystemUrl());
+  }
+
+  @Test
+  void shouldEncodeAsCodeableConcept() {
+    val value = new TestValue("123");
+    val codable = value.asCodeableConcept();
+    assertNotNull(codable);
+
+    val coding = codable.getCodingFirstRep();
+    assertNotNull(coding);
+
+    assertEquals("123", coding.getCode());
+    assertEquals(TEST_VALUE_SYSTEM, value.getSystemUrl());
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025 gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,6 +66,17 @@ public interface WithSystem {
    * @return the canonical URL of the system
    */
   String getCanonicalUrl();
+
+  default CodeableConcept asCodeableConcept(String code) {
+    val coding = this.asCoding(code);
+    return new CodeableConcept().setCoding(List.of(coding));
+  }
+
+  default Coding asCoding(String code) {
+    val coding = new Coding();
+    coding.setSystem(this.getCanonicalUrl()).setCode(code);
+    return coding;
+  }
 
   /**
    * Find the first resource in the given bundle entries which matches the system.

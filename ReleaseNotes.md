@@ -1,5 +1,10 @@
 # Release Notes $B^2riC^2s$
 
+## Release 0.4.0
+
+### FHIR-Bricks
+- Preference for newer SID system identifiers as defaults and abandonment of old system identifiers
+
 ## Release 0.2.0
 
 ### FHIR-Bricks

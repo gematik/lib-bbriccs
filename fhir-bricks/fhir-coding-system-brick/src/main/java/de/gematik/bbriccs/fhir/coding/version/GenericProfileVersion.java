@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025 gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ public class GenericProfileVersion implements ProfileVersion {
   private final String version;
   private final String name;
   private final boolean omitZeroPatch;
+  private final boolean omitPatch;
 
   public GenericProfileVersion(String version) {
     this(version, true);
@@ -36,13 +37,24 @@ public class GenericProfileVersion implements ProfileVersion {
   }
 
   public GenericProfileVersion(String name, String version, boolean omitZeroPatch) {
+    this(name, version, omitZeroPatch, false);
+  }
+
+  public GenericProfileVersion(
+      String name, String version, boolean omitZeroPatch, boolean omitPatch) {
     this.version = version;
     this.name = name;
     this.omitZeroPatch = omitZeroPatch;
+    this.omitPatch = omitPatch;
   }
 
   @Override
   public boolean omitZeroPatch() {
     return this.omitZeroPatch;
+  }
+
+  @Override
+  public boolean omitPatch() {
+    return this.omitPatch;
   }
 }

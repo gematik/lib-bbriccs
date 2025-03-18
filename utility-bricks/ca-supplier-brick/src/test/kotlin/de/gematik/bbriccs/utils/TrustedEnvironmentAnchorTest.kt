@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025 gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,15 @@ package de.gematik.bbriccs.utils
 import de.gematik.bbriccs.crypto.CryptographySpecification
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 
 class TrustedEnvironmentAnchorTest {
 
   @Test
   fun `getCaDownloadPath returns correct path for ROOT_CA with ECC`() {
-    val expectedPath = "/ECC/ROOT-CA/"
+    val expectedPath = "/ECC/ROOT-CA/roots.json"
     assertEquals(expectedPath, TiTrustedEnvironmentAnchor.TU.getCaDownloadPath(CaType.ROOT_CA, CryptographySpecification.ECC))
   }
 
@@ -34,15 +37,16 @@ class TrustedEnvironmentAnchorTest {
     assertEquals(expectedPath, TiTrustedEnvironmentAnchor.RU.getCaDownloadPath(CaType.SUB_CA, CryptographySpecification.RSA))
   }
 
-  @Test
-  fun `getUrl returns internet URL when useInternet is true`() {
-    val expectedUrl = "https://download-test.tsl.ti-dienste.de"
-    assertEquals(expectedUrl, TiTrustedEnvironmentAnchor.TU.getUrl(true))
+  @ParameterizedTest
+  @EnumSource(TiTrustedEnvironmentAnchor::class)
+  fun `getUrl does not throw exceptions`(anchor: TiTrustedEnvironmentAnchor) {
+    assertDoesNotThrow { anchor.getUrl(true) }
+    assertDoesNotThrow { anchor.getUrl(false) }
   }
 
   @Test
   fun `getUrl returns TI URL when useInternet is false`() {
-    val expectedUrl = "http://download.tsl.telematik"
-    assertEquals(expectedUrl, TiTrustedEnvironmentAnchor.PU.getUrl(false))
+    assertEquals("http://download.tsl.telematik", TiTrustedEnvironmentAnchor.PU.getUrl(false))
+    assertEquals("https://download.tsl.ti-dienste.de", TiTrustedEnvironmentAnchor.PU.getUrl(true))
   }
 }

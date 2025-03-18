@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025 gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,10 @@ package de.gematik.bbriccs.utils.dto
 import de.gematik.bbriccs.utils.exceptions.MissingCertificateAuthorityIssuer
 import de.gematik.bbriccs.utils.exceptions.MissingCertificateAuthoritySubject
 import java.security.cert.X509Certificate
+import java.time.ZoneId
 import javax.naming.ldap.LdapName
 
-open class CertificateAuthorityDto(val cert: X509Certificate, val url: String) {
+open class CertificateAuthorityDto(val cert: X509Certificate) {
   fun getSubjectCN(): String {
     val ldapDN = LdapName(this.cert.subjectX500Principal.name)
     for (rdn in ldapDN.rdns) {
@@ -31,6 +32,10 @@ open class CertificateAuthorityDto(val cert: X509Certificate, val url: String) {
     }
     throw MissingCertificateAuthoritySubject(this.cert)
   }
+
+  fun getNotValidBefore() = cert.notBefore.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+
+  fun getNotValidAfter() = cert.notAfter.toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
 
   fun getIssuerCN(): String {
     val issuerX500Principal = this.cert.issuerX500Principal.name

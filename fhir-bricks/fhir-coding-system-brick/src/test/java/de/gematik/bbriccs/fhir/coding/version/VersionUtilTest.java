@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025 gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -178,6 +178,15 @@ class VersionUtilTest {
       delimiter = ':')
   void shouldOmitZeroPatch(String input, String expected) {
     val version = VersionUtil.omitZeroPatch(input);
+    assertEquals(expected, version);
+  }
+
+  @ParameterizedTest(name = "[{index}] Omit Version Patch from {0} and expect {1}")
+  @CsvSource(
+      value = {"my.semver:my.semver", "1.0.1:1.0", "1.9.2:1.9", "4.1.37:4.1", "7.2:7.2"},
+      delimiter = ':')
+  void shouldOmitPatch(String input, String expected) {
+    val version = VersionUtil.omitPatch(input);
     assertEquals(expected, version);
   }
 

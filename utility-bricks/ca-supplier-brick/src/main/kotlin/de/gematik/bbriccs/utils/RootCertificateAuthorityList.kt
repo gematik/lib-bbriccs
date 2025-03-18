@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025 gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,62 +18,56 @@ package de.gematik.bbriccs.utils
 
 import de.gematik.bbriccs.utils.dto.RootCertificateAuthorityDto
 import java.security.cert.X509Certificate
+import java.util.*
 
 class RootCertificateAuthorityList(private val internalList: Set<RootCertificateAuthorityDto>) :
   Set<RootCertificateAuthorityDto> by internalList {
-  fun getRootCABy(subjectCN: String): RootCertificateAuthorityDto? {
-    return internalList.find { !it.isCrossCa() && it.getSubjectCN() == subjectCN }
-  }
+  fun getRootCABy(subjectCN: String): RootCertificateAuthorityDto? = internalList.find { !it.isCrossCa() && it.getSubjectCN() == subjectCN }
 
-  fun getRootCABy(ca: X509Certificate): RootCertificateAuthorityDto? {
-    return getRootCABy(ca.getIssuerCN())
-  }
+  fun getRootCAByCompCA(crossCA: X509Certificate) = getRootCABy(crossCA.getIssuerCN())
+  fun getRootCAByCrossCA(crossCA: X509Certificate) = getRootCABy(crossCA.getSubjectCN())
 
-  fun getRootCABy(cas: Collection<X509Certificate>): Set<RootCertificateAuthorityDto> {
-    return cas.mapNotNull { getRootCABy(it) }.toSet()
-  }
+  fun nextRootCA(rootCa: RootCertificateAuthorityDto): RootCertificateAuthorityDto? = rootCa.nextCrossCA?.let { getRootCAByCrossCA(it) }
+  fun prevRootCA(rootCa: RootCertificateAuthorityDto): RootCertificateAuthorityDto? = rootCa.prevCrossCA?.let { getRootCAByCrossCA(it) }
 
-  fun minRootCA(cas: Collection<X509Certificate>) = getRootCABy(cas).minBy { it.getCaNumber() }
-  fun maxRootCA(cas: Collection<X509Certificate>) = getRootCABy(cas).maxBy { it.getCaNumber() }
-
-  fun nextRootCA(ca: RootCertificateAuthorityDto): RootCertificateAuthorityDto? =
-    internalList.find {
-      !it.isCrossCa() && it.getCaNumber() == ca.getCaNumber().plus(1)
-    }
-
-  fun beforeRootCA(ca: RootCertificateAuthorityDto): RootCertificateAuthorityDto? =
-    internalList.find {
-      !it.isCrossCa() && it.getCaNumber() == ca.getCaNumber().minus(1)
-    }
-
-  fun getCurrentCrossRootCAs(ca: RootCertificateAuthorityDto): Set<RootCertificateAuthorityDto> =
-    internalList.filter {
-      it.isCrossCa() && it.getIssuerCN() == ca.getSubjectCN()
-    }.toSet()
-
-  fun getChainOfCrossRootCAs(
+  fun getChainOfCrossRootCAsBetween(
     start: RootCertificateAuthorityDto,
     target: RootCertificateAuthorityDto,
-  ): Set<RootCertificateAuthorityDto> {
-    val ret = mutableSetOf<RootCertificateAuthorityDto>()
-    val next: (RootCertificateAuthorityDto) -> RootCertificateAuthorityDto? =
-      if (start < target) { ca -> nextRootCA(ca) } else { ca -> beforeRootCA(ca) }
-    var current = start
-    while (next(current) != null && current != target) {
-      next(current)?.let { nextCa ->
-        ret.addAll(getCurrentCrossRootCAs(current).filter { it.getSubjectCN() == nextCa.getSubjectCN() })
-        current = nextCa
+  ): LinkedList<X509Certificate> {
+    val ret = LinkedList<X509Certificate>()
+
+    val nextCrossCa: (RootCertificateAuthorityDto) -> X509Certificate? =
+      if (start < target) {
+        {
+            ca ->
+          ca.nextCrossCA
+        }
+      } else {
+        {
+            ca ->
+          ca.prevCrossCA
+        }
+      }
+
+    var current: RootCertificateAuthorityDto? = start
+    while (current != null && current != target) {
+      current = nextCrossCa(current)?.let {
+        ret.add(it)
+        getRootCAByCrossCA(it)
       }
     }
     return ret
   }
 
-  fun getChainOfCrossRootCAs(cas: Collection<X509Certificate>, current: RootCertificateAuthorityDto): Set<RootCertificateAuthorityDto> {
+  fun getChainOfCrossRootCAByCompCAs(cas: Collection<X509Certificate>, current: RootCertificateAuthorityDto): LinkedList<X509Certificate> {
     if (cas.isEmpty()) {
-      return setOf()
+      return LinkedList()
     }
-    val min = minRootCA(cas)
-    val max = maxRootCA(cas)
-    return getChainOfCrossRootCAs(current, min).union(getChainOfCrossRootCAs(current, max))
+    val min = cas.mapNotNull { getRootCAByCompCA(it) }.minBy { it.getCaNumber() }
+    val max = cas.mapNotNull { getRootCAByCompCA(it) }.maxBy { it.getCaNumber() }
+    return LinkedList<X509Certificate>().apply {
+      addAll(getChainOfCrossRootCAsBetween(current, min))
+      addAll(getChainOfCrossRootCAsBetween(current, max))
+    }
   }
 }

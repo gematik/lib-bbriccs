@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025 gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,13 +50,20 @@ class WithStructureDefinitionTest {
 
   @ParameterizedTest(
       name =
-          "[{index}] Should get StructureDefinition with omitted patch in Version {1} (from raw"
-              + " {0})")
+          "[{index}] Should get StructureDefinition with omitted patch in Version {2} (from raw"
+              + " {1})")
   @CsvSource(
-      value = {"1.0.0:1.0", "10.1.0:10.1", "11.20.0:11.20"},
+      value = {
+        "true:12.30.40:12.30",
+        "false:1.0.0:1.0",
+        "false:10.1.0:10.1",
+        "false:11.20.0:11.20",
+        "false:12.30.40:12.30.40"
+      },
       delimiter = ':')
-  void shouldGetVersionedSystemUrlWithOmittedVersionPatch(String input, String expected) {
-    val version = new GenericProfileVersion(input);
+  void shouldGetVersionedSystemUrlWithOmittedVersionPatch(
+      boolean omitPatch, String input, String expected) {
+    val version = new GenericProfileVersion("generic.fhir.r4", input, true, omitPatch);
     val tsd = new TestProfileStructureDefinition();
 
     val plainSystem = tsd.getCanonicalUrl();

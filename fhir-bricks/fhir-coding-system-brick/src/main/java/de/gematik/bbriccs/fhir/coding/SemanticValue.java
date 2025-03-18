@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025 gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import static java.text.MessageFormat.format;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.val;
+import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Reference;
 
@@ -40,8 +42,20 @@ public abstract class SemanticValue<T, S extends WithSystem> {
     return this.system.getCanonicalUrl();
   }
 
+  public String getValueAsString() {
+    return format("{0}", this.getValue());
+  }
+
   public Identifier asIdentifier() {
     return asIdentifier(this.system);
+  }
+
+  public Coding asCoding() {
+    return this.getSystem().asCoding(this.getValueAsString());
+  }
+
+  public CodeableConcept asCodeableConcept() {
+    return this.getSystem().asCodeableConcept(this.getValueAsString());
   }
 
   /**

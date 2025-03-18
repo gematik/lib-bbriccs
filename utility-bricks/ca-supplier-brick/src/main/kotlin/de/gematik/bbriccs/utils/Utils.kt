@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025 gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,16 @@
 package de.gematik.bbriccs.utils
 
 import de.gematik.bbriccs.utils.exceptions.MissingCertificateAuthoritySubject
+import java.io.ByteArrayInputStream
 import java.io.InputStream
 import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
+import java.util.*
 import javax.naming.ldap.LdapName
 import javax.security.auth.x500.X500Principal
 
 fun InputStream.toCertificate() = CertificateFactory.getInstance("X.509").generateCertificate(this) as X509Certificate
+fun String.toCertificate() = ByteArrayInputStream(Base64.getDecoder().decode(this)).toCertificate()
 
 private fun X509Certificate.getCN(prim: X500Principal): String {
   val ldapDN = LdapName(prim.name)
