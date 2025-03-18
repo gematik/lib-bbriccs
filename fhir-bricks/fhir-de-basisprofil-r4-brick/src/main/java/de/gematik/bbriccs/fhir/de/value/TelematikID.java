@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025 gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,11 @@ import static java.text.MessageFormat.format;
 
 import de.gematik.bbriccs.fhir.builder.FakerBrick;
 import de.gematik.bbriccs.fhir.coding.SemanticValue;
+import de.gematik.bbriccs.fhir.coding.exceptions.InvalidSystemException;
 import de.gematik.bbriccs.fhir.de.DeBasisProfilNamingSystem;
+import java.util.Optional;
 import lombok.val;
+import org.hl7.fhir.r4.model.Identifier;
 
 public class TelematikID extends SemanticValue<String, DeBasisProfilNamingSystem> {
 
@@ -38,5 +41,17 @@ public class TelematikID extends SemanticValue<String, DeBasisProfilNamingSystem
 
   public static TelematikID from(String value) {
     return new TelematikID(value);
+  }
+
+  public static TelematikID from(Identifier identifier) {
+    return Optional.of(identifier)
+        .filter(DeBasisProfilNamingSystem.TELEMATIK_ID_SID::matches)
+        .map(id -> TelematikID.from(id.getValue()))
+        .orElseThrow(
+            () ->
+                new InvalidSystemException(
+                    format(
+                        "Cannot extract TelematikID from identifier with system {0}",
+                        identifier.getSystem())));
   }
 }

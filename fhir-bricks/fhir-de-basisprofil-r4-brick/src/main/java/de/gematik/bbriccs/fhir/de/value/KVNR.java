@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025 gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,9 @@
 
 package de.gematik.bbriccs.fhir.de.value;
 
+import static de.gematik.bbriccs.fhir.de.DeBasisProfilNamingSystem.KVID;
+import static de.gematik.bbriccs.fhir.de.DeBasisProfilNamingSystem.KVID_GKV_SID;
+import static de.gematik.bbriccs.fhir.de.DeBasisProfilNamingSystem.KVID_PKV_SID;
 import static java.text.MessageFormat.format;
 
 import de.gematik.bbriccs.fhir.builder.FakerBrick;
@@ -30,6 +33,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.val;
 import one.util.streamex.StreamEx;
 import org.hl7.fhir.r4.model.Identifier;
@@ -62,35 +66,38 @@ import org.hl7.fhir.r4.model.Resource;
  * @see InsuranceTypeDe
  * @see WithChecksum
  */
+@Getter
 @EqualsAndHashCode(callSuper = true)
 public class KVNR extends SemanticValue<String, DeBasisProfilNamingSystem> implements WithChecksum {
 
   private static final List<DeBasisProfilNamingSystem> KVNR_SYSTEMS =
-      List.of(
-          DeBasisProfilNamingSystem.KVID_GKV_SID,
-          DeBasisProfilNamingSystem.KVID_PKV_SID,
-          DeBasisProfilNamingSystem.KVID);
+      List.of(KVID_GKV_SID, KVID_PKV_SID, KVID);
   private static final Pattern KVNR_PATTERN = Pattern.compile("^([A-Z])(\\d{8})(\\d)$");
+
+  private final InsuranceTypeDe insuranceType;
 
   private KVNR(DeBasisProfilNamingSystem namingSystem, String value) {
     super(namingSystem, value);
-  }
-
-  public InsuranceTypeDe getInsuranceType() {
-    return switch (this.getSystem()) {
-      case KVID, KVID_GKV_SID -> InsuranceTypeDe.GKV;
-      case KVID_PKV_SID -> InsuranceTypeDe.PKV;
-      default -> throw new InvalidSystemException(this.getClass(), this.getSystem());
-    };
+    this.insuranceType = getInsuranceTypeFor(namingSystem);
   }
 
   public boolean isGkv() {
-    return this.getSystem()
-        .matches(DeBasisProfilNamingSystem.KVID_GKV_SID, DeBasisProfilNamingSystem.KVID);
+    return this.getSystem().matches(KVID_GKV_SID, KVID);
   }
 
   public boolean isPkv() {
-    return this.getSystem().matches(DeBasisProfilNamingSystem.KVID_PKV_SID);
+    return this.getSystem().matches(KVID_PKV_SID);
+  }
+
+  /**
+   * Instantiates a new instance of a {@link KVNR} with the given {@link InsuranceTypeDe}.
+   *
+   * @param insuranceType the new instance should have
+   * @return a new instance of {@link KVNR} with the given {@link InsuranceTypeDe} but the same
+   *     value
+   */
+  public KVNR as(InsuranceTypeDe insuranceType) {
+    return from(this.getValue(), insuranceType);
   }
 
   public Reference asReference(boolean withCoding) {
@@ -167,19 +174,27 @@ public class KVNR extends SemanticValue<String, DeBasisProfilNamingSystem> imple
   }
 
   public static KVNR asPkv(String value) {
-    return from(DeBasisProfilNamingSystem.KVID_PKV_SID, value);
+    return from(value, InsuranceTypeDe.PKV);
   }
 
   public static KVNR asGkv(String value) {
-    return from(DeBasisProfilNamingSystem.KVID_GKV_SID, value);
+    return from(value, InsuranceTypeDe.GKV);
   }
 
   public static KVNR from(String value) {
-    return from(DeBasisProfilNamingSystem.KVID, value);
+    return asGkv(value);
   }
 
   public static KVNR from(DeBasisProfilNamingSystem namingSystem, String value) {
     return new KVNR(namingSystem, value);
+  }
+
+  public static KVNR from(String value, InsuranceTypeDe insuranceType) {
+    return switch (insuranceType) {
+      case GKV -> from(KVID_GKV_SID, value);
+      case PKV -> from(KVID_PKV_SID, value);
+      default -> throw new InvalidSystemException(KVNR.class, "InsuranceType " + insuranceType);
+    };
   }
 
   public static KVNR from(Identifier identifier) {
@@ -220,6 +235,14 @@ public class KVNR extends SemanticValue<String, DeBasisProfilNamingSystem> imple
     val numbers = faker.regexify("[0-9]{8}");
     val checkNum = calculateCheckNumber(capLetter, numbers);
     return format("{0}{1}{2}", capLetter, numbers, checkNum);
+  }
+
+  private static InsuranceTypeDe getInsuranceTypeFor(DeBasisProfilNamingSystem system) {
+    return switch (system) {
+      case KVID, KVID_GKV_SID -> InsuranceTypeDe.GKV;
+      case KVID_PKV_SID -> InsuranceTypeDe.PKV;
+      default -> throw new InvalidSystemException(KVNR.class, system);
+    };
   }
 
   /**

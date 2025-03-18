@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025 gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,4 @@
 
 package de.gematik.bbriccs.fhir.coding;
 
-import java.util.List;
-import lombok.val;
-import org.hl7.fhir.r4.model.CodeableConcept;
-import org.hl7.fhir.r4.model.Coding;
-
-public interface WithCodeSystem extends WithSystem {
-
-  default CodeableConcept asCodeableConcept(String code) {
-    val coding = this.asCoding(code);
-    return new CodeableConcept().setCoding(List.of(coding));
-  }
-
-  default Coding asCoding(String code) {
-    val coding = new Coding();
-    coding.setSystem(this.getCanonicalUrl()).setCode(code);
-    return coding;
-  }
-}
+public interface WithCodeSystem extends WithSystem {}

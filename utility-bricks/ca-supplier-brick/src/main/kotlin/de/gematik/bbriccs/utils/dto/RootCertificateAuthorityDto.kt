@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025 gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,39 @@
 
 package de.gematik.bbriccs.utils.dto
 
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.core.JsonProcessingException
+import com.fasterxml.jackson.databind.DeserializationContext
+import com.fasterxml.jackson.databind.JsonDeserializer
+import com.fasterxml.jackson.databind.JsonNode
 import de.gematik.bbriccs.utils.exceptions.MissingRootCertificateAuthorityNumber
+import de.gematik.bbriccs.utils.toCertificate
+import java.io.IOException
 import java.security.cert.X509Certificate
 
-class RootCertificateAuthorityDto(cert: X509Certificate, url: String) :
-  CertificateAuthorityDto(cert, url), Comparable<RootCertificateAuthorityDto> {
+class RootCertificateAuthorityDto(cert: X509Certificate, val nextCrossCA: X509Certificate? = null, val prevCrossCA: X509Certificate? = null) :
+  CertificateAuthorityDto(cert), Comparable<RootCertificateAuthorityDto> {
   override fun compareTo(other: RootCertificateAuthorityDto): Int {
     return this.getCaNumber().compareTo(other.getCaNumber())
   }
 
-  fun isCrossCa(): Boolean = url.contains("-CROSS-")
+  fun isCrossCa(): Boolean = getSubjectCN() != getIssuerCN()
 
   fun getCaNumber(): Int =
     getSubjectCN().filter(Char::isDigit).let {
       if (it.isEmpty()) throw MissingRootCertificateAuthorityNumber(cert) else it.toInt()
     }
+}
+
+class RootCASerializer : JsonDeserializer<RootCertificateAuthorityDto>() {
+
+  @Throws(IOException::class, JsonProcessingException::class)
+  override fun deserialize(jp: JsonParser, ctxt: DeserializationContext?): RootCertificateAuthorityDto {
+    val node: JsonNode = jp.codec.readTree(jp)
+    return RootCertificateAuthorityDto(
+      node["cert"].asText().toCertificate(),
+      node["next"].asText().takeIf(String::isNotEmpty)?.toCertificate(),
+      node["prev"].asText().takeIf(String::isNotEmpty)?.toCertificate(),
+    )
+  }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025 gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@
 package de.gematik.bbriccs.fhir.de.value;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
 
 import de.gematik.bbriccs.fhir.coding.exceptions.InvalidSystemException;
 import de.gematik.bbriccs.fhir.coding.exceptions.MissingFieldException;
@@ -31,6 +29,8 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.EnumSource.Mode;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -94,6 +94,17 @@ class KVNRTest {
     assertTrue(kvnr.isGkv());
   }
 
+  @Test
+  void shouldChangeInsuranceType() {
+    val originalKvnr = KVNR.randomGkv();
+    assertTrue(originalKvnr.isGkv());
+
+    val newKvnr = originalKvnr.as(InsuranceTypeDe.PKV);
+    assertTrue(newKvnr.isPkv());
+
+    assertEquals(originalKvnr.getValue(), newKvnr.getValue());
+  }
+
   @ParameterizedTest
   @ValueSource(booleans = {true, false})
   void shouldCreateAsReference(boolean withCoding) {
@@ -110,6 +121,26 @@ class KVNRTest {
     } else {
       assertNull(code);
     }
+  }
+
+  @ParameterizedTest
+  @EnumSource(
+      value = InsuranceTypeDe.class,
+      names = {"GKV", "PKV"},
+      mode = EnumSource.Mode.EXCLUDE)
+  void shouldThrowOnCreatingWithInvalidInsuranceType(InsuranceTypeDe insuranceType) {
+    assertThrows(InvalidSystemException.class, () -> KVNR.from("D795870231", insuranceType));
+  }
+
+  @ParameterizedTest
+  @EnumSource(
+      value = InsuranceTypeDe.class,
+      names = {"GKV", "PKV"},
+      mode = Mode.INCLUDE)
+  void shouldCreateForInsuranceType(InsuranceTypeDe insuranceType) {
+    val kvnr = assertDoesNotThrow(() -> KVNR.from("D795870231", insuranceType));
+    assertEquals("D795870231", kvnr.getValue());
+    assertEquals(insuranceType, kvnr.getInsuranceType());
   }
 
   @Test
@@ -145,10 +176,9 @@ class KVNRTest {
 
   @Test
   void shouldThrowOnInvalidSystem() {
-    val kvnr = spy(KVNR.randomGkv());
-    when(kvnr.getSystem()).thenReturn(DeBasisProfilNamingSystem.IKNR);
-
-    assertThrows(InvalidSystemException.class, kvnr::getInsuranceType);
+    val invalidSystem = DeBasisProfilNamingSystem.IKNR;
+    val kvnrValue = "D795870231";
+    assertThrows(InvalidSystemException.class, () -> KVNR.from(invalidSystem, kvnrValue));
   }
 
   @Test

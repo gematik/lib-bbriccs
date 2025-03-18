@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025 gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,13 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import java.security.cert.X509Certificate
+import java.time.LocalDate
+import java.time.ZoneId
+import java.util.*
 import javax.security.auth.x500.X500Principal
 
 class CertificateAuthorityDtoTest {
@@ -34,21 +38,17 @@ class CertificateAuthorityDtoTest {
   @BeforeEach
   fun setup() {
     certificate = mock(X509Certificate::class.java)
-    certificateAuthorityDto = CertificateAuthorityDto(certificate, "http://test.url")
+    certificateAuthorityDto = CertificateAuthorityDto(certificate)
   }
 
   @Test
-  fun `getSubjectCN should return correct CN`() {
+  fun `getIssuerCN should return correct Subject CN and Issuer CN`() {
     `when`(certificate.subjectX500Principal).thenReturn(X500Principal("CN=Test Subject"))
-    val subjectCN = certificateAuthorityDto.getSubjectCN()
-    assertEquals("Test Subject", subjectCN)
-  }
-
-  @Test
-  fun `getIssuerCN should return correct CN`() {
     `when`(certificate.issuerX500Principal).thenReturn(X500Principal("CN=Test Issuer"))
-    val issuerCN = certificateAuthorityDto.getIssuerCN()
-    assertEquals("Test Issuer", issuerCN)
+    assertEquals("Test Issuer", certificateAuthorityDto.getIssuerCN())
+    assertEquals("Test Subject", certificateAuthorityDto.getSubjectCN())
+
+    assertDoesNotThrow { certificateAuthorityDto.toString() }
   }
 
   @Test
@@ -65,5 +65,17 @@ class CertificateAuthorityDtoTest {
     assertThrows(MissingCertificateAuthorityIssuer::class.java) {
       certificateAuthorityDto.getIssuerCN()
     }
+  }
+
+  @Test
+  fun `NotValidBefore and NotValidAfter do not throw exceptions`() {
+    val notValidBefore = LocalDate.of(2024, 1, 1)
+    val notValidAfter = LocalDate.of(2025, 1, 1)
+
+    `when`(certificate.notBefore).thenReturn(Date.from(notValidBefore.atStartOfDay(ZoneId.systemDefault()).toInstant()))
+    `when`(certificate.notAfter).thenReturn(Date.from(notValidAfter.atStartOfDay(ZoneId.systemDefault()).toInstant()))
+
+    assertEquals(notValidBefore, certificateAuthorityDto.getNotValidBefore())
+    assertEquals(notValidAfter, certificateAuthorityDto.getNotValidAfter())
   }
 }

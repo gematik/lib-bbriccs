@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025 gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,21 @@ package de.gematik.bbriccs.fhir.coding.version;
 public interface ProfileVersion {
 
   /**
-   * Decide if a tailing zero (SemVer PATCH) should omit
+   * Decide if a tailing SemVer PATCH should omit if the value is "0"
    *
    * @return true if zero PATCH in a version should be omitted and false otherwise
    */
   default boolean omitZeroPatch() {
     return true;
+  }
+
+  /**
+   * Decide if a tailing SemVer PATCH should omit independent of the concrete value
+   *
+   * @return true if PATCH in a version should be omitted and false otherwise
+   */
+  default boolean omitPatch() {
+    return false;
   }
 
   String getVersion();

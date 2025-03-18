@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025 gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,15 +29,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import lombok.val;
 
 public class VersionUtil {
 
-  private static final String PATCH_GROUP = "patch";
-
   public static final Pattern SEMVER_REGEX =
       Pattern.compile("(\\d{1,3}+\\.\\d+(\\.(?<patch>\\d+))?)");
+  private static final String PATCH_GROUP = "patch";
 
   private VersionUtil() {
     throw new IllegalAccessError("Utility class");
@@ -50,6 +50,22 @@ public class VersionUtil {
     }
 
     return matcher.group(0);
+  }
+
+  public static String omitPatch(String input) {
+    val matcher = SEMVER_REGEX.matcher(input);
+    if (matcher.find()) {
+      val patchGroup = matcher.group(PATCH_GROUP);
+      return Optional.ofNullable(patchGroup)
+          .map(
+              v -> {
+                val patchIdx = matcher.start(PATCH_GROUP) - 1;
+                return input.substring(0, patchIdx);
+              })
+          .orElse(input);
+    } else {
+      return input;
+    }
   }
 
   public static String omitZeroPatch(String input) {
@@ -170,12 +186,21 @@ public class VersionUtil {
   public static <T extends ProfileVersion> T getDefaultVersion(Class<T> type, String profileName) {
     return getDefaultVersionOptionally(type, profileName)
         .orElseThrow(
-            () ->
-                new FhirVersionException(
-                    format(
-                        "Profile {0} not found in virtual configuration: have you initialized the"
-                            + " profile configuration?",
-                        profileName)));
+            () -> {
+              val defaultProfileId =
+                  ProfilesConfigurator.getDefaultConfiguration().getDefaultProfile().getId();
+              val defaultProfiles =
+                  ProfilesConfigurator.getDefaultConfiguration()
+                      .getDefaultProfile()
+                      .getProfiles()
+                      .stream()
+                      .map(p -> format("\t{0}:{1}", p.getName(), p.getVersion()))
+                      .collect(Collectors.joining("\n"));
+              return new FhirVersionException(
+                  format(
+                      "Profile {0} not found in virtual configuration ''{1}'' which contains\n{2}",
+                      profileName, defaultProfileId, defaultProfiles));
+            });
   }
 
   @SuppressWarnings("unchecked")

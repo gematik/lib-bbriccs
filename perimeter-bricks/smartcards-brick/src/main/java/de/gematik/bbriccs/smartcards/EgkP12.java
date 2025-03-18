@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025 gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import de.gematik.bbriccs.smartcards.cfg.SmartcardConfigDto;
 import de.gematik.bbriccs.smartcards.exceptions.InvalidCertificateException;
 import de.gematik.bbriccs.smartcards.exceptions.MissingCardAttribute;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.regex.Pattern;
 import lombok.EqualsAndHashCode;
@@ -62,7 +63,7 @@ public class EgkP12 extends SmartcardP12 implements Egk {
     return getAutCertificate(CryptoSystem.ECC_256)
         .or(() -> getAutCertificate(CryptoSystem.RSA_2048))
         .map(it -> it.getX509Certificate().getNotBefore().toInstant())
-        .map(it -> LocalDate.ofEpochDay(it.getEpochSecond()))
+        .map(it -> LocalDate.ofInstant(it, ZoneId.systemDefault()))
         .orElseThrow(() -> new MissingCardAttribute(this, "Insurance Start Date"));
   }
 }

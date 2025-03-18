@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025 gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,36 @@
 
 package de.gematik.bbriccs.utils
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.module.SimpleModule
 import de.gematik.bbriccs.rest.HttpBClient
 import de.gematik.bbriccs.rest.HttpBRequest
 import de.gematik.bbriccs.rest.HttpRequestMethod
 import de.gematik.bbriccs.rest.RestClient
 import de.gematik.bbriccs.utils.dto.CertificateAuthorityDto
+import de.gematik.bbriccs.utils.dto.RootCASerializer
 import de.gematik.bbriccs.utils.dto.RootCertificateAuthorityDto
 import java.nio.charset.Charset
 
 class CertificateAuthoritySupplier private constructor(private val environmentAnchor: TrustedEnvironmentAnchor, private val httpClient: HttpBClient) {
   fun getRootCAs(): RootCertificateAuthorityList {
     val path = environmentAnchor.getCaDownloadPath(CaType.ROOT_CA)
-    val cas =
-      downloadElementsFromBackend(path).map { name -> get("$path$name", true) as RootCertificateAuthorityDto }
-        .toSet()
-    return RootCertificateAuthorityList(cas)
+    return RootCertificateAuthorityList(
+      httpClient.send(HttpBRequest(HttpRequestMethod.GET, path)).let {
+        val mapper = ObjectMapper()
+        val module = SimpleModule()
+        module.addDeserializer(RootCertificateAuthorityDto::class.java, RootCASerializer())
+        mapper.registerModule(module)
+        mapper.readValue(String(it.body, Charset.defaultCharset()), object : TypeReference<Set<RootCertificateAuthorityDto>>() {})
+      },
+    )
+  }
+
+  fun getSubCAs(): Set<CertificateAuthorityDto> {
+    val path = environmentAnchor.getCaDownloadPath(CaType.SUB_CA)
+    return downloadElementsFromBackend(path).map { name -> get("$path$name") }
+      .toSet()
   }
 
   private fun downloadElementsFromBackend(path: String): Set<String> =
@@ -41,13 +56,9 @@ class CertificateAuthoritySupplier private constructor(private val environmentAn
         .toSet()
     }
 
-  private fun get(path: String, isRootCa: Boolean): CertificateAuthorityDto =
+  private fun get(path: String): CertificateAuthorityDto =
     httpClient.send(HttpBRequest(HttpRequestMethod.GET, path)).let {
-      return if (isRootCa) {
-        RootCertificateAuthorityDto(it.body.inputStream().toCertificate(), path)
-      } else {
-        CertificateAuthorityDto(it.body.inputStream().toCertificate(), path)
-      }
+      return CertificateAuthorityDto(it.body.inputStream().toCertificate())
     }
 
   companion object {
@@ -68,13 +79,16 @@ class CertificateAuthoritySupplier private constructor(private val environmentAn
 
     fun useTI() = apply { this.useInternet = false }
 
-    fun getRootCAsFromBackend() = CertificateAuthoritySupplier(
+    private fun build() = CertificateAuthoritySupplier(
       environmentAnchor,
       if (::httpClient.isInitialized) {
         httpClient
       } else {
         RestClient.forUrl(environmentAnchor.getUrl(useInternet)).withoutTlsVerification()
       },
-    ).getRootCAs()
+    )
+
+    fun getRootCAsFromBackend() = build().getRootCAs()
+    fun getSubCAsFromBackend() = build().getSubCAs()
   }
 }

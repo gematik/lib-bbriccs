@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025 gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import static java.text.MessageFormat.format;
 
 import de.gematik.bbriccs.fhir.coding.version.ProfileVersion;
 import de.gematik.bbriccs.fhir.coding.version.VersionUtil;
-import lombok.val;
 import org.hl7.fhir.instance.model.api.IBaseDatatype;
 import org.hl7.fhir.r4.model.BooleanType;
 import org.hl7.fhir.r4.model.CanonicalType;
@@ -58,10 +57,12 @@ public interface WithStructureDefinition<T extends ProfileVersion> extends WithS
    * @return the canonical URL of the StructureDefinition with the given version appended to it
    */
   default String getVersionedUrl(T version) {
-    val v =
+    var v =
         (version.omitZeroPatch())
             ? VersionUtil.omitZeroPatch(version.getVersion())
             : version.getVersion();
+
+    v = (version.omitPatch()) ? VersionUtil.omitPatch(v) : v;
     return format("{0}|{1}", this.getCanonicalUrl(), v);
   }
 

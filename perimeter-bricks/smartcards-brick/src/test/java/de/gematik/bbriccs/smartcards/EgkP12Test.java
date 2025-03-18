@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 gematik GmbH
+ * Copyright 2025 gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,10 @@ import de.gematik.bbriccs.smartcards.cfg.SmartcardConfigDto;
 import de.gematik.bbriccs.smartcards.exceptions.InvalidCertificateException;
 import de.gematik.bbriccs.smartcards.exceptions.MissingCardAttribute;
 import de.gematik.bbriccs.utils.ResourceLoader;
+import java.security.cert.X509Certificate;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import lombok.val;
@@ -85,6 +89,21 @@ class EgkP12Test {
         .getICCSNsFor(SmartcardType.EGK)
         .forEach(
             egk -> assertDoesNotThrow(() -> archive.getEgkByICCSN(egk).getInsuranceStartDate()));
+
+    val mockDate = new Date();
+
+    val certificate = mock(X509Certificate.class);
+    val egk = mock(EgkP12.class);
+    val smartcardCertificate = mock(SmartcardCertificate.class);
+    when(certificate.getNotBefore()).thenReturn(mockDate);
+    when(smartcardCertificate.getX509Certificate()).thenReturn(certificate);
+    when(egk.getAutCertificate(CryptoSystem.ECC_256)).thenReturn(Optional.of(smartcardCertificate));
+    when(egk.getAutCertificate(CryptoSystem.RSA_2048)).thenReturn(Optional.empty());
+
+    doCallRealMethod().when(egk).getInsuranceStartDate();
+
+    val expectedDate = LocalDate.ofInstant(mockDate.toInstant(), ZoneId.systemDefault());
+    assertEquals(expectedDate, egk.getInsuranceStartDate());
   }
 
   @Test
