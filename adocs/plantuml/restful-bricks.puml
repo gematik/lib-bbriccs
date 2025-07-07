@@ -1,47 +1,33 @@
 @startuml
-skinparam componentStyle rectangle
+node "RESTful Bricks" <<transport>> {
+    [x-vau-client-brick] <<vau>>
+    [rest-client-brick] <<transport>>
+    [rest-client-api-brick] <<interface>>
+    () "VAU" <<plugins>>
+    () "REST" <<plugins>>
 
-skinparam component {
-    BorderColor<<fhir-bricks>> Red
-    BorderStyle<<fhir-bricks>> Dashed
-    BackgroundColor<<external>> Yellow
-    BorderColor<<external>> Red
+    [rest-client-api-brick] <|-down- [x-vau-client-brick] <<implement>>
+    [rest-client-api-brick] <|-down- [rest-client-brick] <<implement>>
+    [x-vau-client-brick] -> [rest-client-brick] <<decorate>>
+
+    [x-vau-client-brick] -left-> "VAU" <<plugins>>
+    [rest-client-brick] -right--> "REST" <<plugins>>
 }
 
-node "FHIR REST" #FFD1E5 {
-    [fd-fhir-client-brick]
-    [fhir-codec-brick] <<fhir-bricks>>
-    [fhir-validation-brick] <<fhir-bricks>>
+node "FHIR Client Brick" <<application>> {
+    [fd-fhir-client-brick] <<application>>
+    () "FHIR" <<plugins>>
+
+    [fd-fhir-client-brick] -down--> [rest-client-api-brick] <<use>>
+    [fd-fhir-client-brick] -left-> "FHIR Bricks" <<use>>
+    [fd-fhir-client-brick] --> "FHIR" <<plugins>>
 }
 
-node "REST Communication" #D4DCFF {
-    [rest-client-api-brick]
-    [vau-client-brick]
-    [rest-client-brick]
+node "JSON Client Brick" <<application>> {
+    [fd-json-client-brick] <<application>>
+    [fasterxml] <<external>>
+
+    [fd-json-client-brick] -down--> [rest-client-api-brick] <<use>>
+    [fd-json-client-brick] -> [fasterxml] <<external>>
 }
-
-
-rectangle "FHIR REST Plugins" #CCFFE0 {
-    () Header as RequestHeaderProvider
-    [smartcard-idp-plugin-brick]
-}
-rectangle "VAU Plugins" #CCFFE0
-rectangle "REST Plugins" #CCFFE0
-
-[de.gematik.idp.idp-client] <<external>>
-
-[fd-fhir-client-brick] -down--> [rest-client-api-brick] : uses
-[fd-fhir-client-brick] -[#red,dashed]left-> [fhir-codec-brick] : uses
-[fhir-codec-brick] -[#red,dashed]down-> [fhir-validation-brick] : uses
-
-[fd-fhir-client-brick] -right-> [RequestHeaderProvider]
-
-[vau-client-brick] -up-> [rest-client-api-brick] : implements
-[rest-client-brick] -up-> [rest-client-api-brick] : implements
-
-[vau-client-brick] -left-> [VAU Plugins]
-[rest-client-api-brick] -right--> [REST Plugins]
-[smartcard-idp-plugin-brick] -up-> [RequestHeaderProvider]
-
-[smartcard-idp-plugin-brick] -[#red,dashed]right-> [de.gematik.idp.idp-client]
 @enduml

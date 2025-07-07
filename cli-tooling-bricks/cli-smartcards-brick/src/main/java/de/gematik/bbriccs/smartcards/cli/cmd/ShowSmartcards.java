@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.smartcards.cli.cmd;
@@ -84,7 +88,7 @@ public class ShowSmartcards implements Callable<Integer> {
         format(
             "\tAUT.OIDs:\t{0}",
             smartcard.getAutOids().stream()
-                .map(oid -> format("{0} [{1}]", oid.getType(), oid.getId()))
+                .map(oid -> format("{0} [{1}]", oid.getType(), oid.getValue()))
                 .collect(Collectors.joining(", "))));
     System.out.println(format("\tPrivateKey:\t{0}", smartcard.getPrivateKeyBase64()));
     System.out.println(

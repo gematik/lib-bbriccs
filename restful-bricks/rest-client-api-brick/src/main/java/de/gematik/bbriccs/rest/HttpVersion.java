@@ -12,10 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.rest;
 
+import java.net.http.HttpClient.Version;
 import java.util.Arrays;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +35,10 @@ public enum HttpVersion {
   HTTP_2("HTTP/2");
 
   public final String version;
+
+  public Version asVersion() {
+    return Version.valueOf(this.name());
+  }
 
   @Override
   public String toString() {

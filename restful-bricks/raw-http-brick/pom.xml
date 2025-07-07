@@ -6,27 +6,21 @@
   <parent>
     <groupId>de.gematik.bbriccs</groupId>
     <artifactId>restful-bricks</artifactId>
-    <version>0.4.0</version>
+    <version>0.7.0</version>
   </parent>
 
   <artifactId>raw-http-brick</artifactId>
   <name>Raw HTTP Codec Brick</name>
-
-  <properties>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
 
   <dependencies>
     <dependency>
       <groupId>de.gematik.bbriccs</groupId>
       <artifactId>rest-client-api-brick</artifactId>
     </dependency>
-
     <dependency>
       <groupId>de.gematik.bbriccs</groupId>
       <artifactId>resource-loader-brick</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 

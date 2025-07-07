@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.konnektor;
@@ -19,12 +23,15 @@ package de.gematik.bbriccs.konnektor;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import de.gematik.bbriccs.cardterminal.CardInfo;
 import de.gematik.bbriccs.cardterminal.CardTerminal;
 import de.gematik.bbriccs.cardterminal.PinType;
+import de.gematik.bbriccs.cardterminal.exceptions.PinVerificationException;
 import de.gematik.bbriccs.crypto.CryptoSystem;
 import de.gematik.bbriccs.konnektor.cfg.KonnektorConfiguration;
 import de.gematik.bbriccs.konnektor.cfg.KonnektorContextConfiguration;
@@ -40,7 +47,10 @@ import de.gematik.bbriccs.smartcards.SmartcardP12;
 import de.gematik.bbriccs.utils.ResourceLoader;
 import de.gematik.ws.conn.cardservice.v8.CardInfoType;
 import de.gematik.ws.conn.cardservicecommon.v2.CardTypeType;
+import de.gematik.ws.conn.cardservicecommon.v2.PinResponseType;
+import de.gematik.ws.conn.cardservicecommon.v2.PinResultEnum;
 import de.gematik.ws.conn.certificateservicecommon.v2.CertRefEnum;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.util.List;
 import lombok.Data;
@@ -142,11 +152,39 @@ class KonnektorIntegrationTest {
     val cardHandle =
         konnektor.execute(GetCardHandleRequest.forSmartcard(sca.getSmcB(0))).getPayload();
 
-    val extAuthCmd =
-        new ExternalAuthenticateRequest(cardHandle, cryptoSystem, "challenge".getBytes());
+    val challenge = "challenge".getBytes(StandardCharsets.UTF_8);
+    val extAuthCmd = new ExternalAuthenticateRequest(cardHandle, cryptoSystem, challenge);
     val token = konnektor.execute(extAuthCmd);
     assertNotNull(token);
     assertTrue(token.getPayload().length > 0);
+  }
+
+  @Test
+  void shouldExternallyAuthenticateWithShortcut() {
+    val konnektor = createTestKonnektor();
+
+    val smcb = sca.getSmcB(0);
+    val challenge = "challenge".getBytes(StandardCharsets.UTF_8);
+    val token = konnektor.externalAuthenticate(smcb, challenge);
+
+    assertNotNull(token);
+    assertTrue(token.getPayload().length > 0);
+  }
+
+  @Test
+  void shouldCheckPinOnExternalAuthenticate() {
+    val smcb = sca.getSmcB(0);
+    val konnektor = spy(createTestKonnektor());
+
+    val pinResponseType = new PinResponseType();
+    pinResponseType.setPinResult(PinResultEnum.ERROR);
+    val pinResponse = new KonnektorResponse<>(pinResponseType);
+
+    doReturn(pinResponse).when(konnektor).execute(any(VerifyPinRequest.class));
+
+    val challenge = "challenge".getBytes(StandardCharsets.UTF_8);
+    assertThrows(
+        PinVerificationException.class, () -> konnektor.externalAuthenticate(smcb, challenge));
   }
 
   @ParameterizedTest
@@ -156,8 +194,8 @@ class KonnektorIntegrationTest {
 
     val cardHandle = CardInfo.builder().handle("abc").build();
 
-    val extAuthCmd =
-        new ExternalAuthenticateRequest(cardHandle, cryptoSystem, "challenge".getBytes());
+    val challenge = "challenge".getBytes(StandardCharsets.UTF_8);
+    val extAuthCmd = new ExternalAuthenticateRequest(cardHandle, cryptoSystem, challenge);
     val token = konnektor.executeSafely(extAuthCmd);
     assertNotNull(token);
     assertTrue(token.isEmpty());
@@ -172,8 +210,8 @@ class KonnektorIntegrationTest {
     val konnektor = createTestKonnektor(mockArchive);
 
     val cardHandle = CardInfo.builder().handle("abc").build();
-    val extAuthCmd =
-        new ExternalAuthenticateRequest(cardHandle, cryptoSystem, "challenge".getBytes());
+    val challenge = "challenge".getBytes(StandardCharsets.UTF_8);
+    val extAuthCmd = new ExternalAuthenticateRequest(cardHandle, cryptoSystem, challenge);
     val token = konnektor.executeSafely(extAuthCmd);
     assertNotNull(token);
     assertTrue(token.isEmpty());

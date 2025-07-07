@@ -1,0 +1,60 @@
+include::rest-commons.adoc[]
+
+[#tutorial_rest_client_builders]
+== Configuring a HttpBClient implementation
+When you read the previous tutorial, did you wonder where to put the server URL? And what about TLS or some standard headers? In this tutorial we will see how this can be achieved with the {brick-rest-client}. This brick provides two different implementations for the API.
+
+[plantuml, "{pumldir}/rest-impl-brick", svg]
+.REST-API-Brick
+----
+include::{pumldir}/common-style.iuml[]
+include::{pumldir}/rest-api-brick.iuml[]
+include::{pumldir}/rest-impl-brick.puml[]
+----
+
+The `BasicHttpClient` uses only the standard library, mainly `java.net`, to implement the interface. On the other hand, the `UnirestHttpClient` wraps link:https://github.com/Kong/unirest-java[Unirest]. Both have their strengths and weaknesses, and you can use one or the other depending on your needs.
+
+Regardless of the implementation, the API aims to achieve a separate client per server and user. This means that each client can be configured separately. The equivalent in `Unirest` is the `UnirestInstance`. This approach will come in handy once you start communicating with multiple applications or to a single application with multiple clients.
+
+Let's see how to configure and instantiate the two implementations:
+
+[source,java]
+----
+HttpBClient client = BasicHttpClient.forUrl("https://gematik-ti.de") // (1)
+  .header( // (2)
+      HttpHeader.acceptCharsetUtf8(),
+      HttpHeader.accept(MediaType.ANY_TYPE)
+  )
+  .header( // (3)
+      BasicHeaderProvider.forXRequestId(),
+      BasicHeaderProvider.forDate()
+  ).withoutTlsVerification(); // (4)
+----
+
+1. Initiate a Builder with the URL of the server you want to talk to
+2. Set automatic headers which the client should set on each request
+3. Set automatic header provides which generate http headers dynamically for each request
+4. And finally instantiate the `HttpBClient` without TLS Verification
+
+NOTE: Dynamic header provider in step 3 will be explained in the <<tutorial_rest_plugins,Plugins tutorial>> in more detail.
+
+Pretty simple, right? And by simply replacing the initial Builder call, you can easily replace your implementation: `HttpBClient client = UnirestHttpClient.forUrl("https://gematik-ti.de")`
+
+But what if you want to use TLS verification? Both implementations have you covered here:
+
+[source,java]
+----
+val builder = BasicHttpClient.forUrl("https://gematik-ti.de");
+
+SSLContext sslCtx = SSLContext.getInstance("TLS");
+TrustManager trustManager = new MyTrustManager(); // implement yourself
+
+HttpBClient client1 = builder.withTlsVerification(sslContext);
+HttpBClient client1 = builder.withTlsVerification(trustManager);
+----
+
+You can use either a `javax.net.ssl.SSLContext` link:https://docs.oracle.com/javase/8/docs/api/javax/net/ssl/SSLContext.html[SSLContext] or a `javax.net.ssl.X509TrustManager` link:https://docs.oracle.com/javase/8/docs/api/javax/net/ssl/TrustManager.html[TrustManager]. Both come from the standard library and are well documented and known.
+
+Give it a try and implement your own link:https://codeql.github.com/codeql-query-help/java/java-insecure-trustmanager/[insecure TrustManager]. That is basically exactly what the pre implemented clients do on `.withoutTlsVerification()`.
+
+TIP: Notice how we created two separate clients (`assertNotEquals(client1, client2)`) in the previous example? This is exactly how it is supposed to work. A concrete client is instantiated on the "terminating builder method" and can be repeated as often as you like.  You can use this approach to configure once and instantiate many times.

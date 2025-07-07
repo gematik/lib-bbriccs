@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.fhir.de.builder;
@@ -22,28 +26,31 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import de.gematik.bbriccs.fhir.builder.FakerBrick;
 import de.gematik.bbriccs.fhir.builder.exceptions.BuilderException;
 import de.gematik.bbriccs.fhir.de.valueset.Country;
-import java.util.List;
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class AddressBuilderTest {
 
-  @Test
-  void testFixedStreetNames() {
+  @ParameterizedTest
+  @ValueSource(
+      strings = {
+        "Friedrichstr. 60",
+        "Friedrichstraße 38",
+        "Friedrichstraße 38/40",
+        "Friedrichstr. 60 3 OG",
+        "Friedrichstr.",
+        "Kolmarer Str. 928",
+        "Nikolaus-Ehlen-Weg 21b",
+        "Nisbléstr 87",
+        "Adalbertstr. 198 Apt. 191"
+      })
+  void testFixedStreetNames(String street) {
     val city = "Berlin";
     val postal = "10117";
-    val input =
-        List.of(
-            "Friedrichstr. 60",
-            "Friedrichstraße 38",
-            "Friedrichstraße 38/40",
-            "Friedrichstr. 60 3 OG",
-            "Kolmarer Str. 928",
-            "Nikolaus-Ehlen-Weg 21b",
-            "Nisbléstr 87",
-            "Adalbertstr. 198 Apt. 191");
     val builder = AddressBuilder.ofPhysicalType().city(city).postal(postal);
-    input.forEach(street -> assertDoesNotThrow(() -> builder.street(street).build()));
+    assertDoesNotThrow(() -> builder.street(street).build());
   }
 
   @Test

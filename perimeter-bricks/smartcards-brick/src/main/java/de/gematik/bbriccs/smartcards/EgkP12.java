@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.smartcards;
@@ -19,7 +23,7 @@ package de.gematik.bbriccs.smartcards;
 import static java.text.MessageFormat.format;
 
 import de.gematik.bbriccs.crypto.CryptoSystem;
-import de.gematik.bbriccs.crypto.certificate.Oid;
+import de.gematik.bbriccs.crypto.certificate.CertificateTypeOid;
 import de.gematik.bbriccs.smartcards.cfg.SmartcardConfigDto;
 import de.gematik.bbriccs.smartcards.exceptions.InvalidCertificateException;
 import de.gematik.bbriccs.smartcards.exceptions.MissingCardAttribute;
@@ -52,8 +56,8 @@ public class EgkP12 extends SmartcardP12 implements Egk {
   }
 
   @Override
-  public List<Oid> getAutOids() {
-    return List.of(Oid.OID_EGK_AUT, Oid.OID_EGK_AUT_ALT);
+  public List<CertificateTypeOid> getAutOids() {
+    return List.of(CertificateTypeOid.OID_EGK_AUT, CertificateTypeOid.OID_EGK_AUT_ALT);
   }
 
   @Override

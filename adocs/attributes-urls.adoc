@@ -1,5 +1,12 @@
 
 // ********************
+:url-wiki-http-protocol: https://de.wikipedia.org/wiki/Hypertext_Transfer_Protocol
+:url-wiki-rest: https://en.wikipedia.org/wiki/REST
+
+:link-wiki-http-protocol: {url-wiki-http-protocol}[HTTP]
+:link-wiki-rest: {url-wiki-rest}[REST]
+
+// ********************
 // HL7 urls and links
 :url-hl7-fhir: https://fhir.org/
 :url-hl7-fhir-types: https://hl7.org/fhir/r4/datatypes.html
@@ -24,10 +31,14 @@
 // ********************
 // Design Patterns and Principles
 :url-pattern-builder: https://en.wikipedia.org/wiki/Builder_pattern
+:url-pattern-observer: https://en.wikipedia.org/wiki/Observer_pattern
 :url-pattern-null-object: https://en.wikipedia.org/wiki/Null_object_pattern
+:url-principle-isp: https://en.wikipedia.org/wiki/Interface_segregation_principle
 
 :link-pattern-builder: {url-pattern-builder}[Builder Pattern]
+:link-pattern-observer: {url-pattern-observer}[Observer Pattern]
 :link-pattern-null-object: {url-pattern-null-object}[Null Object Pattern]
+:link-principle-isp: {url-principle-isp}[Interface Segregation Principle]
 
 
 // ********************

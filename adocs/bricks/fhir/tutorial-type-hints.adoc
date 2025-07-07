@@ -105,7 +105,7 @@ KbvErpBundle prescription = fhirCodec.decode(KbvErpBundle.class, content);
 KbvErpMedication medication = prescription.getErpMedication(); // throws ClassCastException
 ----
 
-However, when we call the custom method `getErpMEdication()` we run into a `ClassCastException`.  Let me explain why this is the case. When calling the `decode` method, we can only tell the decoder to decode the outer FHIR resource as a `KbvErpBundle`. But you cannot tell the decoder directly how to decode the `<Medication>`. This is where the `TypeHint` comes in.
+However, when we call the custom method `getErpMedication()` we run into a `ClassCastException`.  Let me explain why this is the case. When calling the `decode` method, we can only tell the decoder to decode the outer FHIR resource as a `KbvErpBundle`. But you cannot tell the decoder directly how to decode the `<Medication>`. This is where the `TypeHint` comes in.
 
 A `TypeHint` allows you to tell the decoder in advance how to decode certain resources. This is basically the main purpose of the structure definition in the profile values.
 

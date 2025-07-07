@@ -12,12 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.smartcards;
 
-import static java.text.MessageFormat.format;
-
+import java.util.List;
 import javax.security.auth.x500.X500Principal;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -44,21 +47,37 @@ public final class LdapReader {
       val value = token[1].trim();
 
       switch (key.toUpperCase()) {
-        case "CN" -> builder.commonName(value);
+        case "CN" -> builder.commonName(trimName(value));
         case "T" -> builder.title(value);
-        case "GIVENNAME", "GN" -> builder.givenName(value);
-        case "SURNAME" -> builder.surname(value);
+        case "GIVENNAME", "GN" -> builder.givenName(trimName(value));
+        case "SURNAME" -> builder.surname(trimName(value));
         case "STREET" -> builder.street(value);
         case "POSTALCODE" -> builder.postalCode(value);
-        case "O" -> builder.organization(value);
+        case "O" -> builder.organization(trimTestTag(value));
         case "OU" -> builder.organizationUnit(value);
         case "L" -> builder.locality(value);
         case "C" -> builder.country(value);
-        default -> log.trace(
-            format("ignore key {0} with value {1} in subject {2}", key, value, subject));
+        default -> log.trace("ignore key {} with value {} in subject {}", key, value, subject);
       }
     }
 
     return builder.build();
+  }
+
+  private static String trimTestTag(String input) {
+    return input.replace("TEST-ONLY", "").trim();
+  }
+
+  private static String trimName(String input) {
+    var output = trimTestTag(input);
+
+    // exclude these tags from the name
+    // Note: "Arzt " has intentional space at the end to avoid matching "Arztpraxis"
+    val excluded = List.of("Arzt ", "ARZT", "Apotheker/in", "APO");
+    for (val tag : excluded) {
+      output = output.replace(tag, "");
+    }
+
+    return output.trim();
   }
 }

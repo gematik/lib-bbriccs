@@ -4,7 +4,7 @@ include::fhir-commons.adoc[]
 == FHIR Builder Brick
 {brick-intro-01}
 
-To solve this issue, the {brick-fhir-builder} provides a simple concept based on the {link-pattern-builder}. This allows you to build FHIR resources in a structured and type-safe way.
+To solve this issue, the {brick-fhir-builder} provides a simple concept based on the {link-pattern-builder}. This allows you to build FHIR resources in a structured and type-safe way by applying the same principles we have already used for <<tutorial_match_resources,matching resources>>.
 
 [plantuml, "{pumldir}/fhir-builder-brick", svg]
 .FHIR Coding System Brick

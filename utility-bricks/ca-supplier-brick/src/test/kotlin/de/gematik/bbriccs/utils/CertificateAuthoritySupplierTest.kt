@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.utils
@@ -22,7 +26,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.get
 import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import de.gematik.bbriccs.rest.HttpBClient
-import de.gematik.bbriccs.rest.RestClient
+import de.gematik.bbriccs.rest.UnirestHttpClient
 import de.gematik.bbriccs.utils.dto.CertificateAuthorityDto
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -56,7 +60,7 @@ class CertificateAuthoritySupplierTest {
     wireMockServer = WireMockServer(wireMockConfig().dynamicPort())
     wireMockServer.start()
 
-    httpBClient = RestClient.forUrl("http://localhost:${wireMockServer.port()}").withoutTlsVerification()
+    httpBClient = UnirestHttpClient.forUrl("http://localhost:${wireMockServer.port()}").withoutTlsVerification()
 
     wireMockServer.stubFor(
       get(urlEqualTo("/ECC/${CaType.ROOT_CA}/roots.json"))

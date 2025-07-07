@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.rest.plugins;
@@ -21,8 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import de.gematik.bbriccs.rest.HttpBRequest;
 import de.gematik.bbriccs.rest.HttpBResponse;
-import de.gematik.bbriccs.rest.HttpRequestMethod;
-import java.util.List;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
@@ -38,8 +40,8 @@ class RestObserverManagerTest {
             .registerForRequests(observer)
             .build();
 
-    val request = new HttpBRequest(HttpRequestMethod.GET, "test");
-    val response = new HttpBResponse(200, List.of(), "");
+    val request = HttpBRequest.get().withPayload("test");
+    val response = HttpBResponse.status(200).withoutPayload();
 
     observerManager.serveRequestObservers(request);
     observerManager.serveResponseObservers(response);
@@ -59,8 +61,8 @@ class RestObserverManagerTest {
             //                    .registerForRequests(observer)
             .build();
 
-    val request = new HttpBRequest(HttpRequestMethod.GET, "test");
-    val response = new HttpBResponse(200, List.of(), "");
+    val request = HttpBRequest.get().withPayload("test");
+    val response = HttpBResponse.status(200).withoutPayload();
 
     observerManager.serveRequestObservers(request);
     observerManager.serveResponseObservers(response);

@@ -1,0 +1,26 @@
+<style>
+  arrow {
+    .decorate {
+      LineStyle: 10-5;
+      LineColor: #6f0000;
+    }
+    .use {
+      LineStyle: 10-5;
+      LineColor: #606060;
+    }
+    .implement {
+      LineColor: #000000;
+    }
+  }
+  .plugins {
+    LineStyle: 10-5;
+    BackGroundColor: #f0f0f0;
+    LineColor: #008800;
+  }
+  .external {
+    BackGroundColor: #fff0f0;
+    LineColor: #ee2222;
+    LineStyle: 10-5;
+  }
+</style>
+skinparam componentStyle rectangle

@@ -12,12 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.smartcards;
 
 import de.gematik.bbriccs.crypto.CryptoSystem;
-import de.gematik.bbriccs.crypto.certificate.Oid;
+import de.gematik.bbriccs.crypto.certificate.CertificateTypeOid;
 import de.gematik.bbriccs.smartcards.cfg.SmartcardConfigDto;
 import de.gematik.bbriccs.smartcards.exceptions.SmartCardKeyNotFoundException;
 import java.util.List;
@@ -36,17 +40,20 @@ public class HbaP12 extends InstituteSmartcardP12 implements Hba {
 
   @Override
   public SmartcardCertificate getQesCertificate(CryptoSystem cryptoSystem) {
-    return getKey(Oid.OID_HBA_QES, cryptoSystem)
-        .orElseThrow(() -> new SmartCardKeyNotFoundException(this, Oid.OID_HBA_QES, cryptoSystem));
+    return getKey(CertificateTypeOid.OID_HBA_QES, cryptoSystem)
+        .orElseThrow(
+            () ->
+                new SmartCardKeyNotFoundException(
+                    this, CertificateTypeOid.OID_HBA_QES, cryptoSystem));
   }
 
   @Override
-  public List<Oid> getAutOids() {
-    return List.of(Oid.OID_HBA_AUT);
+  public List<CertificateTypeOid> getAutOids() {
+    return List.of(CertificateTypeOid.OID_HBA_AUT);
   }
 
   @Override
-  public Oid getEncOid() {
-    return Oid.OID_HBA_ENC;
+  public CertificateTypeOid getEncOid() {
+    return CertificateTypeOid.OID_HBA_ENC;
   }
 }

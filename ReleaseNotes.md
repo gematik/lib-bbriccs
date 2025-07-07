@@ -1,5 +1,10 @@
 # Release Notes $B^2riC^2s$
 
+## Release 0.5.0
+
+### RESTful-Bricks
+- Extend `restful-bricks` for ePA-Bricks
+
 ## Release 0.4.0
 
 ### FHIR-Bricks

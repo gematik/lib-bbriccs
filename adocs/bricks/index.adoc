@@ -7,9 +7,9 @@ image::bricks_overview.png[align=center]
 
 Within {bbriccs-wordmark}, the core modules are referred to as a `brick`. Each `brick` is a small, reusable component that solves a common problem. A group of such components, which together can solve a larger problem, are simply called `bricks`. This documentation follows this pattern and presents each group of `bricks` individually.
 
+include::restful/index.adoc[leveloffset=0]
 include::fhir/index.adoc[leveloffset=0]
 include::perimeter/index.adoc[leveloffset=]
 include::configuration/index.adoc[leveloffset=0]
-include::restful/index.adoc[leveloffset=0]
 include::utils/index.adoc[leveloffset=0]
 include::cli/index.adoc[leveloffset=0]

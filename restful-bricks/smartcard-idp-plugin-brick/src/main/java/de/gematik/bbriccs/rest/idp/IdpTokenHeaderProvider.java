@@ -12,14 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.rest.idp;
 
-import de.gematik.bbriccs.rest.fd.FdRequest;
-import de.gematik.bbriccs.rest.fd.plugins.RequestHeaderProvider;
+import de.gematik.bbriccs.rest.HttpBRequest;
 import de.gematik.bbriccs.rest.headers.HttpHeader;
 import de.gematik.bbriccs.rest.headers.JwtHeaderKey;
+import de.gematik.bbriccs.rest.plugins.RequestHeaderProvider;
 import de.gematik.bbriccs.smartcards.Smartcard;
 import de.gematik.idp.client.IdpClient;
 import de.gematik.idp.client.IdpClientRuntimeException;
@@ -37,7 +41,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.hl7.fhir.r4.model.Resource;
 
 @Slf4j
 public class IdpTokenHeaderProvider implements RequestHeaderProvider {
@@ -52,7 +55,7 @@ public class IdpTokenHeaderProvider implements RequestHeaderProvider {
   }
 
   @Override
-  public HttpHeader forRequest(FdRequest<? extends Resource, ? extends Resource> request) {
+  public HttpHeader forRequest(HttpBRequest request) {
     this.refreshIdpToken();
     val accessKey = this.idpToken.getAccessToken().getRawString();
     return JwtHeaderKey.AUTHORIZATION.createHeader(accessKey);

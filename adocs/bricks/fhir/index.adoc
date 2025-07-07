@@ -11,6 +11,8 @@ However, even with HAPI, it can be challenging to use FHIR in a maintainable, re
 [plantuml, "{pumldir}/fhir-bricks", svg]
 .FHIR-Bricks
 ----
+include::{pumldir}/common-style.iuml[]
+include::{pumldir}/fhir-bricks.iuml[]
 include::{pumldir}/fhir-bricks.puml[]
 ----
 

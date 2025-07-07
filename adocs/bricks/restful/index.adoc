@@ -1,12 +1,23 @@
 include::../attributes-sections.adoc[]
+include::rest-commons.adoc[]
 
 == RESTful-Bricks
-Was sind die RESTful-Bricks?
+The Representational State Transfer ({link-wiki-rest}) is a software architectural style created to describe the design and guide the development of the architecture for the World Wide Web. An application that adheres to the constraints of the REST architecture can be informally described as RESTful, although this term is more commonly associated with the design of HTTP-based APIs and what are widely considered best practices.
 
-image::intro_restful_bricks.png[align=center, pdfwidth=70%, scaledwidth=70%]
+With the increasing popularity of REST, there are a variety of options to choose from for your goto library. This variety leads to the problem that we are dealing with many library interfaces. This makes cross-team reusability almost impossible. To address this problem, we first need to separate the concerns into layers, strongly inspired by the ISO OSI reference model.
+
+image::restful_clients.png[align=center]
+
+One approach to solving this problem might be to restrict ourselves to a single library (or at least a couple of) and enforce it across all teams.
+
+The {bricks-restful} implement the other option by enforcing their own abstraction layer {brick-rest-client-api} for RESTful operations.
 
 [plantuml, "{pumldir}/restful-bricks", svg]
 .RESTful-Bricks Overview
 ----
+include::{pumldir}/common-style.iuml[]
+include::{pumldir}/restful-bricks.iuml[]
 include::{pumldir}/restful-bricks.puml[]
 ----
+
+include::rest-client-api-brick.adoc[leveloffset=+1]

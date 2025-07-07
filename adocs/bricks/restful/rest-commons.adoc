@@ -1,0 +1,8 @@
+include::../attributes-sections.adoc[]
+
+:bricks-restful: pass:c,q[`restful-bricks`]
+:brick-rest-client-api: pass:c,q[`rest-client-api-brick`]
+:brick-rest-client: pass:c,q[`rest-client-brick`]
+:brick-smartcard-idp-plugin: pass:c,q[`smartcard-idp-plugin-brick`]
+:brick-vau-client: pass:c,q[`vau-client-brick`]
+:brick-fd-fhir-client: pass:c,q[`fd-fhir-client-brick`]

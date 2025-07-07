@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.konnektor;
@@ -52,7 +56,7 @@ public class SoftKonSigner {
   private final CAdESService cades;
   private final CommonCertificateVerifier certVerifier;
 
-  SoftKonSigner() {
+  public SoftKonSigner() {
     this.certVerifier = new CommonCertificateVerifier();
     this.cades = new CAdESService(certVerifier);
   }
@@ -64,10 +68,7 @@ public class SoftKonSigner {
           case ECC_256 -> EncryptionAlgorithm.ECDSA;
         };
 
-    log.trace(
-        format(
-            "Encryption Algorithm for signing from {0} to {1}",
-            certificate.getCryptoSystem(), ret));
+    log.trace("Encryption Algorithm for signing from {} to {}", certificate.getCryptoSystem(), ret);
     return ret;
   }
 
@@ -130,11 +131,8 @@ public class SoftKonSigner {
       SmartcardCertificate certificate, boolean includeRevocationInfo, byte[] data) {
     val signingDate = new Date();
     val mimeType = MimeTypeEnum.XML; // Note: only XML for now!
-    log.info(
-        format(
-            "Sign {0} with {1} Bytes at {2}",
-            mimeType.getMimeTypeString(), data.length, signingDate));
-    log.debug(format("Signed Base64 Data:\n{0}", Base64.toBase64String(data)));
+    log.info("Sign {} with {} Bytes at {}", mimeType.getMimeTypeString(), data.length, signingDate);
+    log.debug("Signed Base64 Data:\n{}", Base64.toBase64String(data));
     val inMemDocument = new InMemoryDocument(data);
     inMemDocument.setMimeType(mimeType);
 

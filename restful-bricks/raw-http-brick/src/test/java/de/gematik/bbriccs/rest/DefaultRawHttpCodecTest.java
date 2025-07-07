@@ -12,11 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.rest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.gematik.bbriccs.rest.exceptions.RawHttpCodecException;
 import de.gematik.bbriccs.rest.headers.HttpHeader;
@@ -36,6 +45,14 @@ import org.junit.jupiter.params.provider.MethodSource;
 class DefaultRawHttpCodecTest {
 
   private final RawHttpCodec innerHttp = RawHttpCodec.defaultCodec();
+
+  static Stream<Arguments> shouldDecodeValidResponses() {
+    return ResourceLoader.readFilesFromDirectory("responses").stream().map(Arguments::of);
+  }
+
+  static Stream<Arguments> shouldDecodeValidRequests() {
+    return ResourceLoader.readFilesFromDirectory("requests").stream().map(Arguments::of);
+  }
 
   @Test
   void shouldDecodeValidResponse() {
@@ -122,15 +139,17 @@ class DefaultRawHttpCodecTest {
     val content = "content";
     val expectedInnerHttp =
         "UE9TVCBUYXNrLyRjcmVhdGUgSFRUUC8xLjENClggS2V5OiBYIFZhbHVlDQpBdXRob3JpemF0aW9uOiBCZWFyZXIgSURQX1Rva2VuDQpDb250ZW50LUxlbmd0aDogNw0KDQpjb250ZW50";
+
     val request =
-        new HttpBRequest(
-            HttpRequestMethod.POST,
-            "Task/$create",
-            List.of(
-                new HttpHeader("X Key", "X Value"),
-                JwtHeaderKey.AUTHORIZATION.createHeader("IDP_Token"),
-                HttpHeader.forContentLength(content.length())),
-            content);
+        HttpBRequest.post()
+            .urlPath("Task/$create")
+            .headers(
+                List.of(
+                    new HttpHeader("X Key", "X Value"),
+                    JwtHeaderKey.AUTHORIZATION.createHeader("IDP_Token"),
+                    HttpHeader.forContentLength(content.length())))
+            .withPayload(content);
+
     val encode = innerHttp.encode(request);
     val base64 = Base64.getEncoder().encodeToString(encode.getBytes(StandardCharsets.UTF_8));
     assertEquals(expectedInnerHttp, base64);
@@ -141,14 +160,15 @@ class DefaultRawHttpCodecTest {
     val expectedInnerHttp =
         "UE9TVCBUYXNrLyRjcmVhdGUgSFRUUC8xLjENClggS2V5OiBYIFZhbHVlDQpBdXRob3JpemF0aW9uOiBCZWFyZXIgSURQX1Rva2VuDQpDb250ZW50LUxlbmd0aDogMA0KDQo=";
     val request =
-        new HttpBRequest(
-            HttpRequestMethod.POST,
-            "Task/$create",
-            List.of(
-                new HttpHeader("X Key", "X Value"),
-                JwtHeaderKey.AUTHORIZATION.createHeader("IDP_Token"),
-                HttpHeader.forContentLength(0)),
-            "");
+        HttpBRequest.post()
+            .urlPath("Task/$create")
+            .headers(
+                List.of(
+                    new HttpHeader("X Key", "X Value"),
+                    JwtHeaderKey.AUTHORIZATION.createHeader("IDP_Token"),
+                    HttpHeader.forContentLength(0)))
+            .withoutPayload();
+
     val encode = innerHttp.encode(request);
     val base64 = Base64.getEncoder().encodeToString(encode.getBytes(StandardCharsets.UTF_8));
     assertEquals(expectedInnerHttp, base64);
@@ -158,7 +178,11 @@ class DefaultRawHttpCodecTest {
   void shouldEncodeSimpleResponse() {
     val responseHeaders =
         List.of(HttpHeader.forDate(LocalDateTime.now()), HttpHeader.forContentLength(90));
-    val response = new HttpBResponse(HttpVersion.HTTP_1_1, 200, responseHeaders, "content");
+    val response =
+        HttpBResponse.status(200)
+            .version(HttpVersion.HTTP_1_1)
+            .headers(responseHeaders)
+            .withPayload("content");
     val rawResponse = innerHttp.encode(response);
     val response2 = assertDoesNotThrow(() -> innerHttp.decodeResponse(rawResponse));
 
@@ -174,8 +198,8 @@ class DefaultRawHttpCodecTest {
     val requestHeaders =
         List.of(HttpHeader.forDate(LocalDateTime.now()), HttpHeader.forContentLength(90));
     val request =
-        new HttpBRequest(
-            HttpVersion.HTTP_1_1, HttpRequestMethod.POST, "a/b/c", requestHeaders, "content");
+        HttpBRequest.post().urlPath("a/b/c").headers(requestHeaders).withPayload("content");
+
     val rawRequest = innerHttp.encode(request);
     val request2 = assertDoesNotThrow(() -> innerHttp.decodeRequest(rawRequest));
 
@@ -202,19 +226,11 @@ class DefaultRawHttpCodecTest {
     assertNotNull(response);
   }
 
-  static Stream<Arguments> shouldDecodeValidResponses() {
-    return ResourceLoader.readFilesFromDirectory("responses").stream().map(Arguments::of);
-  }
-
   @ParameterizedTest
   @MethodSource
   void shouldDecodeValidRequests(String rawRequest) {
     val request = assertDoesNotThrow(() -> innerHttp.decodeRequest(rawRequest));
     assertNotNull(request);
-  }
-
-  static Stream<Arguments> shouldDecodeValidRequests() {
-    return ResourceLoader.readFilesFromDirectory("requests").stream().map(Arguments::of);
   }
 
   @Test

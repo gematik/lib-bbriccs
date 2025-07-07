@@ -12,12 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.smartcards;
 
 import de.gematik.bbriccs.crypto.CryptoSystem;
-import de.gematik.bbriccs.crypto.certificate.Oid;
+import de.gematik.bbriccs.crypto.certificate.CertificateTypeOid;
 import de.gematik.bbriccs.smartcards.cfg.SmartcardConfigDto;
 import de.gematik.bbriccs.smartcards.exceptions.SmartCardKeyNotFoundException;
 import java.util.List;
@@ -34,18 +38,20 @@ public class SmcBP12 extends InstituteSmartcardP12 implements SmcB {
 
   @Override
   public SmartcardCertificate getOSigCertificate(CryptoSystem cryptoSystem) {
-    return getKey(Oid.OID_SMC_B_OSIG, cryptoSystem)
+    return getKey(CertificateTypeOid.OID_SMC_B_OSIG, cryptoSystem)
         .orElseThrow(
-            () -> new SmartCardKeyNotFoundException(this, Oid.OID_SMC_B_OSIG, cryptoSystem));
+            () ->
+                new SmartCardKeyNotFoundException(
+                    this, CertificateTypeOid.OID_SMC_B_OSIG, cryptoSystem));
   }
 
   @Override
-  public List<Oid> getAutOids() {
-    return List.of(Oid.OID_SMC_B_AUT);
+  public List<CertificateTypeOid> getAutOids() {
+    return List.of(CertificateTypeOid.OID_SMC_B_AUT);
   }
 
   @Override
-  public Oid getEncOid() {
-    return Oid.OID_SMC_B_ENC;
+  public CertificateTypeOid getEncOid() {
+    return CertificateTypeOid.OID_SMC_B_ENC;
   }
 }

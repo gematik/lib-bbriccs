@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.fhir.de.builder;
@@ -22,6 +26,7 @@ import de.gematik.bbriccs.fhir.builder.ElementBuilder;
 import de.gematik.bbriccs.fhir.builder.exceptions.BuilderException;
 import de.gematik.bbriccs.fhir.de.HL7StructDef;
 import de.gematik.bbriccs.fhir.de.valueset.Country;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import lombok.val;
 import org.hl7.fhir.r4.model.Address;
@@ -95,12 +100,16 @@ public class AddressBuilder extends ElementBuilder<Address, AddressBuilder> {
     }
 
     val streetName = streetMatcher.group(1).trim();
-    val houseNumber = streetMatcher.group(2).trim();
-
     val streetLine = address.addLineElement();
     streetLine.setValue(street);
-    streetLine.addExtension(HL7StructDef.HOUSE_NUMBER.asStringExtension(houseNumber));
     streetLine.addExtension(HL7StructDef.STREET_NAME.asStringExtension(streetName));
+
+    // house number is optional, but if present, it should be added as a separate extension
+    Optional.ofNullable(streetMatcher.group(2))
+        .map(String::trim)
+        .ifPresent(
+            houseNumber ->
+                streetLine.addExtension(HL7StructDef.HOUSE_NUMBER.asStringExtension(houseNumber)));
 
     return address;
   }

@@ -1,0 +1,13 @@
+@startuml
+interface HttpBClient {
+    + init() : HttpBclient
+    + shutDown()
+    + send(HttpBRequest) : HttpBResponse
+}
+
+class BasicHttpClient {}
+class UnirestHttpClient {}
+
+HttpBClient <|-- BasicHttpClient
+HttpBClient <|-- UnirestHttpClient
+@enduml

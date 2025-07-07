@@ -4,13 +4,13 @@ include::fhir-commons.adoc[]
 == Matching FHIR Resources and Elements
 Have you noticed how we have implemented the `getStandardSize()` method in the <<code_kbv_erp_medication_01, KbvErpMedication>> from <<tutorial_custom_resources, this tutorial>>? We have used a `filter` method to extract the `StandardSize` from the `Extension`-List of the `Medication`.
 
-This is a very common pattern when dealing with FHIR. Imagine a FHIR resource containing a list of extensions. If you want to select a particular one of them, the system url is your buddy here.
+This is a very common pattern when dealing with FHIR. Imagine a FHIR resource containing a list of extensions. If you want to select a particular one of them, the profile (to be precise the https://hl7.org/fhir/references.html#canonical:[canonical URL] of the profile a resource claims to conform) is your buddy here.
 
 
 If you have completed <<tutorial_fhir_package,this tutorial>> you already have everything you need to match the systems of your package in.
 And once you start using <<tutorial_custom_resources,custom resources>> you will quickly find that you need to filter your items out of HAPI lists quite often.
 
-Let's have a closer look at the example from the <<tutorial_custom_resources,custom resources tutorial>>.
+Let's have a closer look at the condensed example from the <<tutorial_custom_resources,custom resources tutorial>>.
 
 [source,java,line]
 ----
@@ -120,4 +120,4 @@ Medication medication = bundle.getEntry().stream()
 
 What the filter does is basically compare the given system url of a specific `WithSystem` object with the `meta.profile` of a resource.
 
-Having such a powerful mechanism makes <<tutorial_custom_resources,custom resources tutorial>> easier to implement, easier to test and more robust.
+Having such a powerful mechanism makes the <<tutorial_custom_resources,custom resources tutorial>> easier to implement and test.

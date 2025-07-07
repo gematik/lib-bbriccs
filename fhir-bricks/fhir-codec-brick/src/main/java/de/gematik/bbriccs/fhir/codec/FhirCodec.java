@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.fhir.codec;
@@ -31,11 +35,13 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.annotation.Nullable;
 import lombok.experimental.Delegate;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.Resource;
 
+@Slf4j
 public class FhirCodec {
 
   private final FhirContext ctx;
@@ -80,6 +86,8 @@ public class FhirCodec {
     try {
       return parser.parseResource(expectedClass, content);
     } catch (Throwable t) {
+      log.error("Unable to decode content as {}-FHIR:\n{}", encoding.name(), content);
+      // TODO: auto operation outcome
       throw new FhirCodecException(
           format(
               "Error while decoding content of length {0} as {1}", content.length(), expectedClass),

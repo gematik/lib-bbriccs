@@ -6,7 +6,6 @@ include::attributes-settings.adoc[]
 :toc: left
 :docinfo: shared
 
-
 == Scope
 As a national competence center for digital health, {orgname} covers a broad spectrum of core areas of the German healthcare system. This includes the development of test suites, test tools and self-developed products for the digital health infrastructure.
 
