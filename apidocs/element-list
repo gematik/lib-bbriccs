@@ -41,6 +41,15 @@ de.gematik.bbriccs.fhir.ucum
 de.gematik.bbriccs.fhir.ucum.builder
 de.gematik.bbriccs.fhir.validation
 de.gematik.bbriccs.fhir.validation.support
+de.gematik.bbriccs.fhir.vzd
+de.gematik.bbriccs.fhir.vzd.r4
+de.gematik.bbriccs.fhir.vzd.util
+de.gematik.bbriccs.fhir.vzd.valueset
+de.gematik.bbriccs.idp
+de.gematik.bbriccs.idp.data
+de.gematik.bbriccs.idp.exception
+de.gematik.bbriccs.idp.factory
+de.gematik.bbriccs.idp.request
 de.gematik.bbriccs.konnektor
 de.gematik.bbriccs.konnektor.cfg
 de.gematik.bbriccs.konnektor.exceptions
@@ -61,6 +70,9 @@ de.gematik.bbriccs.rest.tls
 de.gematik.bbriccs.rest.vau
 de.gematik.bbriccs.rest.vau.exceptions
 de.gematik.bbriccs.rest.vau.plugins
+de.gematik.bbriccs.rest.vzd
+de.gematik.bbriccs.rest.vzd.request
+de.gematik.bbriccs.rest.vzd.search
 de.gematik.bbriccs.smartcards
 de.gematik.bbriccs.smartcards.cfg
 de.gematik.bbriccs.smartcards.cli

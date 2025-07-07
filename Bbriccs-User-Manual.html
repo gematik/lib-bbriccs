@@ -314,8 +314,8 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 <h1>B<sup>2</sup>ric<sup>2</sup>s</h1>
 <div class="details">
 <span id="author" class="author">gematik GmbH</span><br>
-<span id="revnumber">version 0.4.0,</span>
-<span id="revdate">2025-03-18</span>
+<span id="revnumber">version 0.7.0,</span>
+<span id="revdate">2025-07-07</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Contents</div>
@@ -324,6 +324,17 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 <ul class="sectlevel2">
 <li><a href="#_acronym">Acronym</a></li>
 <li><a href="#_bricks">Bricks</a></li>
+</ul>
+</li>
+<li><a href="#_restful_bricks">RESTful-Bricks</a>
+<ul class="sectlevel2">
+<li><a href="#rest-client-api-brick">REST Client API Brick</a>
+<ul class="sectlevel3">
+<li><a href="#tutorial_rest_usage">Using a HttpBClient</a></li>
+<li><a href="#tutorial_rest_client_builders">Configuring a HttpBClient implementation</a></li>
+<li><a href="#tutorial_rest_plugins">Using a HttpB Plugins</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#_fhir_bricks">FHIR-Bricks</a>
@@ -379,7 +390,6 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 </li>
 </ul>
 </li>
-<li><a href="#_restful_bricks">RESTful-Bricks</a></li>
 <li><a href="#_utility_bricks">Utility-Bricks</a></li>
 <li><a href="#_cli_bricks">CLI-Bricks</a></li>
 <li><a href="#_release_notes">Appendix A: Release Notes</a></li>
@@ -388,7 +398,7 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_scope">Scope</h2>
+<h2 id="_scope"><a class="anchor" href="#_scope"></a>Scope</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>As a national competence center for digital health, gematik GmbH covers a broad spectrum of core areas of the German healthcare system. This includes the development of test suites, test tools and self-developed products for the digital health infrastructure.</p>
@@ -397,7 +407,7 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 <p>Many products are built for TI, both inside and outside gematik GmbH. Redundant development is hard to avoid. However, the B<sup>2</sup>ric<sup>2</sup>s (<code>briks</code>) is trying to bundle many of the common solutions into a reusable SDK, which promises to significantly reduce development time and costs.</p>
 </div>
 <div class="sect2">
-<h3 id="_acronym">Acronym</h3>
+<h3 id="_acronym"><a class="anchor" href="#_acronym"></a>Acronym</h3>
 <div class="paragraph">
 <p>While B<sup>2</sup>ric<sup>2</sup>s is just the word mark and is rather cumbersome in everyday use,
 the following uses are recommended depending on the situation:</p>
@@ -417,7 +427,7 @@ the following uses are recommended depending on the situation:</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_bricks">Bricks</h3>
+<h3 id="_bricks"><a class="anchor" href="#_bricks"></a>Bricks</h3>
 <div class="paragraph">
 <p>The core objective of B<sup>2</sup>ric<sup>2</sup>s is to create a modular toolkit for more efficient development of applications for the German healthcare system.</p>
 </div>
@@ -433,7 +443,245 @@ the following uses are recommended depending on the situation:</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_fhir_bricks">FHIR-Bricks</h2>
+<h2 id="_restful_bricks"><a class="anchor" href="#_restful_bricks"></a>RESTful-Bricks</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Representational State Transfer (<a href="https://en.wikipedia.org/wiki/REST">REST</a>) is a software architectural style created to describe the design and guide the development of the architecture for the World Wide Web. An application that adheres to the constraints of the REST architecture can be informally described as RESTful, although this term is more commonly associated with the design of HTTP-based APIs and what are widely considered best practices.</p>
+</div>
+<div class="paragraph">
+<p>With the increasing popularity of REST, there are a variety of options to choose from for your goto library. This variety leads to the problem that we are dealing with many library interfaces. This makes cross-team reusability almost impossible. To address this problem, we first need to separate the concerns into layers, strongly inspired by the ISO OSI reference model.</p>
+</div>
+<div class="imageblock text-center">
+<div class="content">
+<img src="./images/restful_clients.png" alt="restful clients">
+</div>
+</div>
+<div class="paragraph">
+<p>One approach to solving this problem might be to restrict ourselves to a single library (or at least a couple of) and enforce it across all teams.</p>
+</div>
+<div class="paragraph">
+<p>The <code>restful-bricks</code> implement the other option by enforcing their own abstraction layer <code>rest-client-api-brick</code> for RESTful operations.</p>
+</div>
+<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9oLL5rlcp0KVUTNMDdBzk2CL4gQDWXrhPPzQ5gbPjjBjGSNhbClnaR6h9cs_FVPV0M2IHiG4k1xpZttt6i7cVx38VGG8ah99_JNl24qZY6IYcYelX7wmWIiREWbclXukcZzlf5SgalqQaPzSvKhkv8cpqvZyEtTOM19oY41eJiyDS3tkodjCqvvlcOYgm3EjDSasdnGCXTnpKHzUo-yVeRvlCnGSCDMWnA4L-GE7khc0JWprs98qiuBtbQTo3PCf4IH14KoIQKmjHV1I46aYLXpy8AcQKB6jSDZagQSHKGpAHgp-W9XIcVBPSTZhOZ8Kgdq4PYfYW9qdMxqdQPWya0cSDRjiZ2sKXB14TZC9nUJyvE57yAADluc-M07uzaqEfyVDEKgqqJfFE5UuVZexltg6yqvkbOiscGZ50IDbZ2igE-tsEJ14MV68lnW8t-QGFCl3Ci01PdkhRU8-b4aPVl8nhKgylKRDFhnxhjLK-s1re9Lt5qvpluFn_99uA4gcdtvdCg6nrbiZyQL3OS3wFgKQefneZbGRIZSrhY8iMBhHuqjfk_Qpgj6OFdnqnswAO3b6DYurWxOpm6DCNragYU_4zmqolAw6kLcATqzTAWp9kOGheiTuAWTAahQZ_Jpm1eqOD7drUtN5rlqAvFY1HRTKvAPiTyctAxNvt7R9GVHoIwvECBXt3ll2aHiZeV_nRmtj000" /></div></div>
+<div class="sect2">
+<h3 id="rest-client-api-brick"><a class="anchor" href="#rest-client-api-brick"></a>REST Client API Brick</h3>
+<div class="paragraph">
+<p>The <code>rest-client-api-brick</code> is a REST client that can be used to communicate with a REST API. It is based on the simple idea of having a minimalist and simple API for sending HTTP requests and receiving HTTP responses. It is designed to be easy to use and understand and extensible to support different use cases.</p>
+</div>
+<div class="paragraph">
+<p>Unlike many other libraries, it does not attempt to be a full-featured, heavyweight HTTP client. Instead, the <code>rest-client-api-brick</code> focuses on supporting the <a href="https://de.wikipedia.org/wiki/Hypertext_Transfer_Protocol">HTTP</a> protocol as simply as possible, especially from a user perspective.</p>
+</div>
+<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9oLKT5EmZ0KVUzNDF45DCDfeY6m408QUU094r-C3sMxWuQkdUsTk2Z_RhTrkCbuiCsIzfvpppcx3Gpc0YQ4KgQrsjClUw9q446eD4DmTqgNNC9pGHtH6z-x6pVASoMK7j6B-zYtgq8EbKnc_gVW5xkbm9DKG08IMpfrW--tBOjla8fimwLn3PssCnRkdhJAP5GhnNwnn-JKOJYi74fj-4JGaWadtg4JT-i0tDerFXVfG89hzn9cnsNAD4jeg99KIVll9Pbg2979ZG0oDSWqPeaWNDeyCGk1BX3JsLpmtr5TKIuvzlfqL85X2Jh8R3DyK7lPwzS5a56lvAtWFGE3nxuL61l303cGltwF4ZdcHxyFq8OhwHfVgfl3ji0YMx3OaXiC2iAYB4qSOQsYtABh7E7rhSFBnJejktJjUgLDI3FcfQUzIHDjpko8ENQhC_Zsl7QASwWBCxNJjE_p0md31WG0" /></div></div>
+<div class="paragraph">
+<p>This means also that encoding and decoding the payload is not part of the brick itself. For payloads with different payload formats such as FHIR, JSON, XML, and others, you will need to implement your own "application client brick" (or reuse an existing one) which handles the encoding and decoding such as the <code>fd-fhir-client-brick</code> specifically for RESTful FHIR APIs.</p>
+</div>
+<div class="paragraph">
+<p>By being a simple HTTP client, we get a bunch of additional benefits essentially for free, such as interchangeability and ease of implementation.</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s dive into the tutorial on <a href="#tutorial_rest_usage">Using a HttpBClient</a></p>
+</div>
+<div class="sect3">
+<h4 id="tutorial_rest_usage"><a class="anchor" href="#tutorial_rest_usage"></a>Using a HttpBClient</h4>
+<div class="paragraph">
+<p>This tutorial is quite short and easy to understand, which is the basic idea of the <code>rest-client-api-brick</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+to keep this focused on the API, the <a href="#tutorial_rest_client_builders">instantiation of a concrete HttpBClient implementation</a> is shown in a separate tutorial.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s demonstrate the <code>rest-client-api-brick</code> by the example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">HttpBClient client = fromSomewhere();
+
+HttpBRequest request = HttpBRequest.post()
+  .urlPath(<span class="string"><span class="delimiter">&quot;</span><span class="content">/v1/fd/pingpong</span><span class="delimiter">&quot;</span></span>)
+  .headers(
+      HttpHeader.accept(MediaType.ANY_TYPE),
+      HttpHeader.forContentType(MediaType.PLAIN_TEXT_UTF_8))
+  .withPayload(<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello World</span><span class="delimiter">&quot;</span></span>);
+
+HttpBResponse response = client.send(request);
+<span class="type">int</span> status = response.statusCode();
+<span class="predefined-type">String</span> payload = response.bodyAsString();
+<span class="predefined-type">String</span> contentType = response.contentType();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>That&#8217;s basically it. This approach is very simple, but extremely powerful. Dive into the next tutorials to learn how to use it for more complex scenarios.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="tutorial_rest_client_builders"><a class="anchor" href="#tutorial_rest_client_builders"></a>Configuring a HttpBClient implementation</h4>
+<div class="paragraph">
+<p>When you read the previous tutorial, did you wonder where to put the server URL? And what about TLS or some standard headers? In this tutorial we will see how this can be achieved with the <code>rest-client-brick</code>. This brick provides two different implementations for the API.</p>
+</div>
+<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9oLaTrAn30GXU_p50FUT96kLL2MjiYoA-Y5Loi-G4YdQzXqKfEKLRJlRlgdMrilJ2YaEJFVETEcrhqhl6K0t1XzX0z_0bXcABJX3ljtW4T9-DIKnd0PXTV9oVLMAsrYEBl98xywfUumbVqV8MhsY22BKc61v4QSeI6AnfRDionLjPTa-uPPsmqNXtkZAye6KXurEs5JXzMgSsZP-ERG45SzV8QJptCGh_nA_efKi_IY_nFs8AdaXXSWT55gyhEtnM1GE4vxXMnj7JUkAXIJvFFaN20yE5Tkjah-VAfpa2HTi82u4qKhzf9zgToTFbAm62wGig2js-5hXTPzz-tG-XWMMSsOKDnQFxQLej46lxeNdaaQtpgMs6cqz3CCV_TF2oOSjlRn_C1V3GpC_G00" /></div></div>
+<div class="paragraph">
+<p>The <code>BasicHttpClient</code> uses only the standard library, mainly <code>java.net</code>, to implement the interface. On the other hand, the <code>UnirestHttpClient</code> wraps <a href="https://github.com/Kong/unirest-java">Unirest</a>. Both have their strengths and weaknesses, and you can use one or the other depending on your needs.</p>
+</div>
+<div class="paragraph">
+<p>Regardless of the implementation, the API aims to achieve a separate client per server and user. This means that each client can be configured separately. The equivalent in <code>Unirest</code> is the <code>UnirestInstance</code>. This approach will come in handy once you start communicating with multiple applications or to a single application with multiple clients.</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s see how to configure and instantiate the two implementations:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">HttpBClient client = BasicHttpClient.forUrl(<span class="string"><span class="delimiter">&quot;</span><span class="content">https://gematik-ti.de</span><span class="delimiter">&quot;</span></span>) <span class="comment">// (1)</span>
+  .header( <span class="comment">// (2)</span>
+      HttpHeader.acceptCharsetUtf8(),
+      HttpHeader.accept(MediaType.ANY_TYPE)
+  )
+  .header( <span class="comment">// (3)</span>
+      BasicHeaderProvider.forXRequestId(),
+      BasicHeaderProvider.forDate()
+  ).withoutTlsVerification(); <span class="comment">// (4)</span></code></pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Initiate a Builder with the URL of the server you want to talk to</p>
+</li>
+<li>
+<p>Set automatic headers which the client should set on each request</p>
+</li>
+<li>
+<p>Set automatic header provides which generate http headers dynamically for each request</p>
+</li>
+<li>
+<p>And finally instantiate the <code>HttpBClient</code> without TLS Verification</p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Dynamic header provider in step 3 will be explained in the <a href="#tutorial_rest_plugins">Plugins tutorial</a> in more detail.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Pretty simple, right? And by simply replacing the initial Builder call, you can easily replace your implementation: <code>HttpBClient client = UnirestHttpClient.forUrl("https://gematik-ti.de")</code></p>
+</div>
+<div class="paragraph">
+<p>But what if you want to use TLS verification? Both implementations have you covered here:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">val builder = BasicHttpClient.forUrl(<span class="string"><span class="delimiter">&quot;</span><span class="content">https://gematik-ti.de</span><span class="delimiter">&quot;</span></span>);
+
+<span class="predefined-type">SSLContext</span> sslCtx = <span class="predefined-type">SSLContext</span>.getInstance(<span class="string"><span class="delimiter">&quot;</span><span class="content">TLS</span><span class="delimiter">&quot;</span></span>);
+<span class="predefined-type">TrustManager</span> trustManager = <span class="keyword">new</span> MyTrustManager(); <span class="comment">// implement yourself</span>
+
+HttpBClient client1 = builder.withTlsVerification(sslContext);
+HttpBClient client1 = builder.withTlsVerification(trustManager);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can use either a <code>javax.net.ssl.SSLContext</code> <a href="https://docs.oracle.com/javase/8/docs/api/javax/net/ssl/SSLContext.html">SSLContext</a> or a <code>javax.net.ssl.X509TrustManager</code> <a href="https://docs.oracle.com/javase/8/docs/api/javax/net/ssl/TrustManager.html">TrustManager</a>. Both come from the standard library and are well documented and known.</p>
+</div>
+<div class="paragraph">
+<p>Give it a try and implement your own <a href="https://codeql.github.com/codeql-query-help/java/java-insecure-trustmanager/">insecure TrustManager</a>. That is basically exactly what the pre implemented clients do on <code>.withoutTlsVerification()</code>.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Notice how we created two separate clients (<code>assertNotEquals(client1, client2)</code>) in the previous example? This is exactly how it is supposed to work. A concrete client is instantiated on the "terminating builder method" and can be repeated as often as you like.  You can use this approach to configure once and instantiate many times.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="tutorial_rest_plugins"><a class="anchor" href="#tutorial_rest_plugins"></a>Using a HttpB Plugins</h4>
+<div class="paragraph">
+<p>The <code>rest-client-api-brick</code> defines two different types of plugins following the <a href="https://en.wikipedia.org/wiki/Interface_segregation_principle">Interface Segregation Principle</a>.</p>
+</div>
+<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9oLaTzAmp0Knk_p50UySKfd5PInZZAs2tSXAFe4MNewmjAadgHJqRwxQPkDTLR1X99_NtxV-PgPTHyAKmR0YSmRVFePm3X3OOWx36k01wdnfP5EuJgERfEZxQLHXgPmTfV7ldKdTOUfxFy8STDx15cK2WlKhiVPNuZZlcNpZKjLRQIsuSAWxOABxJsPIcTxKXutFM4_7IQJpg5buxj3qbm5-00d7-OWtlYM_5PIpMPNuINiLkgI4oz0cA8qscTlnK0e7DSRXMnk7ITN5Of9xUl9kK1OELSkbafwEHEAM-kBir8qss7tIFoChnLQjqAU8JsHsKa_jfak8JSKZizRPbXu-tOSJLkhxYghsMa9ZskBj3lGZFuJTj1OdzJYNjIjlAgRZ1gVapWGLT5NsejzghY8L9GEPntGKfJs4x0vwip_v6zOFVg_" /></div></div>
+<div class="paragraph">
+<p>The <code>RequestHeaderProvider</code> is pretty much self-explanatory, it generates per each single request a dynamic <code>HttpHeader</code>. To demonstrate this kind of plugin, let&#8217;s implement a simple <code>XRequestIdProvider</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> <span class="type">class</span> <span class="class">XRequestIdProvider</span> <span class="directive">implements</span> RequestHeaderProvider {
+  <span class="annotation">@Override</span>
+  <span class="directive">public</span> HttpHeader forRequest(HttpBRequest request) {
+    val xReqId = <span class="predefined-type">UUID</span>.randomUUID().toString();
+    <span class="keyword">return</span> <span class="keyword">new</span> HttpHeader(<span class="string"><span class="delimiter">&quot;</span><span class="content">x-request-id</span><span class="delimiter">&quot;</span></span>, xReqId);
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A slightly more complex example of a useful <code>RequestHeaderProvider</code> is the <code>smartcard-idp-plugin-brick</code> which can provide dynamic Header for the JWT Bearer Token from the smartcard IDP.</p>
+</div>
+<div class="paragraph">
+<p>The other type of plugin is the <code>HttpBObserver</code>, which is heavily inspired by the <a href="https://en.wikipedia.org/wiki/Observer_pattern">Observer Pattern</a>. This type of plugin is particularly useful when it comes to analysing or reporting on http traffic. To demonstrate this kind of plugin, let&#8217;s implement a simple <code>HttpRecorder</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> <span class="type">class</span> <span class="class">HttpRecorder</span> <span class="directive">implements</span> HttpBObserver {
+  <span class="directive">private</span> <span class="directive">final</span> RawHttpCodec httpCodec = RawHttpCodec.defaultCodec();
+  <span class="directive">private</span> <span class="directive">final</span> <span class="predefined-type">PrintStream</span> out = <span class="predefined-type">System</span>.out;
+
+  <span class="annotation">@Override</span>
+  <span class="directive">public</span> <span class="type">void</span> onRequest(HttpBRequest httpBRequest) {
+    val request = httpCodec.encode(httpBRequest);
+    out.println(<span class="string"><span class="delimiter">&quot;</span><span class="content">--------- REQUEST ---------</span><span class="delimiter">&quot;</span></span>);
+    out.println(request);
+    out.println(<span class="string"><span class="delimiter">&quot;</span><span class="content">--------- /REQUEST ---------</span><span class="char">\n</span><span class="delimiter">&quot;</span></span>);
+  }
+
+  <span class="annotation">@Override</span>
+  <span class="directive">public</span> <span class="type">void</span> onResponse(HttpBResponse httpBResponse) {
+    val response = httpCodec.encode(httpBResponse);
+    out.println(<span class="string"><span class="delimiter">&quot;</span><span class="content">--------- RESPONSE ---------</span><span class="delimiter">&quot;</span></span>);
+    out.println(response);
+    out.println(<span class="string"><span class="delimiter">&quot;</span><span class="content">--------- /RESPONSE ---------</span><span class="char">\n</span><span class="delimiter">&quot;</span></span>);
+  }
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Don&#8217;t worry, the <code>RawHttpCodec</code> will be explained later. For the sake of understanding here, what the <code>RawHttpCodec</code> does is transform a <code>HttpBRequest</code> and <code>HttpBResponse</code> into their string encoded form according to RFC standards.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_fhir_bricks"><a class="anchor" href="#_fhir_bricks"></a>FHIR-Bricks</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>While <a href="https://fhir.org/">FHIR</a> (Fast Health Interoperability Resources) is a powerful standard for exchanging healthcare data, it is also complex and can be difficult to understand. Luckily, there are some tools and libraries available that can help you work with the FHIR standard.</p>
@@ -444,11 +692,11 @@ the following uses are recommended depending on the situation:</p>
 <div class="paragraph">
 <p>However, even with HAPI, it can be challenging to use FHIR in a maintainable, reusable, and scalable way. To help with this, we have created a set of FHIR-Bricks, which are intended to be small, reusable, and extendable. Each FHIR-Brick solves a common problem that may arise when working with the FHIR standard.</p>
 </div>
-<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9oDKy5Ewp0GlFihLd3522IueGgzb0Xk24uewi6rD-cgZZVQE41vUl-E0-rJcgQ277pmpixCpZgtRJGIkzghTasXCM9gi5mt7334vxZn288scb1vL1xB2951g5f5SDHNY8EQweM_2jBtnzXr9Tm5bx5dkRd1zuWIZ9_Du0MzvxTl68j3EOGyeLF_b0hi44uohciEy2XSaiVs14xdL_CipxTIHRaYqPtjQhqKikl5uDQXNfgMskQhLylL3fB82soChj6HDVqqsmeCVUmSvFSFJv0RIvxY9kdd-VpoxdfF_zLuSaEYGSqc4djulJ8DwRBx-A1G3NmD93CMJ79P6lRkOa_ESYYfwiH4bad1dhFTj14dKbbsv5FimomSdbTO9__hSy7ojJzGC5ZSpfLKF2t7wHHxmIn0TusUGV7V-q8Le-KbZEEtC4PDhq9_FRWHLXrc2hf_eJtko2gEfp9gdOhr22deubJGdJdJhj0jTZI_3F8uwuz-RZ6uzED-0XcFIW80" /></div></div>
+<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9oLLCjksp0GlEih2FVI7EHAGPgciI04JUksG4xjCSY1afOEOOeKbcHUXV-zf1wsvCYA8qA0HCxExCwIJBHv5f06X514zKZ-kIz2vWNa2gc1zf-G6oxXhuTUaZWAFozwqzTAABma7yvPv9vcPTFGMFq-XiYF0GClAm4bI3FWwGAYQ2Zfttabx8fBtGQCodwZ-VedAYkBZeb5VYo2rmeN5ur2pGrF1b1IqPAFyB1n7e1JzomEfRG9aazj9_IQoueYBKckoaf9LtiD9WYveN8b84YsJPEgw1oUkuxjt1wja04ClTeg7Cbn7j6lyPSzlnr9gUH1H-ACnd2wsA4buwk3wENoU_nZtv8hRIWQMuhWumcP8J10a3ayKC4BQXI6WcSpaYHTTz8qk7qAsJt7C4EUh_NTS36eRPijV_t-GwvTnJxMLvwcRLwtTQpDRTaGtDK0NsQQzW05X1dLN5Ue61SXdasYCyj50TZ7UCaUufvMF6JsvONBrGIiiT1YNNeFvcVtW8Ldqi_QG3b9wCxxn7fhD5Vo5UWjjJ1C9xDsDyGRKkzb61Ip2nwhuSZG0pOUb_h4TkqksQsDUtjsa46_GOto9hW2MRXJyH-mFyHp" /></div></div>
 <div class="sect2">
-<h3 id="fhir-coding-system-brick">FHIR Coding System Brick</h3>
+<h3 id="fhir-coding-system-brick"><a class="anchor" href="#fhir-coding-system-brick"></a>FHIR Coding System Brick</h3>
 <div class="paragraph">
-<p>The FHIR standard is a set of rules and specifications for the exchange of health care data. It is designed to be flexible and adaptable, so that it can be used in a wide range of settings and with different health care information systems. Unfortunately, this flexibility can also make it difficult to work with HAPI. Thise comes primarily from the "being a general-purpose-library" nature of HAPI. Conversely, however, this also means that a consistent and maintainable usage across different projects and teams can be very challenging.</p>
+<p>The FHIR standard is a set of rules and specifications for the exchange of health care data. It is designed to be flexible and adaptable, so that it can be used in a wide range of settings and with different health care information systems. Unfortunately, this flexibility can also make it difficult to work with HAPI. This comes primarily from the "being a general-purpose-library" nature of HAPI. Conversely, however, this also means that a consistent and maintainable usage across different projects and teams can be very challenging.</p>
 </div>
 <div class="paragraph">
 <p>The <code>fhir-coding-system-brick</code> introduce an additional layer of abstraction on top of HAPI, which makes it easier to work with FHIR resources in a consistent and maintainable way. The <code>fhir-coding-system-brick</code> is a set of classes and interfaces that provide a more structured and type-safe way to work with elements of any FHIR resources. It is designed to be easy to use, and to provide a clear and consistent API that can be used across different projects and teams.</p>
@@ -482,7 +730,7 @@ the following uses are recommended depending on the situation:</p>
 </ul>
 </div>
 <div class="sect3">
-<h4 id="_architecture">Architecture</h4>
+<h4 id="_architecture"><a class="anchor" href="#_architecture"></a>Architecture</h4>
 <div class="paragraph">
 <p>The <code>fhir-coding-system-brick</code> provides basically a set interfaces that represent the different elements and structures of a FHIR resource. These interfaces are designed to be easy to use, and to provide a clear and consistent API that can be used across different projects and teams:</p>
 </div>
@@ -492,7 +740,7 @@ the following uses are recommended depending on the situation:</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="tutorial_fhir_package">Implementing a FHIR package</h4>
+<h4 id="tutorial_fhir_package"><a class="anchor" href="#tutorial_fhir_package"></a>Implementing a FHIR package</h4>
 <div class="paragraph">
 <p>In fact B<sup>2</sup>ric<sup>2</sup>s comes already with a basic implementation of the Basisprofil DE (R4) package, which is called <code>fhir-de-basisprofil-r4-brick</code>. We will build the <code>fhir-de-basisprofil-r4-brick</code> to demonstrate how to implement a FHIR package with the <code>fhir-coding-system-brick</code> from scratch.</p>
 </div>
@@ -768,7 +1016,7 @@ To handle this, we implement the <code>DeBasisProfilVersion</code> which will ho
 </div>
 </div>
 <div class="sect3">
-<h4 id="tutorial_custom_resources">Implementing a custom FHIR Resource</h4>
+<h4 id="tutorial_custom_resources"><a class="anchor" href="#tutorial_custom_resources"></a>Implementing a custom FHIR Resource</h4>
 <div class="paragraph">
 <p>When working with native HAPI resources, you often have to deal with extracting certain values. Due to the 'general purpose' nature of HAPI, you need to extract your objects from the FHIR data model.</p>
 </div>
@@ -817,7 +1065,7 @@ Medication medication = bundle.getErpMedication();</code></pre>
 </div>
 <div id="code_kbv_erp_medication_01" class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">private</span> <span class="directive">static</span> <span class="type">class</span> <span class="class">KbvErpMedication</span> <span class="directive">extends</span> Medication {
+<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">private</span> <span class="type">class</span> <span class="class">KbvErpMedication</span> <span class="directive">extends</span> Medication {
   <span class="directive">public</span> StandardSize getStandardSize() {
     <span class="keyword">return</span> <span class="local-variable">this</span>.getExtension().stream()
         .filter(DeBasisProfilStructDef.NORMGROESSE::matches)
@@ -857,19 +1105,19 @@ StandardSize size = medication.getStandardSize();</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="tutorial_match_resources">Matching FHIR Resources and Elements</h4>
+<h4 id="tutorial_match_resources"><a class="anchor" href="#tutorial_match_resources"></a>Matching FHIR Resources and Elements</h4>
 <div class="paragraph">
 <p>Have you noticed how we have implemented the <code>getStandardSize()</code> method in the <a href="#code_kbv_erp_medication_01">KbvErpMedication</a> from <a href="#tutorial_custom_resources">this tutorial</a>? We have used a <code>filter</code> method to extract the <code>StandardSize</code> from the <code>Extension</code>-List of the <code>Medication</code>.</p>
 </div>
 <div class="paragraph">
-<p>This is a very common pattern when dealing with FHIR. Imagine a FHIR resource containing a list of extensions. If you want to select a particular one of them, the system url is your buddy here.</p>
+<p>This is a very common pattern when dealing with FHIR. Imagine a FHIR resource containing a list of extensions. If you want to select a particular one of them, the profile (to be precise the <a href="https://hl7.org/fhir/references.html#canonical:">canonical URL</a> of the profile a resource claims to conform) is your buddy here.</p>
 </div>
 <div class="paragraph">
 <p>If you have completed <a href="#tutorial_fhir_package">this tutorial</a> you already have everything you need to match the systems of your package in.
 And once you start using <a href="#tutorial_custom_resources">custom resources</a> you will quickly find that you need to filter your items out of HAPI lists quite often.</p>
 </div>
 <div class="paragraph">
-<p>Let&#8217;s have a closer look at the example from the <a href="#tutorial_custom_resources">custom resources tutorial</a>.</p>
+<p>Let&#8217;s have a closer look at the condensed example from the <a href="#tutorial_custom_resources">custom resources tutorial</a>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1085,17 +1333,17 @@ Medication medication = bundle.getEntry().stream()
 <p>What the filter does is basically compare the given system url of a specific <code>WithSystem</code> object with the <code>meta.profile</code> of a resource.</p>
 </div>
 <div class="paragraph">
-<p>Having such a powerful mechanism makes <a href="#tutorial_custom_resources">custom resources tutorial</a> easier to implement, easier to test and more robust.</p>
+<p>Having such a powerful mechanism makes the <a href="#tutorial_custom_resources">custom resources tutorial</a> easier to implement and test.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="fhir-builder-brick">FHIR Builder Brick</h3>
+<h3 id="fhir-builder-brick"><a class="anchor" href="#fhir-builder-brick"></a>FHIR Builder Brick</h3>
 <div class="paragraph">
-<p>The FHIR standard is a set of rules and specifications for the exchange of health care data. It is designed to be flexible and adaptable, so that it can be used in a wide range of settings and with different health care information systems. Unfortunately, this flexibility can also make it difficult to work with HAPI. Thise comes primarily from the "being a general-purpose-library" nature of HAPI. Conversely, however, this also means that a consistent and maintainable usage across different projects and teams can be very challenging.</p>
+<p>The FHIR standard is a set of rules and specifications for the exchange of health care data. It is designed to be flexible and adaptable, so that it can be used in a wide range of settings and with different health care information systems. Unfortunately, this flexibility can also make it difficult to work with HAPI. This comes primarily from the "being a general-purpose-library" nature of HAPI. Conversely, however, this also means that a consistent and maintainable usage across different projects and teams can be very challenging.</p>
 </div>
 <div class="paragraph">
-<p>To solve this issue, the <code>fhir-builder-brick</code> provides a simple concept based on the <a href="https://en.wikipedia.org/wiki/Builder_pattern">Builder Pattern</a>. This allows you to build FHIR resources in a structured and type-safe way.</p>
+<p>To solve this issue, the <code>fhir-builder-brick</code> provides a simple concept based on the <a href="https://en.wikipedia.org/wiki/Builder_pattern">Builder Pattern</a>. This allows you to build FHIR resources in a structured and type-safe way by applying the same principles we have already used for <a href="#tutorial_match_resources">matching resources</a>.</p>
 </div>
 <div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9o5KbzhmZ0GV--dEEQBCWUo5w4KaNPMX85WFq5CRrreUYcN5BQ9ttrNgqFTO7aATxz_kSlI1yMXQspaQqEjOjL0nQvhD_IER88YZV1yrMoLhbM5HVYq2BbKCF8OWEJYfOS5zhZW6CWHHbTCxPfMIXJW486SL9HwAoepPnqd2Nu4P59siO1HbkNvQZRW79V8lp4lYkir8r9qZ29jbVUGgnevPQDhI18OPzDHdi_diza42aELnU18Y8FzqriFZWVEgV881vb6CFe85OOrSgDeF87uIlOFtAlJofelBE-XaahjVM2b0mpnKkKnxOoLvoIxAQH354RlEjQuAMCe0ajGAHukr2FiUyPu4iEkbxpNt9tPjxhzcAYySRmdhYmsiep_UH6ZbdyWuuE7p95c30YcQGU-pC7HmsLXvzaE3jiM-TJUTa6MVn7yCRcBBgzRIbt-uZVOhE5K" /></div></div>
 <div class="paragraph">
@@ -1141,7 +1389,7 @@ Medication medication = bundle.getEntry().stream()
 </ul>
 </div>
 <div class="sect3">
-<h4 id="_resourcebuilder">ResourceBuilder</h4>
+<h4 id="_resourcebuilder"><a class="anchor" href="#_resourcebuilder"></a>ResourceBuilder</h4>
 <div class="paragraph">
 <p>The <code>ResourceBuilder</code> is designed to simplify and standardise the process of creating <a href="https://hl7.org/fhir/r4/resourcelist.html">FHIR Resources</a>. This base class has the following signature:</p>
 </div>
@@ -1180,7 +1428,7 @@ Medication medication = bundle.getEntry().stream()
 </div>
 </div>
 <div class="sect3">
-<h4 id="_elementbuilder">ElementBuilder</h4>
+<h4 id="_elementbuilder"><a class="anchor" href="#_elementbuilder"></a>ElementBuilder</h4>
 <div class="paragraph">
 <p>The <code>ResourceBuilder</code> is designed to simplify and standardize the building of <a href="https://hl7.org/fhir/r4/datatypes.html">FHIR Types</a>.</p>
 </div>
@@ -1219,13 +1467,13 @@ Medication medication = bundle.getEntry().stream()
 </div>
 </div>
 <div class="sect3">
-<h4 id="_fakerbrick">FakerBrick</h4>
+<h4 id="_fakerbrick"><a class="anchor" href="#_fakerbrick"></a>FakerBrick</h4>
 <div class="paragraph">
 <p>When dealing with test data, it is often necessary to generate random or fake data. The <code>FakerBrick</code> provides a set of classes and interfaces that allow you to generate fake data for FHIR resources in a structured and extensible way.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="tutorial_resource_builder">Implementing a FHIR Resource Builder</h4>
+<h4 id="tutorial_resource_builder"><a class="anchor" href="#tutorial_resource_builder"></a>Implementing a FHIR Resource Builder</h4>
 <div class="paragraph">
 <p>Now that we have laid the foundations in the <a href="#tutorial_fhir_package">last tutorial</a>, we can start building entire FHIR resources.</p>
 </div>
@@ -1434,7 +1682,7 @@ Instantiating with <code>MedicationBuilder.builder()</code> is just a convention
 </div>
 </div>
 <div class="sect2">
-<h3 id="fhir-codec-brick">FHIR Codec Brick</h3>
+<h3 id="fhir-codec-brick"><a class="anchor" href="#fhir-codec-brick"></a>FHIR Codec Brick</h3>
 <div class="paragraph">
 <p>So far we have only covered the creation and handling of FHIR objects. We have deliberately left out the aspect of serialisation. This is where the <code>fhir-codec-brick</code> comes into action.</p>
 </div>
@@ -1446,7 +1694,7 @@ Instantiating with <code>MedicationBuilder.builder()</code> is just a convention
 <p>In addition to a normal codec, the <code>FhirCodec</code> is able to validate the correctness of the FHIR objects by delegating a <code>ValidatorFhir</code>. This topic will be covered in the <a href="#fhir-validation-brick">FHIR Validation Brick</a>.</p>
 </div>
 <div class="sect3">
-<h4 id="tutorial_fhir_codec_init">Instantiating a FHIR Codec</h4>
+<h4 id="tutorial_fhir_codec_init"><a class="anchor" href="#tutorial_fhir_codec_init"></a>Instantiating a FHIR Codec</h4>
 <div class="paragraph">
 <p>Where can we get one of these <code>FhirCodec</code>? Can we customise it and do we need a <code>fhir-coding-system-brick</code>?</p>
 </div>
@@ -1480,7 +1728,7 @@ Instantiating with <code>MedicationBuilder.builder()</code> is just a convention
 </div>
 </div>
 <div class="sect3">
-<h4 id="tutorial_type_hints">Decoding with Type Hints</h4>
+<h4 id="tutorial_type_hints"><a class="anchor" href="#tutorial_type_hints"></a>Decoding with Type Hints</h4>
 <div class="paragraph">
 <p>The following challenge arises when a decoder attempts to convert a raw string into a structured object. The <code>FhirCodec</code> also faces the same challenge. Try to put yourself in the decoder&#8217;s shoes to mentally understand the process.</p>
 </div>
@@ -1663,7 +1911,7 @@ KbvErpMedication medication = prescription.getErpMedication(); <span class="comm
 </div>
 </div>
 <div class="paragraph">
-<p>However, when we call the custom method <code>getErpMEdication()</code> we run into a <code>ClassCastException</code>.  Let me explain why this is the case. When calling the <code>decode</code> method, we can only tell the decoder to decode the outer FHIR resource as a <code>KbvErpBundle</code>. But you cannot tell the decoder directly how to decode the <code>&lt;Medication&gt;</code>. This is where the <code>TypeHint</code> comes in.</p>
+<p>However, when we call the custom method <code>getErpMedication()</code> we run into a <code>ClassCastException</code>.  Let me explain why this is the case. When calling the <code>decode</code> method, we can only tell the decoder to decode the outer FHIR resource as a <code>KbvErpBundle</code>. But you cannot tell the decoder directly how to decode the <code>&lt;Medication&gt;</code>. This is where the <code>TypeHint</code> comes in.</p>
 </div>
 <div class="paragraph">
 <p>A <code>TypeHint</code> allows you to tell the decoder in advance how to decode certain resources. This is basically the main purpose of the structure definition in the profile values.</p>
@@ -1693,7 +1941,7 @@ KbvErpMedication medication = prescription.getErpMedication(); <span class="comm
 </div>
 </div>
 <div class="sect2">
-<h3 id="fhir-configurator-brick">FHIR Configurator Brick</h3>
+<h3 id="fhir-configurator-brick"><a class="anchor" href="#fhir-configurator-brick"></a>FHIR Configurator Brick</h3>
 <div class="paragraph">
 <p>The FHIR packages that we want to map with the HAPI are subject to the same development cycle as classic software. Bug fixes and refactorings are carried out, but new features are also added or old ones are dropped. This can lead to the point where you need to handle different versions of the same package. Remember when we sneakily introduced the <code>KbvItaErpVersion</code> in the <a href="#tutorial_resource_builder">ResourceBuilder Tutorial</a>?</p>
 </div>
@@ -1731,7 +1979,7 @@ KbvErpMedication medication = prescription.getErpMedication(); <span class="comm
 </div>
 </div>
 <div class="sect2">
-<h3 id="fhir-validation-brick">FHIR Validation Brick</h3>
+<h3 id="fhir-validation-brick"><a class="anchor" href="#fhir-validation-brick"></a>FHIR Validation Brick</h3>
 <div class="paragraph">
 <p>In addition to <a href="#fhir-configurator-brick">configuring</a>, <a href="#fhir-builder-brick">building</a>  and <a href="#fhir-codec-brick">serializing</a>, the FHIR standard also allows us to validate the correctness of resources.</p>
 </div>
@@ -1763,7 +2011,7 @@ KbvErpMedication medication = prescription.getErpMedication(); <span class="comm
 </ol>
 </div>
 <div class="sect3">
-<h4 id="tutorial_validation_disabled">Disable FHIR Validation</h4>
+<h4 id="tutorial_validation_disabled"><a class="anchor" href="#tutorial_validation_disabled"></a>Disable FHIR Validation</h4>
 <div class="paragraph">
 <p>There is no way to explicitly disable FHIR validation. However, by using the <code>DummyValidator</code> we can achieve pretty much the same result. Since <code>DummyValidator</code> always returns <code>true</code>, you can always take the happy path in your code. This helps you to avoid a lot of conditionals and gives you other advantages inherited from the <a href="https://en.wikipedia.org/wiki/Null_object_pattern">Null Object Pattern</a>.</p>
 </div>
@@ -1837,14 +2085,14 @@ INFORMATION: Information provided by DummyValidator</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_perimeter_bricks">Perimeter-Bricks</h2>
+<h2 id="_perimeter_bricks"><a class="anchor" href="#_perimeter_bricks"></a>Perimeter-Bricks</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>A <em>perimeter</em> is a boundary that surrounds a particular area. In the context of TI, we also have a perimeter. It is the boundary that surrounds the TI and separates it from the outside world. The perimeter is the first line of defence against unauthorised access to the TI. This perimeter is usually crossed by a combination of a smart card, a card terminal and a Konnektor.</p>
 </div>
 <div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9nDa4zhmp0CnU_-528xvp1eBpsCG5F3ReFsLdBG72qnjkKYAuTHzjsN_GcrJk-Xf_S3TKLHT4dHbE3vXe89N4wtpCHwriz88EGKUOfaZE4y4ZHlotlq3lgSq7C3J_skFreBTmFhN4jQ6ntAEFnv9KcUCVxRa9afQ9R1V6s55ugKK7s0L_uGB2fBq4NMQclxvzD-gxRevj4J5_qzhb3GYfzcRLzgtaDMwufVwIfGGU00ZVl9E2sDCHtnkBxg6vCcQ0O0" /></div></div>
 <div class="sect2">
-<h3 id="_smartcards_brick">Smartcards Brick</h3>
+<h3 id="_smartcards_brick"><a class="anchor" href="#_smartcards_brick"></a>Smartcards Brick</h3>
 <div class="paragraph">
 <p>When testing the <a href="https://www.gematik.de/telematikinfrastruktur">Gematik Telematikinfrastruktur</a>, we often have to deal with smart cards. These are used in the TI for authorization, authentication and the creation of signatures, etc. With the goal of (test-)automation, we often pursue the approach of using “virtual images” of the smart cards. However, dealing with certificates and especially with the raw cryptography files can be really challenging. To simplify this process, we have created the Smartcards Brick.</p>
 </div>
@@ -1853,7 +2101,7 @@ INFORMATION: Information provided by DummyValidator</code></pre>
 </div>
 <div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9nraj5gmZ0KXk_p58VsRX3Or3agKjHA7s3UR4WlOdAieMbIJjEvCVRkg-YarYvt-V_l7Bv05hKNv9lIiBhGjX8aIf2kh9n5wpV-oo0GIYziRf0DCV3De3qh8OkSN6DLueoZ-Hm_FP8L9exX7OrnnpFcI27T8w-eXjTKJwEs3gDnz29sx8UnRLssmbAGuj9elYCjYmp2wJHDboF6h5C8mURAh4vz0E5wiaxIz2AxlVPBaWVzWLalxjyJ9A_tMWh_XxuzFqRT52wg_ojoWtlFuyxMirm6CmYQ6kk0tNl10oUT7sxdiWuuJDpu3iV0bJlQqrJ_AOmjqAhsI_m2Thws9000" /></div></div>
 <div class="sect3">
-<h4 id="_smartcards_api">Smartcards API</h4>
+<h4 id="_smartcards_api"><a class="anchor" href="#_smartcards_api"></a>Smartcards API</h4>
 <div class="paragraph">
 <p>For example, when dealing with raw .p12 files or <code>X509Certificates</code>, it is very easy to mix up the certificates.</p>
 </div>
@@ -1900,7 +2148,7 @@ Hba hba; <span class="comment">// we will get there soon</span>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_smartcard_archiv">Smartcard-Archiv</h4>
+<h4 id="_smartcard_archiv"><a class="anchor" href="#_smartcard_archiv"></a>Smartcard-Archiv</h4>
 <div class="paragraph">
 <p>Imagine having an archive of all the virtual smartcards you might need, with a simple API to retrieve them easily. That&#8217;s exactly what the <code>SmartcardArchive</code> does.</p>
 </div>
@@ -2016,7 +2264,7 @@ Optional&lt;Smartcard&gt; opt = sca.getByICCSN(<span class="string"><span class=
 </div>
 </div>
 <div class="sect2">
-<h3 id="_konnektor">Konnektor</h3>
+<h3 id="_konnektor"><a class="anchor" href="#_konnektor"></a>Konnektor</h3>
 <div class="paragraph">
 <p>The "Konnektor" is basically the gateway into the TI. It is a hardware device that is connected to the practice&#8217;s network and is used to communicate with the TI. The Konnektor is the central point of the practice&#8217;s network and is responsible for the secure transmission of data to the TI.</p>
 </div>
@@ -2025,13 +2273,13 @@ Optional&lt;Smartcard&gt; opt = sca.getByICCSN(<span class="string"><span class=
 </div>
 </div>
 <div class="sect1">
-<h2 id="_configuration_bricks">Configuration-Bricks</h2>
+<h2 id="_configuration_bricks"><a class="anchor" href="#_configuration_bricks"></a>Configuration-Bricks</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Configuration is crucial for most types of software, including test suites. It is a way of adapting the behaviour of the software to different environments, or changing the behaviour of the software without changing the code. Configuration can be done in many ways, for example using environment variables, system properties or configuration files. The <code>configuration-bricks</code> are designed to help you deal with common problems.</p>
 </div>
 <div class="sect2">
-<h3 id="conf-feature-toggle-brick">Feature-Toggle</h3>
+<h3 id="conf-feature-toggle-brick"><a class="anchor" href="#conf-feature-toggle-brick"></a>Feature-Toggle</h3>
 <div class="paragraph">
 <p>A feature toggle module allows developers to enable or disable certain functions or code sections in an application. This is particularly useful for the gradual introduction of new features. Especially in test suites, we often have the case that certain features go through different stages and need to be activated or deactivated in different environments.</p>
 </div>
@@ -2065,7 +2313,7 @@ Optional&lt;Smartcard&gt; opt = sca.getByICCSN(<span class="string"><span class=
 </ul>
 </div>
 <div class="sect3">
-<h4 id="tutorial_feature_toggle_create">Using basic Feature-Toggles</h4>
+<h4 id="tutorial_feature_toggle_create"><a class="anchor" href="#tutorial_feature_toggle_create"></a>Using basic Feature-Toggles</h4>
 <div class="paragraph">
 <p>A decisive advantage of the <code>feature-toggle-brick</code> is that feature toggles can be set both via system properties and via environment variables. The configuration via system properties is preferred, if these are not set, the environment variables are used and in the very last case (if neither system properties nor environment variables are set) the default value is used.</p>
 </div>
@@ -2152,7 +2400,7 @@ java -DmyFeature.isActive=false MyApplication
 </div>
 </div>
 <div class="sect3">
-<h4 id="_implementing_custom_feature_toggles">Implementing custom Feature-Toggles</h4>
+<h4 id="_implementing_custom_feature_toggles"><a class="anchor" href="#_implementing_custom_feature_toggles"></a>Implementing custom Feature-Toggles</h4>
 <div class="paragraph">
 <p>In the <a href="#tutorial_feature_toggle_create">last tutorial</a> we saw how a feature toggle can be queried via its name. The name of the feature toggle is passed as a string and the <code>FeatureConfiguration</code> takes care of the resolution and the specific mapping to the respective data types of the feature toggle. Other common data types such as <code>Integer</code>, <code>Double</code>, <code>String</code> or generally for enumerations are already implemented and can be used directly.</p>
 </div>
@@ -2300,21 +2548,7 @@ java -DmyFeature.state=42 MyApplication
 </div>
 </div>
 <div class="sect1">
-<h2 id="_restful_bricks">RESTful-Bricks</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Was sind die RESTful-Bricks?</p>
-</div>
-<div class="imageblock text-center">
-<div class="content">
-<img src="./images/intro_restful_bricks.png" alt="intro restful bricks">
-</div>
-</div>
-<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9oLL5rB8p4KVS-l2FhYmeuexBuiKjIsW_icLHUaz25ERgUX-HYJJ5La_xjtqanDdPc2XLAukVUSSyyzzD9vPdsj975heIjccQA5KPNHeFsTVvD0BHIUwL82wUkXxuJYvzfO3dPifB4N5ykLiDcJ5SNQZKPq1Znf2PXVMoRChTekLgnBQshD8nYyUh2QIMnx12dDIvSlQMd8_XEY3GTwbD_ydT7PzEx-Y1xd-UHy-ZkgdIzv5XGKKk0EMo6B-1JgE5_4ClsYDcdRC2auyyBeeTwTbaO67HkbQYsAC8AY9hycupnlHLbmlbN4Ah6dQiFgFh7fIAmZ8zcTBF60tigw5DeXxHX9fsUHzkG7lG66PbBcqBxd6Y6tXLjhDW9_jrHEOL0APdacU9LL0UoJCs7yT_NGuKhVUyKGCkTmMe92QzQdoD1yusQDgvydnixUwz6CcnUTPQCX8-aVMZjmW-FpOmly9mzHN4XO-WQgcuOTIkTb7o6e6Gq69S8Cgh6YN0K5lITPu60d4ZIhguFh2rL9K5X6-TtaV6UybxtrB0d0WWp1nGN3XaaWSE10q5g9WvuSdDqxpyxVuTYHIz0S_ne_0Euultq0" /></div></div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_utility_bricks">Utility-Bricks</h2>
+<h2 id="_utility_bricks"><a class="anchor" href="#_utility_bricks"></a>Utility-Bricks</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p><em>TODO: descreibe the</em> <code>utility-bricks</code> <em>here</em></p>
@@ -2322,7 +2556,7 @@ java -DmyFeature.state=42 MyApplication
 </div>
 </div>
 <div class="sect1">
-<h2 id="_cli_bricks">CLI-Bricks</h2>
+<h2 id="_cli_bricks"><a class="anchor" href="#_cli_bricks"></a>CLI-Bricks</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p><em>TODO: descreibe the</em> <code>cli-tooling-bricks</code> <em>here</em></p>
@@ -2331,8 +2565,17 @@ java -DmyFeature.state=42 MyApplication
 </div>
 </div>
 <div class="sect1">
-<h2 id="_release_notes">Appendix A: Release Notes</h2>
+<h2 id="_release_notes"><a class="anchor" href="#_release_notes"></a>Appendix A: Release Notes</h2>
 <div class="sectionbody">
+<h3 id="_release_0_5_0" class="discrete">Release 0.5.0</h3>
+<h4 id="_restful_bricks_2" class="discrete">RESTful-Bricks</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Extend <code>restful-bricks</code> for ePA-Bricks</p>
+</li>
+</ul>
+</div>
 <h3 id="_release_0_4_0" class="discrete">Release 0.4.0</h3>
 <h4 id="_fhir_bricks_2" class="discrete">FHIR-Bricks</h4>
 <div class="ulist">
@@ -2368,7 +2611,7 @@ java -DmyFeature.state=42 MyApplication
 </li>
 </ul>
 </div>
-<h4 id="_restful_bricks_2" class="discrete">RESTful-Bricks</h4>
+<h4 id="_restful_bricks_3" class="discrete">RESTful-Bricks</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -2397,7 +2640,7 @@ java -DmyFeature.state=42 MyApplication
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.4.0<br>
+Version 0.7.0<br>
 </div>
 </div>
 </body>
