@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.smartcards;
@@ -36,7 +40,7 @@ class LdapReaderTest {
                 + " Bernd Claudius TEST-ONLY, C=DE",
             "Bernd",
             "Claudius",
-            "Arzt Bernd Claudius TEST-ONLY"),
+            "Bernd Claudius"),
         Arguments.of(
             "SURNAME=Gunther + GIVENNAME=Gündüla + SERIALNUMBER=11.80276001081699900578 + CN=Dr."
                 + " med. Gündüla Gunther ARZT TEST-ONLY, C=DE + T = Dr. med. + STREET ="
@@ -44,7 +48,7 @@ class LdapReaderTest {
                 + " locality",
             "Gündüla",
             "Gunther",
-            "Dr. med. Gündüla Gunther ARZT TEST-ONLY",
+            "Dr. med. Gündüla Gunther",
             "Dr. med.",
             "Friedrichstrasse 136",
             "10117",
@@ -55,13 +59,13 @@ class LdapReaderTest {
                 + " Amanda Albrecht APO TEST-ONLY, C=DE",
             "Amanda",
             "Albrecht",
-            "Dr. Amanda Albrecht APO TEST-ONLY"),
+            "Dr. Amanda Albrecht"),
         Arguments.of(
             "CN=Arztpraxis Bernd Claudius TEST-ONLY, GIVENNAME=Bernd, SURNAME=Claudius, O=202110001"
                 + " NOT-VALID, C=DE",
             "Bernd",
             "Claudius",
-            "Arztpraxis Bernd Claudius TEST-ONLY"));
+            "Arztpraxis Bernd Claudius"));
   }
 
   @ParameterizedTest

@@ -12,9 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.crypto.certificate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.security.*;
 import java.security.KeyStore.*;
@@ -47,19 +56,21 @@ class CertificateTest {
   }
 
   @Test
-  void validateCertificateInformations() {
-    Assertions.assertEquals(
-        "3-SMC-B-Testkarte-883110000116873", smcbEncRsaCert.getProfessionId().orElseThrow());
-    Assertions.assertEquals(
-        Oid.OID_SMC_B_ENC, smcbEncRsaCert.getCertificateTypeOid().orElseThrow());
-    Assertions.assertTrue(smcbEncRsaCert.isRsaEncryption());
-    Assertions.assertNotNull(smcbEncRsaCert.toCertificateHolder());
+  void validateCertificateInformation() {
+    assertEquals(
+        "3-SMC-B-Testkarte-883110000116873", smcbEncRsaCert.getTelematikId().orElseThrow());
+    assertEquals(ProfessionOid.KRANKENHAUSAPOTHEKE, smcbAutEccCert.getProfessionId().orElseThrow());
 
-    Assertions.assertEquals(
-        "5-2-KH-APO-Waldesrand-01", smcbAutEccCert.getProfessionId().orElseThrow());
-    Assertions.assertEquals(
-        Oid.OID_SMC_B_AUT, smcbAutEccCert.getCertificateTypeOid().orElseThrow());
-    Assertions.assertFalse(smcbAutEccCert.isRsaEncryption());
-    Assertions.assertNotNull(smcbAutEccCert.toCertificateHolder());
+    assertEquals(
+        CertificateTypeOid.OID_SMC_B_ENC, smcbEncRsaCert.getCertificateTypeOid().orElseThrow());
+    assertTrue(smcbEncRsaCert.isRsaEncryption());
+    assertNotNull(smcbEncRsaCert.toCertificateHolder());
+
+    assertEquals("5-2-KH-APO-Waldesrand-01", smcbAutEccCert.getTelematikId().orElseThrow());
+    assertEquals(ProfessionOid.KRANKENHAUSAPOTHEKE, smcbAutEccCert.getProfessionId().orElseThrow());
+    assertEquals(
+        CertificateTypeOid.OID_SMC_B_AUT, smcbAutEccCert.getCertificateTypeOid().orElseThrow());
+    assertFalse(smcbAutEccCert.isRsaEncryption());
+    assertNotNull(smcbAutEccCert.toCertificateHolder());
   }
 }

@@ -8,6 +8,7 @@
 :icons: font
 :allow-uri-read:
 :hide-uri-scheme:
+:sectanchors:
 :linkattrs:
 :source-highlighter: coderay
 

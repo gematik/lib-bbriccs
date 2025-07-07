@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.crypto.certificate;
@@ -75,7 +79,7 @@ public class X509CertificateWrapper {
     return Optional.empty();
   }
 
-  public Optional<String> getProfessionId() {
+  public Optional<String> getTelematikId() {
     val valueIsIsMttAdmission =
         (ASN1Sequence)
             certHolder
@@ -83,6 +87,17 @@ public class X509CertificateWrapper {
                 .getParsedValue();
     return getAsn1ElementByType(valueIsIsMttAdmission.iterator(), ASN1PrintableString.class)
         .map(ASN1PrintableString::getString);
+  }
+
+  public Optional<ProfessionOid> getProfessionId() {
+    val valueIsIsMttAdmission =
+        (ASN1Sequence)
+            certHolder
+                .getExtension(ISISMTTObjectIdentifiers.id_isismtt_at_admission)
+                .getParsedValue();
+
+    return getAsn1ElementByType(valueIsIsMttAdmission.iterator(), ASN1ObjectIdentifier.class)
+        .flatMap(it -> ProfessionOid.fromString(it.getId()));
   }
 
   public boolean isRsaEncryption() {
@@ -95,13 +110,13 @@ public class X509CertificateWrapper {
   }
 
   @SneakyThrows
-  public Optional<Oid> getCertificateTypeOid() {
+  public Optional<CertificateTypeOid> getCertificateTypeOid() {
     val policies =
         CertificatePolicies.getInstance(
             JcaX509ExtensionUtils.parseExtensionValue(cert.getExtensionValue("2.5.29.32")));
     return Arrays.stream(policies.getPolicyInformation())
         .map(p -> p.getPolicyIdentifier().toString())
-        .map(Oid::getByOid)
+        .map(CertificateTypeOid::getByOid)
         .filter(Optional::isPresent)
         .map(Optional::get)
         .findFirst();

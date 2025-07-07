@@ -4,7 +4,7 @@
     <parent>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>perimeter-bricks</artifactId>
-        <version>0.4.0</version>
+        <version>0.7.0</version>
     </parent>
 
     <artifactId>konnektor-ws-api-brick</artifactId>
@@ -27,18 +27,6 @@
             <version>4.0.2</version>
             <type>pom</type>
         </dependency>
-
-        <!-- TODO: check if that fits better -->
-<!--        <dependency>-->
-<!--            <groupId>com.sun.xml.ws</groupId>-->
-<!--            <artifactId>jaxws-rt</artifactId>-->
-<!--            <version>4.0.2</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.glassfish.hk2</groupId>-->
-<!--            <artifactId>hk2</artifactId>-->
-<!--            <version>4.0.0-M2</version>-->
-<!--        </dependency>-->
     </dependencies>
 
     <build>
@@ -65,7 +53,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jaxb2-maven-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.3.0</version>
                 <executions>
                     <execution>
                         <id>xjc</id>

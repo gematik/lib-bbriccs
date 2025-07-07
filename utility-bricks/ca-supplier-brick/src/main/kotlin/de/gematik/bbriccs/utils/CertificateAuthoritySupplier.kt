@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.utils
@@ -21,8 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import de.gematik.bbriccs.rest.HttpBClient
 import de.gematik.bbriccs.rest.HttpBRequest
-import de.gematik.bbriccs.rest.HttpRequestMethod
-import de.gematik.bbriccs.rest.RestClient
+import de.gematik.bbriccs.rest.UnirestHttpClient
 import de.gematik.bbriccs.utils.dto.CertificateAuthorityDto
 import de.gematik.bbriccs.utils.dto.RootCASerializer
 import de.gematik.bbriccs.utils.dto.RootCertificateAuthorityDto
@@ -32,12 +35,12 @@ class CertificateAuthoritySupplier private constructor(private val environmentAn
   fun getRootCAs(): RootCertificateAuthorityList {
     val path = environmentAnchor.getCaDownloadPath(CaType.ROOT_CA)
     return RootCertificateAuthorityList(
-      httpClient.send(HttpBRequest(HttpRequestMethod.GET, path)).let {
+      httpClient.send(HttpBRequest.get().urlPath(path).withoutPayload()).let {
         val mapper = ObjectMapper()
         val module = SimpleModule()
         module.addDeserializer(RootCertificateAuthorityDto::class.java, RootCASerializer())
         mapper.registerModule(module)
-        mapper.readValue(String(it.body, Charset.defaultCharset()), object : TypeReference<Set<RootCertificateAuthorityDto>>() {})
+        mapper.readValue(String(it.body(), Charset.defaultCharset()), object : TypeReference<Set<RootCertificateAuthorityDto>>() {})
       },
     )
   }
@@ -49,16 +52,16 @@ class CertificateAuthoritySupplier private constructor(private val environmentAn
   }
 
   private fun downloadElementsFromBackend(path: String): Set<String> =
-    httpClient.send(HttpBRequest(HttpRequestMethod.GET, path)).let {
-      """<a href="([^"]*)">""".toRegex().findAll(String(it.body, Charset.defaultCharset()))
+    httpClient.send(HttpBRequest.get().urlPath(path).withoutPayload()).let {
+      """<a href="([^"]*)">""".toRegex().findAll(String(it.body(), Charset.defaultCharset()))
         .map { matchResult -> matchResult.groupValues[1] }
         .filter { name -> name.endsWith(".der") }
         .toSet()
     }
 
   private fun get(path: String): CertificateAuthorityDto =
-    httpClient.send(HttpBRequest(HttpRequestMethod.GET, path)).let {
-      return CertificateAuthorityDto(it.body.inputStream().toCertificate())
+    httpClient.send(HttpBRequest.get().urlPath(path).withoutPayload()).let {
+      return CertificateAuthorityDto(it.body().inputStream().toCertificate())
     }
 
   companion object {
@@ -84,7 +87,7 @@ class CertificateAuthoritySupplier private constructor(private val environmentAn
       if (::httpClient.isInitialized) {
         httpClient
       } else {
-        RestClient.forUrl(environmentAnchor.getUrl(useInternet)).withoutTlsVerification()
+        UnirestHttpClient.forUrl(environmentAnchor.getUrl(useInternet)).withoutTlsVerification()
       },
     )
 

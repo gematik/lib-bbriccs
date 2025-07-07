@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>de.gematik.bbriccs</groupId>
+    <artifactId>restful-bricks</artifactId>
+    <version>0.7.0</version>
+  </parent>
+
+  <artifactId>fd-fhir-vzd-client-brick</artifactId>
+  <name>FHIR-Client Brick for the VZD (Verzeichnisdienst)</name>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>de.gematik.bbriccs</groupId>
+        <artifactId>fhir-bricks</artifactId>
+        <version>0.7.0</version> <!-- TODO: remove me later -->
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>de.gematik.bbriccs</groupId>
+      <artifactId>fhir-vzd-brick</artifactId>
+      <version>0.7.0</version> <!-- TODO: remove me later -->
+    </dependency>
+    <dependency>
+      <groupId>de.gematik.bbriccs</groupId>
+      <artifactId>fd-fhir-client-brick</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>de.gematik.bbriccs</groupId>
+      <artifactId>idp-flow-api-brick</artifactId>
+      <version>0.7.0</version> <!-- TODO: remove me later -->
+    </dependency>
+    <dependency>
+      <groupId>de.gematik.bbriccs</groupId>
+      <artifactId>rest-client-brick</artifactId>
+    </dependency>
+
+    <!-- TODO: remove me later; required for ExampleMain.java -->
+    <dependency>
+      <groupId>de.gematik.bbriccs</groupId>
+      <artifactId>smartcard-idp-plugin-brick</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>de.gematik.bbriccs</groupId>
+      <artifactId>smartcards-brick</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+    </dependency>
+  </dependencies>
+</project>

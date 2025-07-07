@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.fhir.de;
@@ -31,7 +35,7 @@ public enum DeBasisProfilStructDef implements WithStructureDefinition<DeBasisPro
   GKV_VERSICHERTENART("http://fhir.de/StructureDefinition/gkv/versichertenart"),
   NORMGROESSE("http://fhir.de/StructureDefinition/normgroesse"),
   HUMAN_NAMENSZUSATZ("http://fhir.de/StructureDefinition/humanname-namenszusatz"),
-  ;
+  IDENTIFIER_IKNR("http://fhir.de/StructureDefinition/identifier-iknr");
 
   private final String canonicalUrl;
 }

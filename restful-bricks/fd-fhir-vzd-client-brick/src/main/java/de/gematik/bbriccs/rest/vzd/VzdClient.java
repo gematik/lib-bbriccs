@@ -1,0 +1,86 @@
+/*
+ * Copyright 2025 gematik GmbH
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
+ */
+
+package de.gematik.bbriccs.rest.vzd;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.gematik.bbriccs.fhir.codec.FhirCodec.FhirCodecBuilder;
+import de.gematik.bbriccs.fhir.vzd.VzdFhirCodeFactory;
+import de.gematik.bbriccs.rest.ApplicationClient;
+import de.gematik.bbriccs.rest.HttpBClient;
+import de.gematik.bbriccs.rest.UnirestHttpClient;
+import de.gematik.bbriccs.rest.fd.FhirClient;
+import de.gematik.bbriccs.rest.fd.FhirClientImpl.FdClientBuilder;
+import de.gematik.bbriccs.rest.fd.MediaType;
+import lombok.experimental.Delegate;
+import lombok.val;
+
+public class VzdClient implements FhirClient, ApplicationClient {
+
+  private final HttpBClient httpBClient;
+  @Delegate private final FhirClient fhirClient;
+  @Delegate private final ApplicationClient applicationClient;
+
+  public VzdClient(
+      HttpBClient httpBClient, FhirClient fhirClient, ApplicationClient applicationClient) {
+    this.httpBClient = httpBClient;
+    this.fhirClient = fhirClient;
+    this.applicationClient = applicationClient;
+  }
+
+  public void init() {
+    this.httpBClient.init();
+  }
+
+  static VzdClientFhirBuilder forUrl(String url) {
+    return withHttpClient(UnirestHttpClient.forUrl(url).withoutTlsVerification());
+  }
+
+  static VzdClientFhirBuilder withHttpClient(HttpBClient httpClient) {
+    return new VzdClientFhirBuilder(httpClient);
+  }
+
+  public static class VzdClientFhirBuilder {
+    private final HttpBClient httpClient;
+    private final FdClientBuilder clientBuilder;
+    private final FhirCodecBuilder codecBuilder;
+
+    private VzdClientFhirBuilder(HttpBClient httpClient) {
+      this.httpClient = httpClient;
+      this.clientBuilder =
+          FhirClient.via(httpClient).acceptingUtf8Charset().usingFhirMimeType(MediaType.FHIR_JSON);
+      this.codecBuilder = VzdFhirCodeFactory.initializeWithTypeHints();
+    }
+
+    public VzdClientFhirBuilder usingFhirMimeType(MediaType mediaType) {
+      this.clientBuilder.usingFhirMimeType(mediaType);
+      return this;
+    }
+
+    public VzdClient withoutFhirValidation() {
+      val fhirClient = clientBuilder.usingFhir(codecBuilder.andDummyValidator()).build();
+      val objectMapper = new ObjectMapper();
+      val applicationClient =
+          ApplicationClient.using(this.httpClient).withObjectMapper(objectMapper);
+
+      return new VzdClient(httpClient, fhirClient, applicationClient);
+    }
+  }
+}

@@ -4,7 +4,7 @@
     <parent>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>restful-bricks</artifactId>
-        <version>0.4.0</version>
+        <version>0.7.0</version>
     </parent>
 
     <artifactId>smartcard-idp-plugin-brick</artifactId>
@@ -13,7 +13,7 @@
     <dependencies>
         <dependency>
             <groupId>de.gematik.bbriccs</groupId>
-            <artifactId>fd-fhir-client-brick</artifactId>
+            <artifactId>rest-client-api-brick</artifactId>
         </dependency>
         <dependency>
             <groupId>de.gematik.idp</groupId>
@@ -40,29 +40,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-<!--    <build>-->
-<!--        <plugins>-->
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-remote-resources-plugin</artifactId>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <goals>-->
-<!--                            <goal>process</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <resourceBundles>-->
-<!--                                &lt;!&ndash; TODO: check if that is needed, probably not... &ndash;&gt;-->
-<!--                                <resourceBundle>de.gematik.bbriccs:smartcards-brick:${project.version}</resourceBundle>-->
-<!--                            </resourceBundles>-->
-<!--                            <attachToMain>false</attachToMain>-->
-<!--                            <attachToTest>true</attachToTest>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
-<!--        </plugins>-->
-<!--    </build>-->
-
 </project>

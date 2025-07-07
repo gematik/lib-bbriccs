@@ -6,7 +6,7 @@
     <parent>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>bbriccs-parent</artifactId>
-        <version>0.4.0</version>
+        <version>0.7.0</version>
     </parent>
 
     <artifactId>bricks-integration-coverage</artifactId>
@@ -53,6 +53,13 @@
             <version>${project.parent.version}</version>
         </dependency>
 
+        <!-- Auth bricks -->
+        <dependency>
+            <groupId>de.gematik.bbriccs</groupId>
+            <artifactId>idp-flow-api-brick</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
         <!-- FHIR bricks -->
         <dependency>
             <groupId>de.gematik.bbriccs</groupId>
@@ -76,11 +83,6 @@
         </dependency>
         <dependency>
             <groupId>de.gematik.bbriccs</groupId>
-            <artifactId>fhir-de-basisprofil-r4-brick</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.gematik.bbriccs</groupId>
             <artifactId>fhir-hapi-fuzzing-brick</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
@@ -94,11 +96,31 @@
             <artifactId>fhir-validation-brick</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <dependency>
+            <groupId>de.gematik.bbriccs</groupId>
+            <artifactId>fhir-de-basisprofil-r4-brick</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.gematik.bbriccs</groupId>
+            <artifactId>fhir-vzd-brick</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
 
         <!-- RESTful bricks -->
         <dependency>
             <groupId>de.gematik.bbriccs</groupId>
             <artifactId>fd-fhir-client-brick</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.gematik.bbriccs</groupId>
+            <artifactId>fd-fhir-vzd-client-brick</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.gematik.bbriccs</groupId>
+            <artifactId>fd-application-client-brick</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
@@ -118,7 +140,7 @@
         </dependency>
         <dependency>
             <groupId>de.gematik.bbriccs</groupId>
-            <artifactId>vau-client-brick</artifactId>
+            <artifactId>erp-vau-client-brick</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
@@ -126,7 +148,6 @@
             <artifactId>raw-http-brick</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
-
 
         <!-- Perimeter bricks -->
         <dependency>

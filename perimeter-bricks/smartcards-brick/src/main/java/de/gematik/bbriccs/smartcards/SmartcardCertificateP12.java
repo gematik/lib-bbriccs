@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.smartcards;
@@ -19,7 +23,7 @@ package de.gematik.bbriccs.smartcards;
 import static java.text.MessageFormat.format;
 
 import de.gematik.bbriccs.crypto.CryptoSystem;
-import de.gematik.bbriccs.crypto.certificate.Oid;
+import de.gematik.bbriccs.crypto.certificate.CertificateTypeOid;
 import de.gematik.bbriccs.crypto.certificate.X509CertificateWrapper;
 import de.gematik.bbriccs.smartcards.exceptions.InvalidCertificateException;
 import java.io.*;
@@ -76,7 +80,7 @@ public class SmartcardCertificateP12 implements SmartcardCertificate {
   }
 
   @Override
-  public Oid getOid() {
+  public CertificateTypeOid getOid() {
     val oid = certWrapper.getCertificateTypeOid();
     return oid.orElseThrow(() -> new InvalidCertificateException(certWrapper));
   }

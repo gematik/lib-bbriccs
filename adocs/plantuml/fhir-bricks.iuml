@@ -1,0 +1,18 @@
+<style>
+  node {
+    .core {
+      BackGroundColor: #f0ffee;
+    }
+  }
+  component {
+    .core {
+      BackGroundColor: #60a917;
+    }
+  }
+  .common {
+    BackGroundColor: #1ba1e2;
+  }
+  .config {
+    BackGroundColor: #FFD1E5;
+  }
+</style>

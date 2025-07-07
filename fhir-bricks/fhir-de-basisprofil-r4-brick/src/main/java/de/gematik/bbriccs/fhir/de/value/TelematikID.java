@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.fhir.de.value;
@@ -53,5 +57,9 @@ public class TelematikID extends SemanticValue<String, DeBasisProfilNamingSystem
                     format(
                         "Cannot extract TelematikID from identifier with system {0}",
                         identifier.getSystem())));
+  }
+
+  public static boolean matches(Identifier identifier) {
+    return DeBasisProfilNamingSystem.TELEMATIK_ID_SID.matches(identifier);
   }
 }

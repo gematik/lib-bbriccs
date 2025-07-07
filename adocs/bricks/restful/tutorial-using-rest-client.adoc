@@ -1,0 +1,29 @@
+include::rest-commons.adoc[]
+
+[#tutorial_rest_usage]
+== Using a HttpBClient
+This tutorial is quite short and easy to understand, which is the basic idea of the {brick-rest-client-api}.
+
+NOTE: to keep this focused on the API, the <<tutorial_rest_client_builders,instantiation of a concrete HttpBClient implementation>> is shown in a separate tutorial.
+
+Let's demonstrate the {brick-rest-client-api} by the example:
+
+[source,java]
+----
+HttpBClient client = fromSomewhere();
+
+HttpBRequest request = HttpBRequest.post()
+  .urlPath("/v1/fd/pingpong")
+  .headers(
+      HttpHeader.accept(MediaType.ANY_TYPE),
+      HttpHeader.forContentType(MediaType.PLAIN_TEXT_UTF_8))
+  .withPayload("Hello World");
+
+HttpBResponse response = client.send(request);
+int status = response.statusCode();
+String payload = response.bodyAsString();
+String contentType = response.contentType();
+----
+
+That's basically it. This approach is very simple, but extremely powerful. Dive into the next tutorials to learn how to use it for more complex scenarios.
+

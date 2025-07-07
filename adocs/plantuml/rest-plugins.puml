@@ -1,0 +1,17 @@
+@startuml
+interface HttpBClient
+class BasicHttpClient
+
+interface RequestHeaderProvider {
+  + forRequest(HttpBRequest request): HttpHeader
+}
+
+interface HttpBObserver {
+  + onRequest(HttpBRequest request)
+  + onResponse(HttpBResponse response)
+}
+
+BasicHttpClient -u-|> HttpBClient
+BasicHttpClient *-l-> RequestHeaderProvider
+BasicHttpClient *-r-> HttpBObserver
+@enduml

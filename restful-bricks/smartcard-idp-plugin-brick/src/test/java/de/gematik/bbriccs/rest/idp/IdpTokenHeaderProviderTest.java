@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.rest.idp;
@@ -19,8 +23,7 @@ package de.gematik.bbriccs.rest.idp;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import de.gematik.bbriccs.fhir.codec.EmptyResource;
-import de.gematik.bbriccs.rest.fd.FdRequest;
+import de.gematik.bbriccs.rest.HttpBRequest;
 import de.gematik.bbriccs.rest.headers.JwtHeaderKey;
 import de.gematik.bbriccs.smartcards.SmartcardArchive;
 import de.gematik.idp.client.IdpClient;
@@ -33,7 +36,6 @@ import de.gematik.idp.token.JsonWebToken;
 import java.security.interfaces.RSAPrivateKey;
 import java.util.function.UnaryOperator;
 import lombok.val;
-import org.hl7.fhir.r4.model.Bundle;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -211,7 +213,7 @@ class IdpTokenHeaderProviderTest {
   }
 
   @SuppressWarnings("unchecked")
-  private FdRequest<EmptyResource, Bundle> createMockRequest() {
-    return (FdRequest<EmptyResource, Bundle>) mock(FdRequest.class);
+  private HttpBRequest createMockRequest() {
+    return HttpBRequest.get().urlPath("/a/b/c").withoutPayload();
   }
 }

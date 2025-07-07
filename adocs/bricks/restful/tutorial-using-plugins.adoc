@@ -1,0 +1,56 @@
+include::rest-commons.adoc[]
+
+[#tutorial_rest_plugins]
+== Using a HttpB Plugins
+The {brick-rest-client-api} defines two different types of plugins following the {link-principle-isp}.
+
+[plantuml, "{pumldir}/rest-plugins", svg]
+.REST-API Plugins
+----
+include::{pumldir}/common-style.iuml[]
+include::{pumldir}/rest-api-brick.iuml[]
+include::{pumldir}/rest-plugins.puml[]
+----
+
+The `RequestHeaderProvider` is pretty much self-explanatory, it generates per each single request a dynamic `HttpHeader`. To demonstrate this kind of plugin, let's implement a simple `XRequestIdProvider`:
+
+[source,java]
+----
+public class XRequestIdProvider implements RequestHeaderProvider {
+  @Override
+  public HttpHeader forRequest(HttpBRequest request) {
+    val xReqId = UUID.randomUUID().toString();
+    return new HttpHeader("x-request-id", xReqId);
+  }
+}
+----
+
+A slightly more complex example of a useful `RequestHeaderProvider` is the {brick-smartcard-idp-plugin} which can provide dynamic Header for the JWT Bearer Token from the smartcard IDP.
+
+The other type of plugin is the `HttpBObserver`, which is heavily inspired by the {link-pattern-observer}. This type of plugin is particularly useful when it comes to analysing or reporting on http traffic. To demonstrate this kind of plugin, let's implement a simple `HttpRecorder`:
+
+[source,java]
+----
+public class HttpRecorder implements HttpBObserver {
+  private final RawHttpCodec httpCodec = RawHttpCodec.defaultCodec();
+  private final PrintStream out = System.out;
+
+  @Override
+  public void onRequest(HttpBRequest httpBRequest) {
+    val request = httpCodec.encode(httpBRequest);
+    out.println("--------- REQUEST ---------");
+    out.println(request);
+    out.println("--------- /REQUEST ---------\n");
+  }
+
+  @Override
+  public void onResponse(HttpBResponse httpBResponse) {
+    val response = httpCodec.encode(httpBResponse);
+    out.println("--------- RESPONSE ---------");
+    out.println(response);
+    out.println("--------- /RESPONSE ---------\n");
+  }
+}
+----
+
+NOTE: Don't worry, the `RawHttpCodec` will be explained later. For the sake of understanding here, what the `RawHttpCodec` does is transform a `HttpBRequest` and `HttpBResponse` into their string encoded form according to RFC standards.

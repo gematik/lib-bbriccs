@@ -1,0 +1,26 @@
+include::rest-commons.adoc[]
+
+[#rest-client-api-brick]
+== REST Client API Brick
+The {brick-rest-client-api} is a REST client that can be used to communicate with a REST API. It is based on the simple idea of having a minimalist and simple API for sending HTTP requests and receiving HTTP responses. It is designed to be easy to use and understand and extensible to support different use cases.
+
+Unlike many other libraries, it does not attempt to be a full-featured, heavyweight HTTP client. Instead, the {brick-rest-client-api} focuses on supporting the {link-wiki-http-protocol} protocol as simply as possible, especially from a user perspective.
+
+[plantuml, "{pumldir}/rest-api-brick", svg]
+.REST-API-Brick
+----
+include::{pumldir}/common-style.iuml[]
+include::{pumldir}/rest-api-brick.iuml[]
+include::{pumldir}/rest-api-brick.puml[]
+----
+
+This means also that encoding and decoding the payload is not part of the brick itself. For payloads with different payload formats such as FHIR, JSON, XML, and others, you will need to implement your own "application client brick" (or reuse an existing one) which handles the encoding and decoding such as the {brick-fd-fhir-client} specifically for RESTful FHIR APIs.
+
+By being a simple HTTP client, we get a bunch of additional benefits essentially for free, such as interchangeability and ease of implementation.
+
+Let's dive into the tutorial on <<tutorial_rest_usage>>
+
+
+include::tutorial-using-rest-client.adoc[leveloffset=+1]
+include::tutorial-creating-rest-client.adoc[leveloffset=+1]
+include::tutorial-using-plugins.adoc[leveloffset=+1]

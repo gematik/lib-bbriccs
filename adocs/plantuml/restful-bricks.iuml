@@ -1,0 +1,24 @@
+<style>
+  node {
+    .application {
+      BackGroundColor: #e5f6FF;
+    }
+    .transport {
+      BackGroundColor: #f0ffee;
+    }
+  }
+  component {
+    .application {
+      BackGroundColor: #1ba1e2;
+    }
+    .interface {
+      BackGroundColor: #60a917;
+    }
+    .transport {
+      BackGroundColor: #60a917;
+    }
+  }
+  .vau {
+    BackGroundColor: #d65c78;
+  }
+</style>

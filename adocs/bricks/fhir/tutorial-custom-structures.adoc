@@ -46,7 +46,7 @@ And we can implement this concept with all the other FHIR resources you need to 
 [#code_kbv_erp_medication_01]
 [source,java]
 ----
-private static class KbvErpMedication extends Medication {
+private class KbvErpMedication extends Medication {
   public StandardSize getStandardSize() {
     return this.getExtension().stream()
         .filter(DeBasisProfilStructDef.NORMGROESSE::matches)

@@ -4,7 +4,7 @@
     <parent>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>restful-bricks</artifactId>
-        <version>0.4.0</version>
+        <version>0.7.0</version>
     </parent>
 
     <artifactId>rest-client-brick</artifactId>
@@ -14,6 +14,10 @@
         <dependency>
             <groupId>de.gematik.bbriccs</groupId>
             <artifactId>rest-client-api-brick</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.gematik.bbriccs</groupId>
+            <artifactId>raw-http-brick</artifactId>
         </dependency>
         <dependency>
             <groupId>com.konghq</groupId>

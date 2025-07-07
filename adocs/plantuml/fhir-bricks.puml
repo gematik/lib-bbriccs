@@ -1,39 +1,23 @@
 @startuml
-skinparam componentStyle rectangle
-left to right direction
+() "referencevalidator-lib" <<external>>
+[x-fhir-bricks] <<external>>
 
-skinparam component {
-    BackgroundColor<<external>> Yellow
-    BorderColor<<external>> Red
+node "FHIR Core" <<core>> {
+    [fhir-ucum-brick] <<common>>
+    [fhir-de-basisprofil-r4-brick] <<common>>
+    [fhir-builder-brick] <<core>>
+    [fhir-hapi-fuzzing-brick] <<core>>
+    [fhir-configurator-brick] <<config>>
+    [fhir-coding-system-brick] <<core>>
+    [fhir-codec-brick] <<core>>
+    [fhir-validation-brick] <<core>>
+
+    [fhir-coding-system-brick] --> [fhir-configurator-brick] <<use>>
+    [fhir-validation-brick] --> [fhir-configurator-brick] <<use>>
+    [fhir-codec-brick] --> [fhir-validation-brick] <<use>>
+    [fhir-codec-brick] --> [fhir-coding-system-brick] <<use>>
+    [fhir-validation-brick] --> "referencevalidator-lib" <<decorate>>
+
+    [x-fhir-bricks] --> [fhir-codec-brick] <<use>>
 }
-
-node "Common Profiles" #D4DCFF {
-    [fhir-ucum-brick]
-    [fhir-de-basisprofil-r4-brick]
-}
-
-[epa-medication-brick] <<external>>
-
-node "FHIR Facility" #FFD1E5 {
-    [fhir-validation-brick]
-    [fhir-codec-brick]
-    [fhir-hapi-fuzzing-brick]
-}
-
-node "FHIR Core" #CCFFE0 {
-    [fhir-configurator-brick]
-    [fhir-coding-system-brick]
-    [fhir-builder-brick]
-}
-
-[de.gematik.refv.referencevalidator-lib] <<external>>
-
-[FHIR Facility] -up-> [FHIR Core]
-[Common Profiles] -down-> [FHIR Core]
-[epa-medication-brick] -right-> [FHIR Core]
-
-[fhir-codec-brick] -left-> [fhir-validation-brick]
-[fhir-coding-system-brick] -left-> [fhir-configurator-brick]
-[fhir-validation-brick] -[#red,dashed]left-> [de.gematik.refv.referencevalidator-lib]
-[fhir-validation-brick] -left-> [fhir-configurator-brick]
 @enduml

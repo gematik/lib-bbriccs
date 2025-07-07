@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.rest;
@@ -40,49 +44,34 @@ public class DefaultRawHttpCodec implements RawHttpCodec {
 
   @Override
   public String encode(HttpBRequest request) {
-    StringBuilder ret = new StringBuilder();
+    val statusLine = format("{0} {1} {2}", request.method(), request.urlPath(), request.version());
 
-    ret.append(request.method())
-        .append(" ")
-        .append(request.urlPath())
-        .append(" ")
-        .append(request.version())
-        .append(LINE_BREAK);
-
-    request
-        .headers()
-        .forEach(h -> ret.append(h.key()).append(": ").append(h.value()).append(LINE_BREAK));
-
-    ret.append(LINE_BREAK); // separator between the headers and the body
-    if (!request.isEmptyBody()) {
-      ret.append(request.bodyAsString());
-    }
-    log.trace("Encoded HTTP Request:\n----------\n{}\n----------", ret);
-
-    return ret.toString();
+    return finishEncoding(statusLine, request);
   }
 
   @Override
   public String encode(HttpBResponse response) {
-    StringBuilder ret = new StringBuilder();
+    val responsePhrase = ReasonPhrase.fromStatusCode(response.statusCode()).getReasonPhrase();
+    val statusLine =
+        format("{0} {1} {2}", response.version(), response.statusCode(), responsePhrase);
 
-    ret.append(response.version().version)
-        .append(" ")
-        .append(response.statusCode())
-        .append(" ")
-        .append(ReasonPhrase.fromStatusCode(response.statusCode()).getReasonPhrase())
-        .append(LINE_BREAK);
+    return finishEncoding(statusLine, response);
+  }
 
-    response
-        .headers()
-        .forEach(h -> ret.append(h.key()).append(": ").append(h.value()).append(LINE_BREAK));
+  private String finishEncoding(String statusLine, HttpBEntity httpEntity) {
+    val ret = new StringBuilder(statusLine);
+    ret.append(LINE_BREAK);
+    httpEntity.headers().stream()
+        .map(h -> format("{0}: {1}", h.key(), h.value()))
+        .forEach(it -> ret.append(it).append(LINE_BREAK));
 
-    if (!response.isEmptyBody()) {
-      // only a single line break because we have already one from the last header
-      ret.append(LINE_BREAK).append(response.bodyAsString());
+    ret.append(LINE_BREAK);
+    if (!httpEntity.isEmptyBody()) {
+      ret.append(httpEntity.bodyAsString());
     }
-    log.trace("Encoded HTTP Response:\n----------\n{}\n----------", ret);
 
+    log.trace(
+        "Encoded {}:\n----------\n{}\n----------", httpEntity.getClass().getSimpleName(), ret);
     return ret.toString();
   }
 
@@ -103,7 +92,10 @@ public class DefaultRawHttpCodec implements RawHttpCodec {
     val statusLine = splitStatusLine(rawStatusLine);
     val headers = parseHeader(rawHeaders);
     val body = rawHttpParts.length == 2 ? rawHttpParts[1] : "";
-    return new HttpBResponse(statusLine.getKey(), statusLine.getRight(), headers, body);
+    return HttpBResponse.status(statusLine.getRight())
+        .version(statusLine.getLeft())
+        .headers(headers)
+        .withPayload(body);
   }
 
   @Override
@@ -126,7 +118,11 @@ public class DefaultRawHttpCodec implements RawHttpCodec {
 
     val headers = parseHeader(rawHeaders);
     val body = rawHttpParts.length == 2 ? rawHttpParts[1] : "";
-    return new HttpBRequest(version, requestMethod, urlPath, headers, body);
+    return HttpBRequest.method(requestMethod)
+        .version(version)
+        .urlPath(urlPath)
+        .headers(headers)
+        .withPayload(body);
   }
 
   private List<HttpHeader> parseHeader(String[] rawHeader) {

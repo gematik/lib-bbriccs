@@ -1,0 +1,1750 @@
+{
+  "resourceType": "Bundle",
+  "id": "55069a75-81fc-4f84-b35a-6b4c2b0cb7e2",
+  "meta": {
+    "lastUpdated": "2025-03-25T12:48:08.984+01:00",
+    "tag": [
+      {
+        "system": "https://gematik.de/fhir/StructureDefinition/filtered-endpoints-count",
+        "code": "0",
+        "display": "Reason: hideVersicherte"
+      }
+    ]
+  },
+  "type": "searchset",
+  "total": 10,
+  "entry": [
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/HealthcareService/8d5d490c-4369-4de7-8114-f950fc637fd4",
+      "resource": {
+        "resourceType": "HealthcareService",
+        "id": "8d5d490c-4369-4de7-8114-f950fc637fd4",
+        "meta": {
+          "versionId": "2",
+          "lastUpdated": "2024-03-27T17:48:08.527+01:00",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/HealthcareService",
+            "https://gematik.de/fhir/directory/StructureDefinition/HealthcareServiceDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "2672a87d-84f7-4135-9965-14dd5972fc31"
+          }
+        ],
+        "providedBy": {
+          "reference": "Organization/1fb3240c-76c2-473b-ab57-f73fa4a013b8"
+        },
+        "location": [
+          {
+            "reference": "Location/cb3a2dd5-e287-41bf-87f1-036cdd8f6a7f"
+          }
+        ],
+        "endpoint": [
+          {
+            "reference": "Endpoint/10642f91-e062-44c9-8e3b-902e16ef8437"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/HealthcareService/a4f1b52e-c5de-47eb-874c-990c2b39bb77",
+      "resource": {
+        "resourceType": "HealthcareService",
+        "id": "a4f1b52e-c5de-47eb-874c-990c2b39bb77",
+        "meta": {
+          "versionId": "2",
+          "lastUpdated": "2024-03-27T17:49:37.898+01:00",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/HealthcareService",
+            "https://gematik.de/fhir/directory/StructureDefinition/HealthcareServiceDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "1b9b1767-5496-4c20-bfc1-32ad6d96adbc"
+          }
+        ],
+        "providedBy": {
+          "reference": "Organization/4f5a9754-2a9d-486d-9eec-a5c6b5f95016"
+        },
+        "location": [
+          {
+            "reference": "Location/9514f96e-897d-492d-950f-aea11d6f2bb4"
+          }
+        ],
+        "endpoint": [
+          {
+            "reference": "Endpoint/11d91987-d31e-468f-962e-845bb0c743c3"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/HealthcareService/5536522d-e444-41af-87f8-6f1ac088f9d8",
+      "resource": {
+        "resourceType": "HealthcareService",
+        "id": "5536522d-e444-41af-87f8-6f1ac088f9d8",
+        "meta": {
+          "versionId": "3",
+          "lastUpdated": "2024-05-16T17:38:21.450+02:00",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/HealthcareService",
+            "https://gematik.de/fhir/directory/StructureDefinition/HealthcareServiceDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "16ed2cea-38a9-4295-a2e2-c3c9c3f72e9b"
+          }
+        ],
+        "providedBy": {
+          "reference": "Organization/0e1f7f20-6795-4041-a33b-19e1fb64a6b8"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "urn:oid:1.3.6.1.4.1.19376.3.276.1.5.5",
+                "code": "PAT",
+                "display": "Patient außerhalb der Betreuung"
+              }
+            ]
+          }
+        ],
+        "location": [
+          {
+            "reference": "Location/0097e53a-c3d1-4c1e-b7ed-ec15aa1c7b8b"
+          }
+        ],
+        "endpoint": [
+          {
+            "reference": "Endpoint/ab10eb1d-a91d-474d-a1a5-d374dc9d37ac"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/HealthcareService/3cc6936f-6b29-4533-a2b9-c08ee95ff963",
+      "resource": {
+        "resourceType": "HealthcareService",
+        "id": "3cc6936f-6b29-4533-a2b9-c08ee95ff963",
+        "meta": {
+          "versionId": "2",
+          "lastUpdated": "2024-03-27T17:43:08.225+01:00",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/HealthcareService",
+            "https://gematik.de/fhir/directory/StructureDefinition/HealthcareServiceDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "e2a2c5bb-5441-4e82-8185-f9c80064f112"
+          }
+        ],
+        "providedBy": {
+          "reference": "Organization/6a10284a-2249-4998-94a8-da5b169122b2"
+        },
+        "location": [
+          {
+            "reference": "Location/51708391-1cec-4c01-bb12-7a64345a0c42"
+          }
+        ],
+        "endpoint": [
+          {
+            "reference": "Endpoint/61e96a34-b1e6-40c3-be58-c9075e10550b"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/HealthcareService/262346ca-1543-4859-b47a-675fa2f375ad",
+      "resource": {
+        "resourceType": "HealthcareService",
+        "id": "262346ca-1543-4859-b47a-675fa2f375ad",
+        "meta": {
+          "versionId": "2",
+          "lastUpdated": "2024-03-27T17:41:42.623+01:00",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/HealthcareService",
+            "https://gematik.de/fhir/directory/StructureDefinition/HealthcareServiceDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "b955bdf6-6184-4aa4-bca4-335fe49c4458"
+          }
+        ],
+        "providedBy": {
+          "reference": "Organization/97639dc3-6412-43a3-b89c-df48e24d3365"
+        },
+        "location": [
+          {
+            "reference": "Location/16c1a5f8-f530-4b48-bd21-a32c322285f4"
+          }
+        ],
+        "endpoint": [
+          {
+            "reference": "Endpoint/8bf101e0-a818-4782-8ace-d42fb5f333e9"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/HealthcareService/1884ae3f-69a7-48ef-af64-c084641f33f6",
+      "resource": {
+        "resourceType": "HealthcareService",
+        "id": "1884ae3f-69a7-48ef-af64-c084641f33f6",
+        "meta": {
+          "versionId": "2",
+          "lastUpdated": "2024-03-27T17:40:53.135+01:00",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/HealthcareService",
+            "https://gematik.de/fhir/directory/StructureDefinition/HealthcareServiceDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "bac776b4-a106-4446-b6cc-c0e045f46d88"
+          }
+        ],
+        "providedBy": {
+          "reference": "Organization/5fbbcb9d-33e6-40ca-b218-82d8f4a1951b"
+        },
+        "location": [
+          {
+            "reference": "Location/60178ff3-d341-41f8-bd76-5d7efd876a2b"
+          }
+        ],
+        "endpoint": [
+          {
+            "reference": "Endpoint/72379885-2d8c-43e1-8722-bf5fb45fbf30"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/HealthcareService/1b78d4bd-2bff-47ed-8d83-0ac1ca903036",
+      "resource": {
+        "resourceType": "HealthcareService",
+        "id": "1b78d4bd-2bff-47ed-8d83-0ac1ca903036",
+        "meta": {
+          "versionId": "2",
+          "lastUpdated": "2024-03-27T17:41:02.646+01:00",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/HealthcareService",
+            "https://gematik.de/fhir/directory/StructureDefinition/HealthcareServiceDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "d52426eb-66e5-4841-abbb-57c3ea3104b5"
+          }
+        ],
+        "providedBy": {
+          "reference": "Organization/03ff983a-6b8d-4dc6-a1d2-74cc537d378a"
+        },
+        "location": [
+          {
+            "reference": "Location/3a57ca8d-53bf-4d91-95f8-f9d0ef34279b"
+          }
+        ],
+        "endpoint": [
+          {
+            "reference": "Endpoint/7bbdc72b-12fc-4cda-98c3-104bd0263868"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/HealthcareService/d4a70568-2097-47c6-99b2-d4dbd67527ae",
+      "resource": {
+        "resourceType": "HealthcareService",
+        "id": "d4a70568-2097-47c6-99b2-d4dbd67527ae",
+        "meta": {
+          "versionId": "2",
+          "lastUpdated": "2024-03-27T17:52:46.158+01:00",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/HealthcareService",
+            "https://gematik.de/fhir/directory/StructureDefinition/HealthcareServiceDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "441bb28f-3f68-490e-8c96-7e686cc4b519"
+          }
+        ],
+        "providedBy": {
+          "reference": "Organization/a4f3a10d-823a-40aa-bc76-0758f03227e1"
+        },
+        "location": [
+          {
+            "reference": "Location/fc118d78-f80e-4851-8ea9-7497b06b1cfe"
+          }
+        ],
+        "endpoint": [
+          {
+            "reference": "Endpoint/befd29c3-81e2-4a18-bfcf-a6ac8fc53a12"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/HealthcareService/aa05b2a8-8078-48ef-ada8-65e0b9a7f0ec",
+      "resource": {
+        "resourceType": "HealthcareService",
+        "id": "aa05b2a8-8078-48ef-ada8-65e0b9a7f0ec",
+        "meta": {
+          "versionId": "3",
+          "lastUpdated": "2024-05-16T17:38:22.996+02:00",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/HealthcareService",
+            "https://gematik.de/fhir/directory/StructureDefinition/HealthcareServiceDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "c3d00eb6-adef-409f-931e-64f811fde284"
+          }
+        ],
+        "providedBy": {
+          "reference": "Organization/38ec8bbe-a2c3-4a89-a38f-e2ecfad39068"
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "urn:oid:1.3.6.1.4.1.19376.3.276.1.5.5",
+                "code": "ERN",
+                "display": "Ernährung und Diätetik"
+              }
+            ]
+          }
+        ],
+        "location": [
+          {
+            "reference": "Location/823024d6-2f95-4972-9a44-a59872a5ba23"
+          }
+        ],
+        "endpoint": [
+          {
+            "reference": "Endpoint/2580de94-9003-4a0a-8c3b-b8023046e697"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/HealthcareService/d38207c4-0b60-4175-8061-d03d725c91b4",
+      "resource": {
+        "resourceType": "HealthcareService",
+        "id": "d38207c4-0b60-4175-8061-d03d725c91b4",
+        "meta": {
+          "versionId": "2",
+          "lastUpdated": "2024-03-27T17:52:41.831+01:00",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/HealthcareService",
+            "https://gematik.de/fhir/directory/StructureDefinition/HealthcareServiceDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "d00bbfb8-ec38-42bc-8760-138be242e0e0"
+          }
+        ],
+        "providedBy": {
+          "reference": "Organization/f531bfb2-be6f-4209-a775-973f454286f4"
+        },
+        "location": [
+          {
+            "reference": "Location/6f5fa6c7-bfe7-4c98-ba65-bc6878e388a2"
+          }
+        ],
+        "endpoint": [
+          {
+            "reference": "Endpoint/155a49ff-38a0-48e9-b8ab-0846f4296633"
+          }
+        ]
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Organization/1fb3240c-76c2-473b-ab57-f73fa4a013b8",
+      "resource": {
+        "resourceType": "Organization",
+        "id": "1fb3240c-76c2-473b-ab57-f73fa4a013b8",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:10:22.697+01:00",
+          "source": "#7NrF0r8A4TyXUqsp",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Organization",
+            "https://gematik.de/fhir/directory/StructureDefinition/OrganizationDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "caef75c8-36a2-432b-973b-7e92339cebde"
+          },
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "PRN"
+                }
+              ]
+            },
+            "system": "https://gematik.de/fhir/sid/telematik-id",
+            "value": "1-2arvtst-ap000016"
+          }
+        ],
+        "active": true,
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "https://gematik.de/fhir/directory/CodeSystem/OrganizationProfessionOID",
+                "code": "1.2.276.0.76.4.54",
+                "display": "Öffentliche Apotheke"
+              }
+            ]
+          }
+        ],
+        "name": "Organisation 1-2arvtst-ap000016",
+        "alias": [
+          "Organisation 1-2arvtst-ap000016"
+        ]
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Organization/a4f3a10d-823a-40aa-bc76-0758f03227e1",
+      "resource": {
+        "resourceType": "Organization",
+        "id": "a4f3a10d-823a-40aa-bc76-0758f03227e1",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:15:16.631+01:00",
+          "source": "#kPdsPRN0P47u7kbj",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Organization",
+            "https://gematik.de/fhir/directory/StructureDefinition/OrganizationDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "76ddb807-8fa6-499f-8d72-908541fdec9c"
+          },
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "PRN"
+                }
+              ]
+            },
+            "system": "https://gematik.de/fhir/sid/telematik-id",
+            "value": "1-2arvtst-ap000141"
+          }
+        ],
+        "active": true,
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "https://gematik.de/fhir/directory/CodeSystem/OrganizationProfessionOID",
+                "code": "1.2.276.0.76.4.54",
+                "display": "Öffentliche Apotheke"
+              }
+            ]
+          }
+        ],
+        "name": "Organisation 1-2arvtst-ap000141",
+        "alias": [
+          "Organisation 1-2arvtst-ap000141"
+        ]
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Endpoint/10642f91-e062-44c9-8e3b-902e16ef8437",
+      "resource": {
+        "resourceType": "Endpoint",
+        "id": "10642f91-e062-44c9-8e3b-902e16ef8437",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:10:22.697+01:00",
+          "source": "#7NrF0r8A4TyXUqsp",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Endpoint",
+            "https://gematik.de/fhir/directory/StructureDefinition/EndpointDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "b1d4dcf6-4d56-40ca-91fe-b4dc38fe22e3"
+          }
+        ],
+        "status": "active",
+        "connectionType": {
+          "system": "https://gematik.de/fhir/directory/CodeSystem/EndpointDirectoryConnectionType",
+          "code": "tim"
+        },
+        "name": "MatrixId von Organisation 1-2arvtst-ap000016 (@1-2arvtst-ap000016:tim.test.gematik.de)",
+        "payloadType": [
+          {
+            "coding": [
+              {
+                "system": "https://gematik.de/fhir/directory/CodeSystem/EndpointDirectoryPayloadType",
+                "code": "tim-chat",
+                "display": "TI-Messenger chat"
+              }
+            ]
+          }
+        ],
+        "address": "@1-2arvtst-ap000016:tim.test.gematik.de"
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Endpoint/befd29c3-81e2-4a18-bfcf-a6ac8fc53a12",
+      "resource": {
+        "resourceType": "Endpoint",
+        "id": "befd29c3-81e2-4a18-bfcf-a6ac8fc53a12",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:15:16.631+01:00",
+          "source": "#kPdsPRN0P47u7kbj",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Endpoint",
+            "https://gematik.de/fhir/directory/StructureDefinition/EndpointDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "f630eb7d-e042-4fff-9302-80fd35ce1ac5"
+          }
+        ],
+        "status": "active",
+        "connectionType": {
+          "system": "https://gematik.de/fhir/directory/CodeSystem/EndpointDirectoryConnectionType",
+          "code": "tim"
+        },
+        "name": "MatrixId von Organisation 1-2arvtst-ap000141 (@1-2arvtst-ap000141:tim.test.gematik.de)",
+        "payloadType": [
+          {
+            "coding": [
+              {
+                "system": "https://gematik.de/fhir/directory/CodeSystem/EndpointDirectoryPayloadType",
+                "code": "tim-chat",
+                "display": "TI-Messenger chat"
+              }
+            ]
+          }
+        ],
+        "address": "@1-2arvtst-ap000141:tim.test.gematik.de"
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Location/cb3a2dd5-e287-41bf-87f1-036cdd8f6a7f",
+      "resource": {
+        "resourceType": "Location",
+        "id": "cb3a2dd5-e287-41bf-87f1-036cdd8f6a7f",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:10:22.697+01:00",
+          "source": "#7NrF0r8A4TyXUqsp",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Location",
+            "https://gematik.de/fhir/directory/StructureDefinition/LocationDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "94327122-45f7-4f7a-9d0d-30fe4e0101fd"
+          }
+        ],
+        "name": "Location of Organisation 1-2arvtst-ap000016",
+        "address": {
+          "use": "work",
+          "type": "postal",
+          "text": "Tilsiter Str. 37&#13;&#10;24944&#13;&#10;Flensburg&#13;&#10;Schlewig-Holstein&#13;&#10;DE",
+          "line": [
+            "Tilsiter Str. 37"
+          ],
+          "city": "Flensburg",
+          "state": "Schlewig-Holstein",
+          "postalCode": "24944",
+          "country": "DE"
+        }
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Location/fc118d78-f80e-4851-8ea9-7497b06b1cfe",
+      "resource": {
+        "resourceType": "Location",
+        "id": "fc118d78-f80e-4851-8ea9-7497b06b1cfe",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:15:16.631+01:00",
+          "source": "#kPdsPRN0P47u7kbj",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Location",
+            "https://gematik.de/fhir/directory/StructureDefinition/LocationDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "9b4aa059-1580-4460-899a-012540cc91e6"
+          }
+        ],
+        "name": "Location of Organisation 1-2arvtst-ap000141",
+        "address": {
+          "use": "work",
+          "type": "postal",
+          "text": "Egestorffstr. 7&#13;&#10;30449&#13;&#10;Hannover&#13;&#10;Niedersachsen&#13;&#10;DE",
+          "line": [
+            "Egestorffstr. 7"
+          ],
+          "city": "Hannover",
+          "state": "Niedersachsen",
+          "postalCode": "30449",
+          "country": "DE"
+        }
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Organization/6a10284a-2249-4998-94a8-da5b169122b2",
+      "resource": {
+        "resourceType": "Organization",
+        "id": "6a10284a-2249-4998-94a8-da5b169122b2",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:14:28.492+01:00",
+          "source": "#v68ESEnDr61X7J6N",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Organization",
+            "https://gematik.de/fhir/directory/StructureDefinition/OrganizationDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "98af4d10-a2c0-407d-9b93-bd3233a5e6b1"
+          },
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "PRN"
+                }
+              ]
+            },
+            "system": "https://gematik.de/fhir/sid/telematik-id",
+            "value": "1-2arvtst-ap000073"
+          }
+        ],
+        "active": true,
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "https://gematik.de/fhir/directory/CodeSystem/OrganizationProfessionOID",
+                "code": "1.2.276.0.76.4.56",
+                "display": "Bundeswehrapotheke"
+              }
+            ]
+          }
+        ],
+        "name": "Organisation 1-2arvtst-ap000073",
+        "alias": [
+          "Organisation 1-2arvtst-ap000073"
+        ]
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Endpoint/61e96a34-b1e6-40c3-be58-c9075e10550b",
+      "resource": {
+        "resourceType": "Endpoint",
+        "id": "61e96a34-b1e6-40c3-be58-c9075e10550b",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:14:28.492+01:00",
+          "source": "#v68ESEnDr61X7J6N",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Endpoint",
+            "https://gematik.de/fhir/directory/StructureDefinition/EndpointDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "788c6f27-9a4c-49da-b9f3-f6546813f0c3"
+          }
+        ],
+        "status": "active",
+        "connectionType": {
+          "system": "https://gematik.de/fhir/directory/CodeSystem/EndpointDirectoryConnectionType",
+          "code": "tim"
+        },
+        "name": "MatrixId von Organisation 1-2arvtst-ap000073 (@1-2arvtst-ap000073:tim.test.gematik.de)",
+        "payloadType": [
+          {
+            "coding": [
+              {
+                "system": "https://gematik.de/fhir/directory/CodeSystem/EndpointDirectoryPayloadType",
+                "code": "tim-chat",
+                "display": "TI-Messenger chat"
+              }
+            ]
+          }
+        ],
+        "address": "@1-2arvtst-ap000073:tim.test.gematik.de"
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Location/51708391-1cec-4c01-bb12-7a64345a0c42",
+      "resource": {
+        "resourceType": "Location",
+        "id": "51708391-1cec-4c01-bb12-7a64345a0c42",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:14:28.492+01:00",
+          "source": "#v68ESEnDr61X7J6N",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Location",
+            "https://gematik.de/fhir/directory/StructureDefinition/LocationDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "f8ccfe71-a56a-4d87-a039-609cbab37996"
+          }
+        ],
+        "name": "Location of Organisation 1-2arvtst-ap000073",
+        "address": {
+          "use": "work",
+          "type": "postal",
+          "text": "Ahornstr. 14&#13;&#10;64839&#13;&#10;Münster (Hessen)&#13;&#10;Hessen&#13;&#10;DE",
+          "line": [
+            "Ahornstr. 14"
+          ],
+          "city": "Münster (Hessen)",
+          "state": "Hessen",
+          "postalCode": "64839",
+          "country": "DE"
+        }
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Organization/38ec8bbe-a2c3-4a89-a38f-e2ecfad39068",
+      "resource": {
+        "resourceType": "Organization",
+        "id": "38ec8bbe-a2c3-4a89-a38f-e2ecfad39068",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:15:39.710+01:00",
+          "source": "#y9W4TTt7tSnnwbVz",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Organization",
+            "https://gematik.de/fhir/directory/StructureDefinition/OrganizationDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "792dc483-18cc-4618-981e-126df7e2a0bd"
+          },
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "PRN"
+                }
+              ]
+            },
+            "system": "https://gematik.de/fhir/sid/telematik-id",
+            "value": "1-2arvtst-ap000191"
+          }
+        ],
+        "active": true,
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "https://gematik.de/fhir/directory/CodeSystem/OrganizationProfessionOID",
+                "code": "1.2.276.0.76.4.56",
+                "display": "Bundeswehrapotheke"
+              }
+            ]
+          }
+        ],
+        "name": "Organisation 1-2arvtst-ap000191",
+        "alias": [
+          "Organisation 1-2arvtst-ap000191"
+        ]
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Endpoint/2580de94-9003-4a0a-8c3b-b8023046e697",
+      "resource": {
+        "resourceType": "Endpoint",
+        "id": "2580de94-9003-4a0a-8c3b-b8023046e697",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:15:39.710+01:00",
+          "source": "#y9W4TTt7tSnnwbVz",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Endpoint",
+            "https://gematik.de/fhir/directory/StructureDefinition/EndpointDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "8a22bf3b-4597-4842-af8e-c1c056ac7050"
+          }
+        ],
+        "status": "active",
+        "connectionType": {
+          "system": "https://gematik.de/fhir/directory/CodeSystem/EndpointDirectoryConnectionType",
+          "code": "tim"
+        },
+        "name": "MatrixId von Organisation 1-2arvtst-ap000191 (@1-2arvtst-ap000191:tim.test.gematik.de)",
+        "payloadType": [
+          {
+            "coding": [
+              {
+                "system": "https://gematik.de/fhir/directory/CodeSystem/EndpointDirectoryPayloadType",
+                "code": "tim-chat",
+                "display": "TI-Messenger chat"
+              }
+            ]
+          }
+        ],
+        "address": "@1-2arvtst-ap000191:tim.test.gematik.de"
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Location/823024d6-2f95-4972-9a44-a59872a5ba23",
+      "resource": {
+        "resourceType": "Location",
+        "id": "823024d6-2f95-4972-9a44-a59872a5ba23",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:15:39.710+01:00",
+          "source": "#y9W4TTt7tSnnwbVz",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Location",
+            "https://gematik.de/fhir/directory/StructureDefinition/LocationDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "a978f0f0-5c82-4fa2-a519-0d102e480450"
+          }
+        ],
+        "name": "Location of Organisation 1-2arvtst-ap000191",
+        "address": {
+          "use": "work",
+          "type": "postal",
+          "text": "Silberallee 34&#13;&#10;9496&#13;&#10;Marienberg&#13;&#10;Sachsen&#13;&#10;DE",
+          "line": [
+            "Silberallee 34"
+          ],
+          "city": "Marienberg",
+          "state": "Sachsen",
+          "postalCode": "9496",
+          "country": "DE"
+        }
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Organization/4f5a9754-2a9d-486d-9eec-a5c6b5f95016",
+      "resource": {
+        "resourceType": "Organization",
+        "id": "4f5a9754-2a9d-486d-9eec-a5c6b5f95016",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:14:28.492+01:00",
+          "source": "#v68ESEnDr61X7J6N",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Organization",
+            "https://gematik.de/fhir/directory/StructureDefinition/OrganizationDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "44bb2f53-cdd7-4098-9d52-a6c5ac0ddc8d"
+          },
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "PRN"
+                }
+              ]
+            },
+            "system": "https://gematik.de/fhir/sid/telematik-id",
+            "value": "1-2arvtst-ap000053"
+          }
+        ],
+        "active": true,
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "https://gematik.de/fhir/directory/CodeSystem/OrganizationProfessionOID",
+                "code": "1.2.276.0.76.4.54",
+                "display": "Öffentliche Apotheke"
+              }
+            ]
+          }
+        ],
+        "name": "Organisation 1-2arvtst-ap000053",
+        "alias": [
+          "Organisation 1-2arvtst-ap000053"
+        ]
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Organization/f531bfb2-be6f-4209-a775-973f454286f4",
+      "resource": {
+        "resourceType": "Organization",
+        "id": "f531bfb2-be6f-4209-a775-973f454286f4",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:16:24.922+01:00",
+          "source": "#oLO3C8rRJtnOpc64",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Organization",
+            "https://gematik.de/fhir/directory/StructureDefinition/OrganizationDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "938791fa-2084-4c18-917b-c13b73f9c589"
+          },
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "PRN"
+                }
+              ]
+            },
+            "system": "https://gematik.de/fhir/sid/telematik-id",
+            "value": "1-2arvtst-ap000261"
+          }
+        ],
+        "active": true,
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "https://gematik.de/fhir/directory/CodeSystem/OrganizationProfessionOID",
+                "code": "1.2.276.0.76.4.56",
+                "display": "Bundeswehrapotheke"
+              }
+            ]
+          }
+        ],
+        "name": "Organisation 1-2arvtst-ap000261",
+        "alias": [
+          "Organisation 1-2arvtst-ap000261"
+        ]
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Endpoint/11d91987-d31e-468f-962e-845bb0c743c3",
+      "resource": {
+        "resourceType": "Endpoint",
+        "id": "11d91987-d31e-468f-962e-845bb0c743c3",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:14:28.492+01:00",
+          "source": "#v68ESEnDr61X7J6N",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Endpoint",
+            "https://gematik.de/fhir/directory/StructureDefinition/EndpointDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "d41180a5-cc74-4ad7-a84f-beea06b70f6b"
+          }
+        ],
+        "status": "active",
+        "connectionType": {
+          "system": "https://gematik.de/fhir/directory/CodeSystem/EndpointDirectoryConnectionType",
+          "code": "tim"
+        },
+        "name": "MatrixId von Organisation 1-2arvtst-ap000053 (@1-2arvtst-ap000053:tim.test.gematik.de)",
+        "payloadType": [
+          {
+            "coding": [
+              {
+                "system": "https://gematik.de/fhir/directory/CodeSystem/EndpointDirectoryPayloadType",
+                "code": "tim-chat",
+                "display": "TI-Messenger chat"
+              }
+            ]
+          }
+        ],
+        "address": "@1-2arvtst-ap000053:tim.test.gematik.de"
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Endpoint/155a49ff-38a0-48e9-b8ab-0846f4296633",
+      "resource": {
+        "resourceType": "Endpoint",
+        "id": "155a49ff-38a0-48e9-b8ab-0846f4296633",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:16:24.922+01:00",
+          "source": "#oLO3C8rRJtnOpc64",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Endpoint",
+            "https://gematik.de/fhir/directory/StructureDefinition/EndpointDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "85db3b05-c561-4dff-9735-5cc677228695"
+          }
+        ],
+        "status": "active",
+        "connectionType": {
+          "system": "https://gematik.de/fhir/directory/CodeSystem/EndpointDirectoryConnectionType",
+          "code": "tim"
+        },
+        "name": "MatrixId von Organisation 1-2arvtst-ap000261 (@1-2arvtst-ap000261:tim.test.gematik.de)",
+        "payloadType": [
+          {
+            "coding": [
+              {
+                "system": "https://gematik.de/fhir/directory/CodeSystem/EndpointDirectoryPayloadType",
+                "code": "tim-chat",
+                "display": "TI-Messenger chat"
+              }
+            ]
+          }
+        ],
+        "address": "@1-2arvtst-ap000261:tim.test.gematik.de"
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Location/9514f96e-897d-492d-950f-aea11d6f2bb4",
+      "resource": {
+        "resourceType": "Location",
+        "id": "9514f96e-897d-492d-950f-aea11d6f2bb4",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:14:28.492+01:00",
+          "source": "#v68ESEnDr61X7J6N",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Location",
+            "https://gematik.de/fhir/directory/StructureDefinition/LocationDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "995d8a48-f7fc-4ffb-a676-feb18c7c052c"
+          }
+        ],
+        "name": "Location of Organisation 1-2arvtst-ap000053",
+        "address": {
+          "use": "work",
+          "type": "postal",
+          "text": "Schwarzwaldstr. 18&#13;&#10;63762&#13;&#10;Großostheim&#13;&#10;Bayern&#13;&#10;DE",
+          "line": [
+            "Schwarzwaldstr. 18"
+          ],
+          "city": "Großostheim",
+          "state": "Bayern",
+          "postalCode": "63762",
+          "country": "DE"
+        }
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Location/6f5fa6c7-bfe7-4c98-ba65-bc6878e388a2",
+      "resource": {
+        "resourceType": "Location",
+        "id": "6f5fa6c7-bfe7-4c98-ba65-bc6878e388a2",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:16:24.922+01:00",
+          "source": "#oLO3C8rRJtnOpc64",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Location",
+            "https://gematik.de/fhir/directory/StructureDefinition/LocationDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "0b330019-2488-4fc7-b61e-f87160659c41"
+          }
+        ],
+        "name": "Location of Organisation 1-2arvtst-ap000261",
+        "address": {
+          "use": "work",
+          "type": "postal",
+          "text": "Badstr. 14&#13;&#10;91301&#13;&#10;Forchheim&#13;&#10;Bayern&#13;&#10;DE",
+          "line": [
+            "Badstr. 14"
+          ],
+          "city": "Forchheim",
+          "state": "Bayern",
+          "postalCode": "91301",
+          "country": "DE"
+        }
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Organization/0e1f7f20-6795-4041-a33b-19e1fb64a6b8",
+      "resource": {
+        "resourceType": "Organization",
+        "id": "0e1f7f20-6795-4041-a33b-19e1fb64a6b8",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:14:28.492+01:00",
+          "source": "#v68ESEnDr61X7J6N",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Organization",
+            "https://gematik.de/fhir/directory/StructureDefinition/OrganizationDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "acc171ba-460b-4797-815e-0bb30341bdd5"
+          },
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "PRN"
+                }
+              ]
+            },
+            "system": "https://gematik.de/fhir/sid/telematik-id",
+            "value": "1-2arvtst-ap000064"
+          }
+        ],
+        "active": true,
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "https://gematik.de/fhir/directory/CodeSystem/OrganizationProfessionOID",
+                "code": "1.2.276.0.76.4.56",
+                "display": "Bundeswehrapotheke"
+              }
+            ]
+          }
+        ],
+        "name": "Organisation 1-2arvtst-ap000064",
+        "alias": [
+          "Organisation 1-2arvtst-ap000064"
+        ]
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Organization/5fbbcb9d-33e6-40ca-b218-82d8f4a1951b",
+      "resource": {
+        "resourceType": "Organization",
+        "id": "5fbbcb9d-33e6-40ca-b218-82d8f4a1951b",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:14:52.292+01:00",
+          "source": "#Y0FhdfRdKPgGfRiN",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Organization",
+            "https://gematik.de/fhir/directory/StructureDefinition/OrganizationDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "709fc26b-3750-4cbf-b37c-6caa5714b242"
+          },
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "PRN"
+                }
+              ]
+            },
+            "system": "https://gematik.de/fhir/sid/telematik-id",
+            "value": "1-2arvtst-ap000112"
+          }
+        ],
+        "active": true,
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "https://gematik.de/fhir/directory/CodeSystem/OrganizationProfessionOID",
+                "code": "1.2.276.0.76.4.54",
+                "display": "Öffentliche Apotheke"
+              }
+            ]
+          }
+        ],
+        "name": "Organisation 1-2arvtst-ap000112",
+        "alias": [
+          "Organisation 1-2arvtst-ap000112"
+        ]
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Endpoint/ab10eb1d-a91d-474d-a1a5-d374dc9d37ac",
+      "resource": {
+        "resourceType": "Endpoint",
+        "id": "ab10eb1d-a91d-474d-a1a5-d374dc9d37ac",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:14:28.492+01:00",
+          "source": "#v68ESEnDr61X7J6N",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Endpoint",
+            "https://gematik.de/fhir/directory/StructureDefinition/EndpointDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "1ab8cf1a-6708-499d-8d84-2e12ab1c825b"
+          }
+        ],
+        "status": "active",
+        "connectionType": {
+          "system": "https://gematik.de/fhir/directory/CodeSystem/EndpointDirectoryConnectionType",
+          "code": "tim"
+        },
+        "name": "MatrixId von Organisation 1-2arvtst-ap000064 (@1-2arvtst-ap000064:tim.test.gematik.de)",
+        "payloadType": [
+          {
+            "coding": [
+              {
+                "system": "https://gematik.de/fhir/directory/CodeSystem/EndpointDirectoryPayloadType",
+                "code": "tim-chat",
+                "display": "TI-Messenger chat"
+              }
+            ]
+          }
+        ],
+        "address": "@1-2arvtst-ap000064:tim.test.gematik.de"
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Endpoint/72379885-2d8c-43e1-8722-bf5fb45fbf30",
+      "resource": {
+        "resourceType": "Endpoint",
+        "id": "72379885-2d8c-43e1-8722-bf5fb45fbf30",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:14:52.292+01:00",
+          "source": "#Y0FhdfRdKPgGfRiN",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Endpoint",
+            "https://gematik.de/fhir/directory/StructureDefinition/EndpointDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "a689daa6-e747-424d-b72c-1b8393d1911d"
+          }
+        ],
+        "status": "active",
+        "connectionType": {
+          "system": "https://gematik.de/fhir/directory/CodeSystem/EndpointDirectoryConnectionType",
+          "code": "tim"
+        },
+        "name": "MatrixId von Organisation 1-2arvtst-ap000112 (@1-2arvtst-ap000112:tim.test.gematik.de)",
+        "payloadType": [
+          {
+            "coding": [
+              {
+                "system": "https://gematik.de/fhir/directory/CodeSystem/EndpointDirectoryPayloadType",
+                "code": "tim-chat",
+                "display": "TI-Messenger chat"
+              }
+            ]
+          }
+        ],
+        "address": "@1-2arvtst-ap000112:tim.test.gematik.de"
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Location/0097e53a-c3d1-4c1e-b7ed-ec15aa1c7b8b",
+      "resource": {
+        "resourceType": "Location",
+        "id": "0097e53a-c3d1-4c1e-b7ed-ec15aa1c7b8b",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:14:28.492+01:00",
+          "source": "#v68ESEnDr61X7J6N",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Location",
+            "https://gematik.de/fhir/directory/StructureDefinition/LocationDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "eb867700-ca18-4e5b-8d61-8dd3a139e0a7"
+          }
+        ],
+        "name": "Location of Organisation 1-2arvtst-ap000064",
+        "address": {
+          "use": "work",
+          "type": "postal",
+          "text": "Barbarastr. 30&#13;&#10;49076&#13;&#10;Osnabrück&#13;&#10;Niedersachsen&#13;&#10;DE",
+          "line": [
+            "Barbarastr. 30"
+          ],
+          "city": "Osnabrück",
+          "state": "Niedersachsen",
+          "postalCode": "49076",
+          "country": "DE"
+        }
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Location/60178ff3-d341-41f8-bd76-5d7efd876a2b",
+      "resource": {
+        "resourceType": "Location",
+        "id": "60178ff3-d341-41f8-bd76-5d7efd876a2b",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:14:52.292+01:00",
+          "source": "#Y0FhdfRdKPgGfRiN",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Location",
+            "https://gematik.de/fhir/directory/StructureDefinition/LocationDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "dc02b3b3-1af8-4518-af14-e3568ba8f388"
+          }
+        ],
+        "name": "Location of Organisation 1-2arvtst-ap000112",
+        "address": {
+          "use": "work",
+          "type": "postal",
+          "text": "Taruper Weg 22&#13;&#10;24943&#13;&#10;Flensburg&#13;&#10;Schlewig-Holstein&#13;&#10;DE",
+          "line": [
+            "Taruper Weg 22"
+          ],
+          "city": "Flensburg",
+          "state": "Schlewig-Holstein",
+          "postalCode": "24943",
+          "country": "DE"
+        }
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Organization/03ff983a-6b8d-4dc6-a1d2-74cc537d378a",
+      "resource": {
+        "resourceType": "Organization",
+        "id": "03ff983a-6b8d-4dc6-a1d2-74cc537d378a",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:15:16.631+01:00",
+          "source": "#kPdsPRN0P47u7kbj",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Organization",
+            "https://gematik.de/fhir/directory/StructureDefinition/OrganizationDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "160bff7d-5a3b-47f4-aa66-a4a0f2b30821"
+          },
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "PRN"
+                }
+              ]
+            },
+            "system": "https://gematik.de/fhir/sid/telematik-id",
+            "value": "1-2arvtst-ap000129"
+          }
+        ],
+        "active": true,
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "https://gematik.de/fhir/directory/CodeSystem/OrganizationProfessionOID",
+                "code": "1.2.276.0.76.4.56",
+                "display": "Bundeswehrapotheke"
+              }
+            ]
+          }
+        ],
+        "name": "Organisation 1-2arvtst-ap000129",
+        "alias": [
+          "Organisation 1-2arvtst-ap000129"
+        ]
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Endpoint/7bbdc72b-12fc-4cda-98c3-104bd0263868",
+      "resource": {
+        "resourceType": "Endpoint",
+        "id": "7bbdc72b-12fc-4cda-98c3-104bd0263868",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:15:16.631+01:00",
+          "source": "#kPdsPRN0P47u7kbj",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Endpoint",
+            "https://gematik.de/fhir/directory/StructureDefinition/EndpointDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "dc1050ee-1f4e-4658-a430-0308b09bdb80"
+          }
+        ],
+        "status": "active",
+        "connectionType": {
+          "system": "https://gematik.de/fhir/directory/CodeSystem/EndpointDirectoryConnectionType",
+          "code": "tim"
+        },
+        "name": "MatrixId von Organisation 1-2arvtst-ap000129 (@1-2arvtst-ap000129:tim.test.gematik.de)",
+        "payloadType": [
+          {
+            "coding": [
+              {
+                "system": "https://gematik.de/fhir/directory/CodeSystem/EndpointDirectoryPayloadType",
+                "code": "tim-chat",
+                "display": "TI-Messenger chat"
+              }
+            ]
+          }
+        ],
+        "address": "@1-2arvtst-ap000129:tim.test.gematik.de"
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Location/3a57ca8d-53bf-4d91-95f8-f9d0ef34279b",
+      "resource": {
+        "resourceType": "Location",
+        "id": "3a57ca8d-53bf-4d91-95f8-f9d0ef34279b",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:15:16.631+01:00",
+          "source": "#kPdsPRN0P47u7kbj",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Location",
+            "https://gematik.de/fhir/directory/StructureDefinition/LocationDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "8a477e57-dbee-4eaf-9197-34b1e3b21bf3"
+          }
+        ],
+        "name": "Location of Organisation 1-2arvtst-ap000129",
+        "address": {
+          "use": "work",
+          "type": "postal",
+          "text": "Friesstr. 5&#13;&#10;60388&#13;&#10;Frankfurt am Main&#13;&#10;Hessen&#13;&#10;DE",
+          "line": [
+            "Friesstr. 5"
+          ],
+          "city": "Frankfurt am Main",
+          "state": "Hessen",
+          "postalCode": "60388",
+          "country": "DE"
+        }
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Organization/97639dc3-6412-43a3-b89c-df48e24d3365",
+      "resource": {
+        "resourceType": "Organization",
+        "id": "97639dc3-6412-43a3-b89c-df48e24d3365",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:14:28.492+01:00",
+          "source": "#v68ESEnDr61X7J6N",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Organization",
+            "https://gematik.de/fhir/directory/StructureDefinition/OrganizationDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "05664acf-6726-41d5-b6d7-bd4078016be1"
+          },
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "PRN"
+                }
+              ]
+            },
+            "system": "https://gematik.de/fhir/sid/telematik-id",
+            "value": "1-2arvtst-ap000076"
+          }
+        ],
+        "active": true,
+        "type": [
+          {
+            "coding": [
+              {
+                "system": "https://gematik.de/fhir/directory/CodeSystem/OrganizationProfessionOID",
+                "code": "1.2.276.0.76.4.56",
+                "display": "Bundeswehrapotheke"
+              }
+            ]
+          }
+        ],
+        "name": "Organisation 1-2arvtst-ap000076",
+        "alias": [
+          "Organisation 1-2arvtst-ap000076"
+        ]
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Endpoint/8bf101e0-a818-4782-8ace-d42fb5f333e9",
+      "resource": {
+        "resourceType": "Endpoint",
+        "id": "8bf101e0-a818-4782-8ace-d42fb5f333e9",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:14:28.492+01:00",
+          "source": "#v68ESEnDr61X7J6N",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Endpoint",
+            "https://gematik.de/fhir/directory/StructureDefinition/EndpointDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "1689c1e2-48a6-4eb5-b361-1a6d78348b6a"
+          }
+        ],
+        "status": "active",
+        "connectionType": {
+          "system": "https://gematik.de/fhir/directory/CodeSystem/EndpointDirectoryConnectionType",
+          "code": "tim"
+        },
+        "name": "MatrixId von Organisation 1-2arvtst-ap000076 (@1-2arvtst-ap000076:tim.test.gematik.de)",
+        "payloadType": [
+          {
+            "coding": [
+              {
+                "system": "https://gematik.de/fhir/directory/CodeSystem/EndpointDirectoryPayloadType",
+                "code": "tim-chat",
+                "display": "TI-Messenger chat"
+              }
+            ]
+          }
+        ],
+        "address": "@1-2arvtst-ap000076:tim.test.gematik.de"
+      },
+      "search": {
+        "mode": "include"
+      }
+    },
+    {
+      "fullUrl": "https://fhir-directory-ref.vzd.ti-dienste.de/fdv/search/Location/16c1a5f8-f530-4b48-bd21-a32c322285f4",
+      "resource": {
+        "resourceType": "Location",
+        "id": "16c1a5f8-f530-4b48-bd21-a32c322285f4",
+        "meta": {
+          "versionId": "1",
+          "lastUpdated": "2023-03-23T14:14:28.492+01:00",
+          "source": "#v68ESEnDr61X7J6N",
+          "profile": [
+            "http://hl7.org/fhir/StructureDefinition/Location",
+            "https://gematik.de/fhir/directory/StructureDefinition/LocationDirectory"
+          ]
+        },
+        "identifier": [
+          {
+            "system": "http://hl7.org/fhir/sid/us-npi",
+            "value": "156d5695-ae76-4152-b620-4492516cd346"
+          }
+        ],
+        "name": "Location of Organisation 1-2arvtst-ap000076",
+        "address": {
+          "use": "work",
+          "type": "postal",
+          "text": "Goethestr. 40&#13;&#10;61118&#13;&#10;Bad Vilbel&#13;&#10;Hessen&#13;&#10;DE",
+          "line": [
+            "Goethestr. 40"
+          ],
+          "city": "Bad Vilbel",
+          "state": "Hessen",
+          "postalCode": "61118",
+          "country": "DE"
+        }
+      },
+      "search": {
+        "mode": "include"
+      }
+    }
+  ]
+}

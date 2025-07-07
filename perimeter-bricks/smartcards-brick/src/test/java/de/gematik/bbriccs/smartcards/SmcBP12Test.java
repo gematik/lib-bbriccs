@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.smartcards;
@@ -19,7 +23,7 @@ package de.gematik.bbriccs.smartcards;
 import static org.junit.jupiter.api.Assertions.*;
 
 import de.gematik.bbriccs.crypto.CryptoSystem;
-import de.gematik.bbriccs.crypto.certificate.Oid;
+import de.gematik.bbriccs.crypto.certificate.CertificateTypeOid;
 import de.gematik.bbriccs.smartcards.exceptions.SmartCardKeyNotFoundException;
 import java.util.List;
 import lombok.val;
@@ -52,6 +56,6 @@ class SmcBP12Test {
   @Test
   void getAutOids() {
     val smcb = archive.getSmcB(0);
-    assertEquals(List.of(Oid.OID_SMC_B_AUT), smcb.getAutOids());
+    assertEquals(List.of(CertificateTypeOid.OID_SMC_B_AUT), smcb.getAutOids());
   }
 }

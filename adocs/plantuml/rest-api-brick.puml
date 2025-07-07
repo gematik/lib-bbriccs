@@ -1,0 +1,22 @@
+@startuml
+interface HttpBClient {
+    + init() : HttpBclient
+    + shutDown()
+    + send(HttpBRequest) : HttpBResponse
+}
+
+interface HttpBEntity {
+    + version : HttpVersion
+    + headers : List<HttpHeader>
+    + body : byte[]
+}
+
+interface HttpBRequest
+interface HttpBResponse
+interface HttpHeader
+
+HttpBEntity *-r-> HttpHeader
+HttpBClient -r-> HttpBEntity
+HttpBEntity <|-- HttpBRequest
+HttpBEntity <|-- HttpBResponse
+@enduml

@@ -12,13 +12,25 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.konnektor;
 
 import de.gematik.bbriccs.cardterminal.CardTerminalOperator;
+import de.gematik.bbriccs.cardterminal.PinType;
+import de.gematik.bbriccs.cardterminal.exceptions.PinVerificationException;
+import de.gematik.bbriccs.crypto.CryptoSystem;
 import de.gematik.bbriccs.konnektor.cfg.KonnektorConfiguration;
 import de.gematik.bbriccs.konnektor.exceptions.MissingKonnektorServiceException;
+import de.gematik.bbriccs.konnektor.requests.ExternalAuthenticateRequest;
+import de.gematik.bbriccs.konnektor.requests.GetCardHandleRequest;
+import de.gematik.bbriccs.konnektor.requests.VerifyPinRequest;
+import de.gematik.bbriccs.smartcards.Smartcard;
+import de.gematik.ws.conn.cardservicecommon.v2.PinResultEnum;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import lombok.val;
@@ -31,6 +43,25 @@ public interface Konnektor {
   <R> KonnektorResponse<R> execute(KonnektorRequest<R> cmd);
 
   <R> Optional<KonnektorResponse<R>> executeSafely(KonnektorRequest<R> cmd);
+
+  default KonnektorResponse<byte[]> externalAuthenticate(Smartcard smartcard, byte[] challenge) {
+    val cryptoSystem = smartcard.getAutCertificate().getCryptoSystem();
+    return externalAuthenticate(smartcard, cryptoSystem, challenge);
+  }
+
+  default KonnektorResponse<byte[]> externalAuthenticate(
+      Smartcard smartcard, CryptoSystem cryptoSystem, byte[] challenge) {
+    val cardHandle = this.execute(GetCardHandleRequest.forSmartcard(smartcard)).getPayload();
+    val pinResponseType =
+        this.execute(new VerifyPinRequest(cardHandle, PinType.PIN_SMC)).getPayload();
+    if (pinResponseType.getPinResult() != PinResultEnum.OK) {
+      throw new PinVerificationException(smartcard);
+    }
+
+    val externalAuthenticateCmd =
+        new ExternalAuthenticateRequest(cardHandle, cryptoSystem, challenge);
+    return this.execute(externalAuthenticateCmd);
+  }
 
   CardTerminalOperator getCardTerminalOperator();
 

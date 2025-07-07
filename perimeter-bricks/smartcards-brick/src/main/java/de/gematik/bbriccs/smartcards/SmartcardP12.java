@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.smartcards;
@@ -20,7 +24,7 @@ import static java.text.MessageFormat.format;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.gematik.bbriccs.crypto.CryptoSystem;
-import de.gematik.bbriccs.crypto.certificate.Oid;
+import de.gematik.bbriccs.crypto.certificate.CertificateTypeOid;
 import de.gematik.bbriccs.smartcards.cfg.SmartcardConfigDto;
 import de.gematik.bbriccs.smartcards.exceptions.InvalidSmartcardTypeException;
 import de.gematik.bbriccs.smartcards.exceptions.SmartCardKeyNotFoundException;
@@ -65,7 +69,7 @@ public abstract class SmartcardP12 implements Smartcard {
         LdapReader.getOwnerData(
             this.getAutCertificate().getX509Certificate().getSubjectX500Principal());
 
-    log.trace(format("Initialize smartcard {0} with iccsn={1}", this.type.name(), this.iccsn));
+    log.trace("Initialize smartcard {} with iccsn={}", this.type.name(), this.iccsn);
   }
 
   @Override
@@ -112,9 +116,9 @@ public abstract class SmartcardP12 implements Smartcard {
     }
   }
 
-  protected Optional<SmartcardCertificate> getKey(Oid oid, CryptoSystem cryptoSystem) {
-    log.debug(
-        format("Look for smartcard certificate with oid={0} and algorithm={1}", oid, cryptoSystem));
+  protected Optional<SmartcardCertificate> getKey(
+      CertificateTypeOid oid, CryptoSystem cryptoSystem) {
+    log.debug("Look for smartcard certificate with oid={} and algorithm={}", oid, cryptoSystem);
     return certificates.stream()
         .filter(it -> it.getCryptoSystem() == cryptoSystem)
         .filter(it -> it.getOid() == oid)

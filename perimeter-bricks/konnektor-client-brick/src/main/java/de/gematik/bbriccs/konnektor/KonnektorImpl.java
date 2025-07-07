@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.konnektor;
@@ -52,9 +56,10 @@ public final class KonnektorImpl implements Konnektor {
     val response = cmd.execute(ctx, serviceProvider);
     val duration = Duration.between(start, Instant.now());
     log.info(
-        format(
-            "Received Response for {0} from {1} within {2}",
-            cmd.getClass().getSimpleName(), this, duration.toMillis()));
+        "Received Response for {} from {} within {}",
+        cmd.getClass().getSimpleName(),
+        this,
+        duration.toMillis());
     return new KonnektorResponse<>(response, duration);
   }
 
@@ -63,10 +68,7 @@ public final class KonnektorImpl implements Konnektor {
     try {
       return Optional.of(execute(cmd));
     } catch (Exception e) {
-      log.warn(
-          format(
-              "Execute {0} produced an error: {1}",
-              cmd.getClass().getSimpleName(), e.getMessage()));
+      log.warn("Execute {} produced an error: {}", cmd.getClass().getSimpleName(), e.getMessage());
       return Optional.empty();
     }
   }

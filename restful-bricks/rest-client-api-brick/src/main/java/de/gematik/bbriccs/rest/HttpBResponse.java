@@ -12,89 +12,27 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.rest;
 
+import de.gematik.bbriccs.rest.HttpBResponseImpl.HttpBResponseBuilder;
 import de.gematik.bbriccs.rest.headers.HttpHeader;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import lombok.Generated;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
-public record HttpBResponse(
-    HttpVersion version, int statusCode, List<HttpHeader> headers, byte[] body)
-    implements HttpBEntity {
+public interface HttpBResponse extends HttpBEntity {
 
-  public HttpBResponse {
-    if (body == null) {
-      body = new byte[0];
-    }
-  }
+  int statusCode();
 
-  public HttpBResponse(int statusCode, List<HttpHeader> headers, byte[] body) {
-    this(HttpVersion.HTTP_1_1, statusCode, headers, body);
-  }
+  List<HttpHeader> headers();
 
-  public HttpBResponse(int statusCode, List<HttpHeader> headers, String body) {
-    this(HttpVersion.HTTP_1_1, statusCode, headers, body);
-  }
+  byte[] body();
 
-  public HttpBResponse(int statusCode, List<HttpHeader> headers) {
-    this(HttpVersion.HTTP_1_1, statusCode, headers, new byte[0]);
-  }
-
-  public HttpBResponse(HttpVersion version, int statusCode, List<HttpHeader> headers, String body) {
-    this(
-        version,
-        statusCode,
-        headers,
-        Optional.ofNullable(body).map(b -> b.getBytes(StandardCharsets.UTF_8)).orElse(new byte[0]));
-  }
-
-  public HttpBResponse(HttpVersion version, int statusCode, List<HttpHeader> headers) {
-    this(version, statusCode, headers, new byte[0]);
-  }
-
-  @Override
-  @Generated
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    HttpBResponse that = (HttpBResponse) o;
-    return statusCode == that.statusCode
-        && Objects.equals(version, that.version)
-        && Objects.equals(headers, that.headers)
-        && Arrays.equals(body, that.body);
-  }
-
-  @Override
-  @Generated
-  public int hashCode() {
-    int result = Objects.hash(version, statusCode, headers);
-    result = 31 * result + Arrays.hashCode(body);
-    return result;
-  }
-
-  @Override
-  @Generated
-  public String toString() {
-    return "HttpResponse{"
-        + "protocol='"
-        + version
-        + '\''
-        + ", statusCode="
-        + statusCode
-        + ", headers="
-        + headers
-        + '\''
-        + ", body="
-        + body.length
-        + " Bytes"
-        + '}';
+  static HttpBResponseBuilder status(int statusCode) {
+    return new HttpBResponseBuilder(statusCode);
   }
 }

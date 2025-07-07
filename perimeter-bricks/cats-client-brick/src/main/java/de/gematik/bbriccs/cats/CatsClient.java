@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.cats;
@@ -28,7 +32,7 @@ import de.gematik.bbriccs.cats.dto.CardStatusDto;
 import de.gematik.bbriccs.rest.HttpBClient;
 import de.gematik.bbriccs.rest.HttpBRequest;
 import de.gematik.bbriccs.rest.HttpRequestMethod;
-import de.gematik.bbriccs.rest.RestClient;
+import de.gematik.bbriccs.rest.UnirestHttpClient;
 import de.gematik.bbriccs.rest.headers.StandardHttpHeaderKey;
 import de.gematik.bbriccs.smartcards.Smartcard;
 import java.util.*;
@@ -56,9 +60,9 @@ public class CatsClient implements CardTerminal {
 
   public static Builder create(String address) {
     return create(
-        RestClient.forUrl(address)
-            .withHeader(StandardHttpHeaderKey.CONTENT_TYPE.createHeader(MimeTypes.JSON))
-            .withHeader(StandardHttpHeaderKey.ACCEPT.createHeader(MimeTypes.JSON))
+        UnirestHttpClient.forUrl(address)
+            .header(StandardHttpHeaderKey.CONTENT_TYPE.createHeader(MimeTypes.JSON))
+            .header(StandardHttpHeaderKey.ACCEPT.createHeader(MimeTypes.JSON))
             .withoutTlsVerification()
             .init());
   }
@@ -127,7 +131,7 @@ public class CatsClient implements CardTerminal {
   @SneakyThrows
   private <T> void request(String path, T body) {
     val bodyString = this.mapper.writeValueAsString(body);
-    val req = new HttpBRequest(HttpRequestMethod.POST, path, bodyString);
+    val req = HttpBRequest.post().urlPath(path).withPayload(bodyString);
     val resp = this.restClient.send(req);
 
     if (resp.statusCode() != 200) {

@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.rest;
@@ -21,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import de.gematik.bbriccs.rest.headers.JwtHeaderKey;
 import de.gematik.bbriccs.rest.headers.StandardHttpHeaderKey;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +34,7 @@ class HttpBRequestTest {
   void shouldNotThrowOnNullBody01() {
     byte[] nullBody = null;
     val request =
-        new HttpBRequest(HttpVersion.HTTP_1_1, HttpRequestMethod.GET, "a/b/c", List.of(), nullBody);
+        HttpBRequest.get().version(HttpVersion.HTTP_1_1).urlPath("a/b/c").withPayload(nullBody);
     assertNotNull(request.body());
     assertEquals(0, request.body().length);
     assertTrue(request.isEmptyBody());
@@ -41,7 +44,7 @@ class HttpBRequestTest {
   @Test
   void shouldNotThrowOnNullBody02() {
     String nullBody = null;
-    val request = new HttpBRequest(HttpRequestMethod.GET, "a/b/c", nullBody);
+    val request = HttpBRequest.get().urlPath("a/b/c").withPayload(nullBody);
     assertNotNull(request.body());
     assertEquals(0, request.body().length);
     assertTrue(request.isEmptyBody());
@@ -51,7 +54,7 @@ class HttpBRequestTest {
   @Test
   void shouldNotThrowOnEmptyBody() {
     val emptyBody = new byte[0];
-    val request = new HttpBRequest(HttpRequestMethod.GET, "a/b/c", emptyBody);
+    val request = HttpBRequest.patch().urlPath("a/b/c").withPayload(emptyBody);
     assertNotNull(request.body());
     assertTrue(request.isEmptyBody());
     assertEquals("", request.bodyAsString());
@@ -60,11 +63,11 @@ class HttpBRequestTest {
   @Test
   void shouldNotThrowOnEmptyBody02() {
     val request =
-        new HttpBRequest(
-            HttpRequestMethod.GET,
-            "a/b/c",
-            StandardHttpHeaderKey.USER_AGENT.createHeader("bbriccs"),
-            "");
+        HttpBRequest.get()
+            .urlPath("a/b/c")
+            .headers(StandardHttpHeaderKey.USER_AGENT.createHeader("bbriccs"))
+            .withoutPayload();
+
     assertNotNull(request.body());
     assertTrue(request.isEmptyBody());
     assertEquals("", request.bodyAsString());
@@ -73,7 +76,7 @@ class HttpBRequestTest {
   @Test
   void shouldEncodeBodyAsString() {
     val body = "HelloWorld";
-    val request = new HttpBRequest(HttpRequestMethod.GET, "a/b/c", List.of(), body);
+    val request = HttpBRequest.post().urlPath("a/b/c").withPayload(body);
     assertNotNull(request.body());
     assertFalse(request.isEmptyBody());
     assertEquals("HelloWorld", request.bodyAsString());
@@ -84,11 +87,54 @@ class HttpBRequestTest {
   void shouldExtractBearerToken() {
     val body = "HelloWorld".getBytes(StandardCharsets.UTF_8);
     val request =
-        new HttpBRequest(
-            HttpRequestMethod.GET, "a/b/c", JwtHeaderKey.AUTHORIZATION.createHeader("ABC"), body);
+        HttpBRequest.put()
+            .urlPath("a/b/c")
+            .headers(JwtHeaderKey.AUTHORIZATION.createHeader("ABC"))
+            .withPayload(body);
 
     val bearer = request.getBearerToken();
     assertTrue(bearer.isPresent());
     assertEquals("ABC", bearer.get());
+  }
+
+  @Test
+  void shouldNotOverwriteExistingHeader() {
+    val request =
+        HttpBRequest.get()
+            .urlPath("a/b/c")
+            .headers(StandardHttpHeaderKey.USER_AGENT.createHeader("ABC"))
+            .withoutPayload();
+
+    request.addIfAbsentHeader(StandardHttpHeaderKey.USER_AGENT.createHeader("XYZ"));
+
+    assertTrue(request.hasHeader(StandardHttpHeaderKey.USER_AGENT));
+    assertEquals(1, request.headerValues(StandardHttpHeaderKey.USER_AGENT).size());
+    assertEquals("ABC", request.headerValue(StandardHttpHeaderKey.USER_AGENT));
+  }
+
+  @Test
+  void shouldSetAbsentHeader() {
+    val request = HttpBRequest.get().urlPath("a/b/c").withoutPayload();
+
+    request.addIfAbsentHeader(StandardHttpHeaderKey.USER_AGENT.createHeader("XYZ"));
+
+    assertTrue(request.hasHeader(StandardHttpHeaderKey.USER_AGENT));
+    assertEquals(1, request.headerValues(StandardHttpHeaderKey.USER_AGENT).size());
+    assertEquals("XYZ", request.headerValue(StandardHttpHeaderKey.USER_AGENT));
+  }
+
+  @Test
+  void shouldRemoveExistingHeader() {
+    val request =
+        HttpBRequest.get()
+            .urlPath("a/b/c")
+            .headers(StandardHttpHeaderKey.USER_AGENT.createHeader("ABC"))
+            .withoutPayload();
+
+    request.addIfAbsentHeader(StandardHttpHeaderKey.USER_AGENT.createHeader(""));
+
+    assertFalse(request.hasHeader(StandardHttpHeaderKey.USER_AGENT));
+    assertEquals(0, request.headerValues(StandardHttpHeaderKey.USER_AGENT).size());
+    assertEquals("", request.headerValue(StandardHttpHeaderKey.USER_AGENT));
   }
 }

@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * *******
+ *
+ * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
 package de.gematik.bbriccs.smartcards;
@@ -19,7 +23,7 @@ package de.gematik.bbriccs.smartcards;
 import static org.junit.jupiter.api.Assertions.*;
 
 import de.gematik.bbriccs.crypto.CryptoSystem;
-import de.gematik.bbriccs.crypto.certificate.Oid;
+import de.gematik.bbriccs.crypto.certificate.CertificateTypeOid;
 import de.gematik.bbriccs.smartcards.exceptions.InvalidCertificateException;
 import de.gematik.bbriccs.utils.ResourceLoader;
 import java.io.*;
@@ -87,7 +91,7 @@ class SmartcardCertificateP12Test {
   @Test
   void getOid() {
     assertNotNull(smartcardCertificate.getX509Certificate());
-    assertEquals(Oid.OID_EGK_AUT, smartcardCertificate.getOid());
+    assertEquals(CertificateTypeOid.OID_EGK_AUT, smartcardCertificate.getOid());
   }
 
   @Test
