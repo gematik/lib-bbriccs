@@ -62,6 +62,11 @@ public class GsiClient implements ApplicationClient {
       return this;
     }
 
+    public GsiClientBuilder proxy(String host, int port) {
+      this.httpClientBuilder.proxy(host, port);
+      return this;
+    }
+
     public GsiClient withoutTlsVerification() {
       val httpClient = this.httpClientBuilder.withoutTlsVerification();
       val applicationClient = ApplicationClient.using(httpClient).withSimpleObjectMapper();

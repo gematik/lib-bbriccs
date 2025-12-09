@@ -6,8 +6,9 @@
   <parent>
     <groupId>de.gematik.bbriccs</groupId>
     <artifactId>configuration-bricks</artifactId>
-    <version>0.7.0</version>
+    <version>0.8.0</version>
   </parent>
 
   <artifactId>feature-toggle-brick</artifactId>
+  <name>Feature Toggle Brick</name>
 </project>

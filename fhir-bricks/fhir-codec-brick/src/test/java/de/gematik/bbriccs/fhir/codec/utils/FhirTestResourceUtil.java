@@ -31,7 +31,9 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import lombok.val;
-import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r4.model.IdType;
+import org.hl7.fhir.r4.model.Narrative;
+import org.hl7.fhir.r4.model.OperationOutcome;
 
 public class FhirTestResourceUtil {
 

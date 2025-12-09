@@ -44,18 +44,42 @@ public interface ProfileVersion {
 
   String getName();
 
-  default boolean isEqual(String version) {
-    return compareTo(version) == 0;
+  default boolean isSmallerThan(ProfileVersion o) {
+    return this.compareTo(o) < 0;
   }
 
+  default boolean isSmallerThanOrEqualTo(ProfileVersion o) {
+    return this.compareTo(o) <= 0;
+  }
+
+  default boolean isBiggerThan(ProfileVersion o) {
+    return this.compareTo(o) > 0;
+  }
+
+  default boolean isBiggerThanOrEqualTo(ProfileVersion o) {
+    return this.compareTo(o) >= 0;
+  }
+
+  /**
+   * Compare two ProfileVersion objects by their concrete version value
+   *
+   * @param o is the specified object which is compared to this
+   * @return a negative integer, zero, or a positive integer as this object is less than, equal to,
+   *     or greater than the specified object.
+   */
   default int compareTo(ProfileVersion o) {
-    if (!this.equals(o)) {
-      return -1;
-    }
     return compareTo(o.getVersion());
   }
 
   default int compareTo(String version) {
     return VersionUtil.compare(this.getVersion(), version);
+  }
+
+  default boolean isEqual(ProfileVersion o) {
+    return isEqual(o.getVersion());
+  }
+
+  default boolean isEqual(String version) {
+    return compareTo(version) == 0;
   }
 }

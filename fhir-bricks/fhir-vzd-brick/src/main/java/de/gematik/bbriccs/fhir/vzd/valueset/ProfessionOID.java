@@ -42,7 +42,7 @@ import org.hl7.fhir.r4.model.CodeableConcept;
  *   <li>BV: Bundesvereinigung
  * </ul>
  *
- * <p>TODO: duplicates with {@link de.gematik.bbriccs.crypto.certificate.GemOid}
+ * <p>TODO: duplicates with de.gematik.bbriccs.crypto.certificate.ProfessionOID
  */
 @Getter
 @RequiredArgsConstructor

@@ -42,6 +42,8 @@ class RootCertificateAuthorityDto(cert: X509Certificate, val nextCrossCA: X509Ce
     getSubjectCN().filter(Char::isDigit).let {
       if (it.isEmpty()) throw MissingRootCertificateAuthorityNumber(cert) else it.toInt()
     }
+
+  override fun toString() = "Issuer: ${this.getIssuerCN()} -> Subject: ${this.getSubjectCN()}, Serial: ${this.cert.serialNumber}"
 }
 
 class RootCASerializer : JsonDeserializer<RootCertificateAuthorityDto>() {

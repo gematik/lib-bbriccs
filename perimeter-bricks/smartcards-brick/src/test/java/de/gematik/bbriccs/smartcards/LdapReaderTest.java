@@ -65,7 +65,14 @@ class LdapReaderTest {
                 + " NOT-VALID, C=DE",
             "Bernd",
             "Claudius",
-            "Arztpraxis Bernd Claudius"));
+            "Arztpraxis Bernd Claudius"),
+        Arguments.of(
+            "CN=Prof. Dr. Daniel Arnold L. Graf von"
+                + " ØzTEST-ONLY,2.5.4.12=#0c0950726f662e2044722e,2.5.4.42=#0c1c44616e69656c2041726e6f6c64204c756b6173204772616620766f6e,2.5.4.4=#0c03c3987a,OU=X110603293,OU=109500969,O=Test"
+                + " GKV-SVNOT-VALID,C=DE",
+            "Daniel Arnold Lukas Graf von",
+            "Øz",
+            "Prof. Dr. Daniel Arnold L. Graf von Øz"));
   }
 
   @ParameterizedTest

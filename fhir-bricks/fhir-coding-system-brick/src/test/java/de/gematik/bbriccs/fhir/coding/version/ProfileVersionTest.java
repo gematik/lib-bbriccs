@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import de.gematik.bbriccs.fhir.coding.utils.TestBasisClassVersion;
 import de.gematik.bbriccs.fhir.coding.utils.TestBasisVersion;
+import de.gematik.bbriccs.fhir.coding.utils.TestBasisVersion.TestBasisVersion2;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
@@ -52,7 +53,28 @@ class ProfileVersionTest {
     val v1 = new GenericProfileVersion("1.0.0");
     val v2 = new TestBasisClassVersion("1.0.0");
 
-    assertEquals(-1, v1.compareTo(v2));
+    assertTrue(v1.isEqual(v2));
+    assertTrue(v1.isSmallerThanOrEqualTo(v2));
+    assertFalse(v1.isSmallerThan(v2));
+
+    assertTrue(v1.isBiggerThanOrEqualTo(v2));
+    assertFalse(v1.isBiggerThan(v2));
+  }
+
+  @Test
+  void shouldCompareVersions04() {
+    // v1.3.2 is greater than v1.3 -> v1.3.0
+    assertTrue(TestBasisVersion.V1_3_2.isBiggerThan(TestBasisVersion.V0_9_13));
+    assertTrue(TestBasisVersion.V1_3_2.isBiggerThan(TestBasisVersion2.V1_3));
+    assertTrue(TestBasisVersion.V1_3_2.isBiggerThanOrEqualTo(TestBasisVersion2.V1_3));
+    assertTrue(TestBasisVersion.V1_3_2.isBiggerThanOrEqualTo(TestBasisVersion.V1_3_2));
+    assertFalse(TestBasisVersion2.V1_3.isBiggerThan(TestBasisVersion.V1_3_2));
+
+    // v0.9 -> v0.9.0 is smaller than v0.9.13
+    assertTrue(TestBasisVersion2.V0_9.isSmallerThan(TestBasisVersion.V0_9_13));
+    assertFalse(TestBasisVersion.V0_9_13.isSmallerThan(TestBasisVersion2.V0_9));
+    assertFalse(TestBasisVersion.V0_9_13.isSmallerThanOrEqualTo(TestBasisVersion2.V0_9));
+    assertTrue(TestBasisVersion.V0_9_13.isSmallerThanOrEqualTo(TestBasisVersion.V0_9_13));
   }
 
   @Test

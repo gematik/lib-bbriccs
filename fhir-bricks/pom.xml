@@ -6,7 +6,7 @@
   <parent>
     <groupId>de.gematik.bbriccs</groupId>
     <artifactId>bbriccs-parent</artifactId>
-    <version>0.7.0</version>
+    <version>0.8.0</version>
   </parent>
 
   <artifactId>fhir-bricks</artifactId>
@@ -69,6 +69,13 @@
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>fhir-validation-brick</artifactId>
         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>de.gematik.bbriccs</groupId>
+        <artifactId>fhir-validation-brick</artifactId>
+        <version>${project.version}</version>
+        <type>test-jar</type>
+        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>de.gematik.bbriccs</groupId>

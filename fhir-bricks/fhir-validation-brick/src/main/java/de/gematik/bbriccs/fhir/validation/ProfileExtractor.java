@@ -213,7 +213,7 @@ public class ProfileExtractor {
    * @return a shortened content string which should provide just enough information without
    *     polluting the log
    */
-  private String shortenContentForLogging(String content) {
+  public String shortenContentForLogging(String content) {
     if (content.length() <= 200) {
       return content;
     } else {

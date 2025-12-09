@@ -4,7 +4,7 @@
     <parent>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>perimeter-bricks</artifactId>
-        <version>0.7.0</version>
+        <version>0.8.0</version>
     </parent>
 
     <artifactId>konnektor-ws-api-brick</artifactId>
@@ -30,6 +30,16 @@
     </dependencies>
 
     <build>
+      <resources>
+        <resource>
+          <directory>src/main/resources/gematik_schemes</directory>
+          <targetPath>gematik_schemes</targetPath>
+          <includes>
+            <include>**/*.wsdl</include>
+          </includes>
+        </resource>
+      </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -96,6 +106,7 @@
                                 <wsdlFile>conn/vsds/VSDService.wsdl</wsdlFile>
                                 <wsdlFile>conn/EncryptionService_v6_1_1.wsdl</wsdlFile>
                             </wsdlFiles>
+                            <wsdlLocation>/gematik_schemes/*</wsdlLocation>
                             <keep>true</keep>
                             <sourceDestDir>${project.build.directory}/generated/src/main/java</sourceDestDir>
                         </configuration>

@@ -51,6 +51,4 @@ open class CertificateAuthorityDto(val cert: X509Certificate) {
     }
     throw MissingCertificateAuthorityIssuer(this.cert)
   }
-
-  override fun toString() = "Issuer: ${this.getIssuerCN()} -> Subject: ${this.getSubjectCN()}"
 }

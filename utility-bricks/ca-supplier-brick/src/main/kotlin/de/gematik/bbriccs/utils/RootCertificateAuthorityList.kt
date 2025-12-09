@@ -63,15 +63,23 @@ class RootCertificateAuthorityList(private val internalList: Set<RootCertificate
     return ret
   }
 
-  fun getChainOfCrossRootCAByCompCAs(cas: Collection<X509Certificate>, current: RootCertificateAuthorityDto): LinkedList<X509Certificate> {
-    if (cas.isEmpty()) {
-      return LinkedList()
+  fun getChainOfCrossRootCAByCompCAs(current: RootCertificateAuthorityDto, cas: Collection<X509Certificate>? = null): LinkedList<X509Certificate> {
+    val (min, max) = if (cas.isNullOrEmpty()) {
+      val min = internalList.minBy { it.getCaNumber() }
+      val max = internalList.maxBy { it.getCaNumber() }
+      Pair(min, max)
+    } else {
+      val min = cas.mapNotNull { getRootCAByCompCA(it) }.minBy { it.getCaNumber() }
+      val max = cas.mapNotNull { getRootCAByCompCA(it) }.maxBy { it.getCaNumber() }
+      Pair(min, max)
     }
-    val min = cas.mapNotNull { getRootCAByCompCA(it) }.minBy { it.getCaNumber() }
-    val max = cas.mapNotNull { getRootCAByCompCA(it) }.maxBy { it.getCaNumber() }
     return LinkedList<X509Certificate>().apply {
-      addAll(getChainOfCrossRootCAsBetween(current, min))
-      addAll(getChainOfCrossRootCAsBetween(current, max))
+      getChainOfCrossRootCAsBetween(current, max).forEach {
+        if (!contains(it)) add(it)
+      }
+      getChainOfCrossRootCAsBetween(current, min).forEach {
+        if (!contains(it)) add(it)
+      }
     }
   }
 }

@@ -33,19 +33,16 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.assertj.core.util.Strings;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IPrimitiveType;
 import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.Bundle.BundleType;
 
 @Slf4j
-public class MultiProfileValidator implements ValidatorFhir {
+public class MultiProfileValidator extends ValidatorFhirBase {
 
   private final FhirContext ctx;
   private final List<ProfiledValidator> profiledValidators;
   private final ProfiledValidator defaultProfileValidator;
-  private final ProfileExtractor profileExtractor;
 
   private IParser xmlParser;
   private IParser jsonParser;
@@ -54,7 +51,6 @@ public class MultiProfileValidator implements ValidatorFhir {
     this.ctx = FhirContext.forR4();
     this.profiledValidators = profiledValidators;
     this.defaultProfileValidator = profiledValidators.get(0);
-    this.profileExtractor = new ProfileExtractor();
   }
 
   @Override
@@ -79,31 +75,10 @@ public class MultiProfileValidator implements ValidatorFhir {
 
   @Override
   public ValidationResult validate(IBaseResource resource) {
-    // instead of using the default implementation, we can use the resource directly for easier
-    // decision if this is an unprofiled bundle
-    val isUnprofiled =
-        resource.getMeta().getProfile().stream()
-            .map(IPrimitiveType::getValue)
-            .filter(p -> !Strings.isNullOrEmpty(p))
-            .toList()
-            .isEmpty();
-    val isCollectionBundle =
-        Optional.of(resource)
-            .filter(Bundle.class::isInstance)
-            .map(r -> (Bundle) r)
-            .filter(
-                bundle ->
-                    bundle.getType() == BundleType.COLLECTION
-                        || bundle.getType() == BundleType.SEARCHSET)
-            .isPresent();
-
-    if (isUnprofiled && isCollectionBundle) {
+    if (!this.hasProfile(resource) && this.isCollectionBundle(resource)) {
       return validateUnprofiledBundle((Bundle) resource);
     } else {
-      val parser =
-          this.getXmlParser()
-              .setOverrideResourceIdWithBundleEntryFullUrl(false)
-              .setOmitResourceId(false);
+      val parser = this.getXmlParser();
       val content = parser.encodeResourceToString(resource);
       return this.validate(content);
     }

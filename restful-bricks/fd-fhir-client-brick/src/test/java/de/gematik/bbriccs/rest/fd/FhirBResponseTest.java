@@ -20,10 +20,11 @@
 
 package de.gematik.bbriccs.rest.fd;
 
+import static de.gematik.bbriccs.fhir.codec.utils.FhirTestResourceUtil.createEmptyValidationResult;
+import static de.gematik.bbriccs.fhir.codec.utils.FhirTestResourceUtil.createOperationOutcome;
 import static org.junit.jupiter.api.Assertions.*;
 
 import de.gematik.bbriccs.fhir.codec.EmptyResource;
-import de.gematik.bbriccs.fhir.codec.utils.FhirTestResourceUtil;
 import de.gematik.bbriccs.rest.fd.exceptions.UnexpectedResponseResourceError;
 import de.gematik.bbriccs.rest.headers.HttpHeader;
 import de.gematik.bbriccs.rest.headers.StandardHttpHeaderKey;
@@ -59,8 +60,7 @@ class FhirBResponseTest {
   @Test
   void shouldDetectUnexpectedOperationOutcome() {
     val response =
-        FhirBResponse.forPayload(Bundle.class, FhirTestResourceUtil.createOperationOutcome())
-            .andValidationResult(null);
+        FhirBResponse.forPayload(Bundle.class, createOperationOutcome()).andValidationResult(null);
     val exception =
         assertThrows(UnexpectedResponseResourceError.class, response::getExpectedResource);
     assertTrue(exception.getMessage().contains("of type Bundle but received OperationOutcome"));
@@ -99,15 +99,14 @@ class FhirBResponseTest {
     val response =
         FhirBResponse.forPayload(Task.class, resource)
             .withStatusCode(200)
-            .andValidationResult(FhirTestResourceUtil.createEmptyValidationResult());
+            .andValidationResult(createEmptyValidationResult());
     Function<FhirBResponse<? extends Resource>, RuntimeException> errorFunction =
         r -> new RuntimeException("test");
     assertThrows(RuntimeException.class, () -> response.getExpectedOrThrow(errorFunction));
   }
 
   static Stream<Arguments> shouldThrowCustomExceptionOnUnexpected() {
-    return Stream.of(new Bundle(), FhirTestResourceUtil.createOperationOutcome())
-        .map(Arguments::of);
+    return Stream.of(new Bundle(), createOperationOutcome()).map(Arguments::of);
   }
 
   @Test
@@ -116,7 +115,7 @@ class FhirBResponseTest {
     val response =
         FhirBResponse.forPayload(Bundle.class, resource)
             .withStatusCode(200)
-            .andValidationResult(FhirTestResourceUtil.createEmptyValidationResult());
+            .andValidationResult(createEmptyValidationResult());
     Function<FhirBResponse<? extends Resource>, RuntimeException> errorFunction =
         r -> new RuntimeException("test");
     val r2 = assertDoesNotThrow(() -> response.getExpectedOrThrow(errorFunction));

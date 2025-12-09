@@ -20,9 +20,9 @@
 
 package de.gematik.bbriccs.fhir.codec;
 
+import static de.gematik.bbriccs.fhir.codec.utils.FhirTestResourceUtil.createOperationOutcome;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import de.gematik.bbriccs.fhir.codec.utils.FhirTestResourceUtil;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
@@ -30,14 +30,14 @@ class OperationOutcomeExtractorTest {
 
   @Test
   void shouldExtractErrorDetails() {
-    val oo = FhirTestResourceUtil.createOperationOutcome();
+    val oo = createOperationOutcome();
     val wrapper = OperationOutcomeExtractor.from(oo);
     assertDoesNotThrow(wrapper::toString);
   }
 
   @Test
   void shouldExtractErrorDetailsWithoutDiagnostics() {
-    val oo = FhirTestResourceUtil.createOperationOutcome();
+    val oo = createOperationOutcome();
     oo.getIssueFirstRep().setDiagnostics(null);
     val wrapper = OperationOutcomeExtractor.from(oo);
     assertDoesNotThrow(wrapper::toString);
@@ -45,7 +45,7 @@ class OperationOutcomeExtractorTest {
 
   @Test
   void shouldExtractDirectly() {
-    val oo = FhirTestResourceUtil.createOperationOutcome();
+    val oo = createOperationOutcome();
     assertDoesNotThrow(() -> OperationOutcomeExtractor.extractFrom(oo));
   }
 }

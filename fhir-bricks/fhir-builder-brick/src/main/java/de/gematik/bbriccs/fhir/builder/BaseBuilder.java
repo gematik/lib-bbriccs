@@ -28,8 +28,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.val;
-import org.assertj.core.util.Strings;
 import org.hl7.fhir.r4.model.Base;
 
 public abstract class BaseBuilder<R extends Base, B extends BaseBuilder<R, B>> {
@@ -125,7 +125,7 @@ public abstract class BaseBuilder<R extends Base, B extends BaseBuilder<R, B>> {
       val errorMsg =
           format(
               "Given valueset {0} is not in the list of expected choices: ''{1}''",
-              obj, Strings.join(oneOf).with(", "));
+              obj, oneOf.stream().map(FromValueSet::getCode).collect(Collectors.joining(", ")));
       throw new BuilderException(errorMsg);
     }
   }

@@ -26,14 +26,13 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.validation.ResultSeverityEnum;
-import de.gematik.bbriccs.fhir.conf.ProfilesConfigurator;
 import de.gematik.bbriccs.fhir.validation.utils.FhirValidatingTest;
 import de.gematik.bbriccs.utils.ResourceLoader;
 import de.gematik.refv.SupportedValidationModule;
 import java.io.File;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
@@ -69,13 +68,6 @@ class ValidatorFhirTest extends FhirValidatingTest {
 
   static Stream<Arguments> shouldValidateWithSingleProfileValidatorWithoutSupport() {
     return ResourceLoader.getResourceFilesInDirectory("examples/fhir/valid/hl7", true).stream()
-        .map(Arguments::of);
-  }
-
-  static Stream<Arguments> shouldValidateValidErpResourcesWithoutCanonicalClaims() {
-    return ResourceLoader.getResourceFilesInDirectory(
-            "examples/fhir/valid/erp/kbv/1.1.0/bundle", true)
-        .stream()
         .map(Arguments::of);
   }
 
@@ -153,17 +145,27 @@ class ValidatorFhirTest extends FhirValidatingTest {
 
   @ParameterizedTest
   @MethodSource
-  void shouldValidateValidErpResourcesWithoutCanonicalClaims(File file) {
+  void shouldValidateMixedBundles(File file, Supplier<ValidatorFhir> validatorSupplier) {
     val content = ResourceLoader.readString(file);
-
-    val ctx = FhirContext.forR4();
-    val profileSettings = ProfilesConfigurator.getDefaultConfiguration().getProfileConfigurations();
-    profileSettings.forEach(
-        psdto -> psdto.getProfiles().forEach(pdto -> pdto.setCanonicalClaims(List.of())));
-    val customValidator = ValidatorFhirFactory.createValidator(ctx, profileSettings);
+    val customValidator = validatorSupplier.get();
 
     val vr = customValidator.validate(content);
     assertTrue(vr.isSuccessful());
+  }
+
+  static Stream<Arguments> shouldValidateMixedBundles() {
+    val files =
+        List.of(
+            ResourceLoader.getFileFromResource(
+                "examples/fhir/valid/erp/erx/1.2.0/acceptbundle/cef4b960-7ce4-4755-b4ce-3b01a30ec2f0.xml"),
+            ResourceLoader.getFileFromResource(
+                "examples/fhir/valid/erp/erx/mixed/task_bundle_01.json"));
+
+    return Stream.of(
+            (Supplier<ValidatorFhir>)
+                () -> ReferenzValidator.withValidationModule(SupportedValidationModule.ERP),
+            ValidatorFhirFactory::createValidator)
+        .flatMap(validator -> files.stream().map(f -> Arguments.of(f, validator)));
   }
 
   @ParameterizedTest

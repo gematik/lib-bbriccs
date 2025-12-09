@@ -20,16 +20,22 @@
 
 package de.gematik.bbriccs.fhir.validation;
 
-import ca.uhn.fhir.validation.ResultSeverityEnum;
-import ca.uhn.fhir.validation.SingleValidationMessage;
 import ca.uhn.fhir.validation.ValidationResult;
+import com.google.common.base.Strings;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.instance.model.api.IPrimitiveType;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Bundle.BundleType;
 
 @Slf4j
 public abstract class ValidatorFhirBase implements ValidatorFhir {
+
+  protected final ProfileExtractor profileExtractor = new ProfileExtractor();
 
   protected ValidationResult validateSafely(Supplier<ValidationResult> validationResultSupplier) {
     try {
@@ -40,10 +46,27 @@ public abstract class ValidatorFhirBase implements ValidatorFhir {
        */
       log.error(
           "{} while validating FHIR content: {}", e.getClass().getSimpleName(), e.getMessage());
-      val svm = new SingleValidationMessage();
-      svm.setMessage(e.getMessage());
-      svm.setSeverity(ResultSeverityEnum.ERROR);
+      val svm = ValidationMessageUtil.createErrorMessage(e.getMessage());
       return new ValidationResult(this.getContext(), List.of(svm));
     }
+  }
+
+  protected boolean hasProfile(IBaseResource resource) {
+    return !resource.getMeta().getProfile().stream()
+        .map(IPrimitiveType::getValue)
+        .filter(p -> !Strings.isNullOrEmpty(p))
+        .toList()
+        .isEmpty();
+  }
+
+  protected boolean isCollectionBundle(IBaseResource resource) {
+    return Optional.of(resource)
+        .filter(Bundle.class::isInstance)
+        .map(r -> (Bundle) r)
+        .filter(
+            bundle ->
+                bundle.getType() == BundleType.COLLECTION
+                    || bundle.getType() == BundleType.SEARCHSET)
+        .isPresent();
   }
 }
