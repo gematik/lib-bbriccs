@@ -20,13 +20,13 @@
 
 package de.gematik.bbriccs.rest.fd;
 
+import static de.gematik.bbriccs.fhir.codec.utils.FhirTestResourceUtil.createOperationOutcome;
 import static java.text.MessageFormat.format;
 import static org.junit.jupiter.api.Assertions.*;
 
 import de.gematik.bbriccs.fhir.EncodingType;
 import de.gematik.bbriccs.fhir.codec.EmptyResource;
 import de.gematik.bbriccs.fhir.codec.FhirCodec;
-import de.gematik.bbriccs.fhir.codec.utils.FhirTestResourceUtil;
 import de.gematik.bbriccs.rest.HttpBResponse;
 import de.gematik.bbriccs.rest.HttpRequestMethod;
 import de.gematik.bbriccs.rest.HttpVersion;
@@ -95,8 +95,7 @@ class FhirBResponseCreatorTest {
 
   @Test
   void unexpectedOperationOutcomeResponse() {
-    val testOperationOutcome =
-        encodeTestRessource(FhirTestResourceUtil.createOperationOutcome(), EncodingType.JSON);
+    val testOperationOutcome = encodeTestRessource(createOperationOutcome(), EncodingType.JSON);
 
     val httpResponse =
         HttpBResponse.status(404).headers(HEADERS_JSON).withPayload(testOperationOutcome);
@@ -121,8 +120,7 @@ class FhirBResponseCreatorTest {
 
   @Test
   void expectedOperationOutcome() {
-    val testOperationOutcome =
-        encodeTestRessource(FhirTestResourceUtil.createOperationOutcome(), EncodingType.JSON);
+    val testOperationOutcome = encodeTestRessource(createOperationOutcome(), EncodingType.JSON);
 
     val httpResponse =
         HttpBResponse.status(404).headers(HEADERS_JSON).withPayload(testOperationOutcome);
@@ -164,8 +162,7 @@ class FhirBResponseCreatorTest {
 
   @Test
   void shouldFetchUnexpectedResponseResource01() {
-    val testOperationOutcome =
-        encodeTestRessource(FhirTestResourceUtil.createOperationOutcome(), EncodingType.JSON);
+    val testOperationOutcome = encodeTestRessource(createOperationOutcome(), EncodingType.JSON);
 
     val httpResponse =
         HttpBResponse.status(404).headers(HEADERS_JSON).withPayload(testOperationOutcome);
@@ -199,8 +196,7 @@ class FhirBResponseCreatorTest {
 
   @Test
   void fetchUnexpectedResponseResourceOptional() {
-    val testOperationOutcome =
-        encodeTestRessource(FhirTestResourceUtil.createOperationOutcome(), EncodingType.JSON);
+    val testOperationOutcome = encodeTestRessource(createOperationOutcome(), EncodingType.JSON);
 
     val httpResponse =
         HttpBResponse.status(404).headers(HEADERS_JSON).withPayload(testOperationOutcome);
@@ -217,8 +213,7 @@ class FhirBResponseCreatorTest {
 
   @Test
   void shouldIdentifyConcreteResourceOfType() {
-    val testOperationOutcome =
-        encodeTestRessource(FhirTestResourceUtil.createOperationOutcome(), EncodingType.JSON);
+    val testOperationOutcome = encodeTestRessource(createOperationOutcome(), EncodingType.JSON);
 
     val httpResponse =
         HttpBResponse.status(404).headers(HEADERS_JSON).withPayload(testOperationOutcome);
@@ -250,8 +245,7 @@ class FhirBResponseCreatorTest {
 
   @Test
   void shouldValidateOperationOutcomeCorrectly() {
-    val testOperationOutcome =
-        encodeTestRessource(FhirTestResourceUtil.createOperationOutcome(), EncodingType.JSON);
+    val testOperationOutcome = encodeTestRessource(createOperationOutcome(), EncodingType.JSON);
     val httpResponse =
         HttpBResponse.status(204).headers(HEADERS_JSON).withPayload(testOperationOutcome);
     val response =
@@ -266,8 +260,7 @@ class FhirBResponseCreatorTest {
   @Test
   void shouldFailOnInvalidOperationOutcomeCorrectly() {
     val testOperationOutcome =
-        encodeTestRessource(FhirTestResourceUtil.createOperationOutcome(), EncodingType.JSON)
-            .replace("issue", "issues");
+        encodeTestRessource(createOperationOutcome(), EncodingType.JSON).replace("issue", "issues");
     val httpResponse =
         HttpBResponse.status(204).headers(HEADERS_JSON).withPayload(testOperationOutcome);
     val response =
@@ -281,8 +274,7 @@ class FhirBResponseCreatorTest {
 
   @Test
   void shouldCheckHeadersCorrectly() {
-    val testOperationOutcome =
-        encodeTestRessource(FhirTestResourceUtil.createOperationOutcome(), EncodingType.JSON);
+    val testOperationOutcome = encodeTestRessource(createOperationOutcome(), EncodingType.JSON);
     val headers = new LinkedList<HttpHeader>();
     headers.add(
         StandardHttpHeaderKey.CONTENT_LENGTH.createHeader(
@@ -307,8 +299,7 @@ class FhirBResponseCreatorTest {
 
   @Test
   void shouldCheckHeadersCorrectly02() {
-    val testOperationOutcome =
-        encodeTestRessource(FhirTestResourceUtil.createOperationOutcome(), EncodingType.XML);
+    val testOperationOutcome = encodeTestRessource(createOperationOutcome(), EncodingType.XML);
     val headers = new LinkedList<HttpHeader>();
     headers.add(StandardHttpHeaderKey.CONTENT_TYPE.createHeader(MediaType.FHIR_XML.asString()));
 

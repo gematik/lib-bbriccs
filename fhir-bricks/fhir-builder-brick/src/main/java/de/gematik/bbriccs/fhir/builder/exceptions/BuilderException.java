@@ -22,7 +22,7 @@ package de.gematik.bbriccs.fhir.builder.exceptions;
 
 public class BuilderException extends RuntimeException {
 
-  public BuilderException(String message) {
+  public BuilderException(final String message) {
     super(message);
   }
 }

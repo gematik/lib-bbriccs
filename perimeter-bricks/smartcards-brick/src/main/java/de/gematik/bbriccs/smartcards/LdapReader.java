@@ -20,10 +20,14 @@
 
 package de.gematik.bbriccs.smartcards;
 
+import java.util.Arrays;
 import java.util.List;
 import javax.security.auth.x500.X500Principal;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.BCStyle;
 
 @Slf4j
 public final class LdapReader {
@@ -33,10 +37,23 @@ public final class LdapReader {
   }
 
   public static SmartcardOwnerData getOwnerData(X500Principal subject) {
-    return getOwnerData(subject.getName());
+    val value = subject.getName();
+    return isOidEncoded(value)
+        ? getOwnerDataByOidEncoded(new X500Name(value))
+        : getOwnerDataByLdapEncoded(value);
   }
 
   public static SmartcardOwnerData getOwnerData(String subject) {
+    return isOidEncoded(subject)
+        ? getOwnerDataByOidEncoded(new X500Name(subject))
+        : getOwnerDataByLdapEncoded(subject);
+  }
+
+  private static boolean isOidEncoded(String subject) {
+    return subject.matches(".*2\\.5\\.4\\.(\\d{1,2})=.*");
+  }
+
+  private static SmartcardOwnerData getOwnerDataByLdapEncoded(String subject) {
     val builder = SmartcardOwnerData.builder();
     val fixedName = subject.replace("+", ",");
     val elements = fixedName.split(",");
@@ -58,6 +75,48 @@ public final class LdapReader {
         case "L" -> builder.locality(value);
         case "C" -> builder.country(value);
         default -> log.trace("ignore key {} with value {} in subject {}", key, value, subject);
+      }
+    }
+
+    return builder.build();
+  }
+
+  private static SmartcardOwnerData getOwnerDataByOidEncoded(X500Name subject) {
+    val builder = SmartcardOwnerData.builder();
+    val rdns = subject.getRDNs();
+    val attList =
+        Arrays.stream(rdns)
+            .flatMap(
+                rdn -> {
+                  AttributeTypeAndValue[] typesAndValues = rdn.getTypesAndValues();
+                  return Arrays.stream(typesAndValues);
+                })
+            .toList();
+    for (AttributeTypeAndValue atv : attList) {
+      val type = atv.getType();
+      val value = atv.getValue().toString();
+      if (type.equals(BCStyle.CN)) {
+        builder.commonName(trimName(value));
+      } else if (type.equals(BCStyle.T)) {
+        builder.title(value);
+      } else if (type.equals(BCStyle.GIVENNAME)) {
+        builder.givenName(trimName(value));
+      } else if (type.equals(BCStyle.SURNAME)) {
+        builder.surname(trimName(value));
+      } else if (type.equals(BCStyle.STREET)) {
+        builder.street(value);
+      } else if (type.equals(BCStyle.POSTAL_CODE)) {
+        builder.postalCode(value);
+      } else if (type.equals(BCStyle.O)) {
+        builder.organization(trimTestTag(value));
+      } else if (type.equals(BCStyle.OU)) {
+        builder.organizationUnit(value);
+      } else if (type.equals(BCStyle.L)) {
+        builder.locality(value);
+      } else if (type.equals(BCStyle.C)) {
+        builder.country(value);
+      } else {
+        log.trace("ignore key {} with value {} in subject {}", type, value, subject);
       }
     }
 

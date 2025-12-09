@@ -28,12 +28,20 @@ import de.gematik.bbriccs.fhir.validation.utils.FhirValidatingTest;
 import de.gematik.bbriccs.utils.ResourceLoader;
 import de.gematik.refv.SupportedValidationModule;
 import de.gematik.refv.commons.exceptions.ValidationModuleInitializationException;
+import java.util.LinkedList;
 import java.util.stream.Stream;
 import lombok.val;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Bundle.BundleType;
+import org.hl7.fhir.r4.model.IdType;
+import org.hl7.fhir.r4.model.Narrative;
+import org.hl7.fhir.r4.model.OperationOutcome;
+import org.hl7.fhir.r4.model.OperationOutcome.OperationOutcomeIssueComponent;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.EnumSource.Mode;
 import org.junit.jupiter.params.provider.MethodSource;
 
 class ReferenzValidatorTest extends FhirValidatingTest {
@@ -54,13 +62,49 @@ class ReferenzValidatorTest extends FhirValidatingTest {
         () -> ReferenzValidator.withValidationModule(svm));
   }
 
+  @ParameterizedTest
+  @EnumSource(
+      value = BundleType.class,
+      mode = Mode.INCLUDE,
+      names = {"COLLECTION", "SEARCHSET"})
+  void shouldValidateUnprofiledCollectionBundle(BundleType bt) {
+    val bundle = new Bundle();
+    bundle.setType(bt);
+
+    val amountResources = 2;
+    for (var i = 0; i < amountResources; i++) {
+      val oop = createOperationOutcome();
+      bundle.addEntry().setResource(oop);
+    }
+
+    val vr = this.fhirValidator.validate(bundle);
+    assertTrue(vr.isSuccessful());
+
+    assertFalse(
+        vr.getMessages().isEmpty(), "must contain at least one entry from unprofiled validator");
+  }
+
   @Test
-  void shouldValidateInvalidResources() {
-    val resource = new Bundle();
-    assertFalse(this.fhirValidator.isValid(resource));
+  void shouldValidatingGenericOperationOutcome() {
+    val resource = createOperationOutcome();
 
     val vr = this.fhirValidator.validate(resource);
+    assertTrue(vr.isSuccessful());
     assertFalse(vr.getMessages().isEmpty());
+    assertTrue(this.fhirValidator.isValid(resource));
+  }
+
+  @Test
+  void shouldFailOnValidatingUnknownProfile() {
+    val resource = createOperationOutcome();
+    resource
+        .getMeta()
+        .addProfile("http://example.com/fhir/StructureDefinition/MY_CUSTOM_OPERATIONE_OUTCOME");
+
+    val vr = this.fhirValidator.validate(resource);
+    assertFalse(vr.isSuccessful());
+    assertFalse(vr.getMessages().isEmpty());
+    assertFalse(this.fhirValidator.isValid(resource));
   }
 
   static Stream<Arguments> validErpResources() {
@@ -78,5 +122,33 @@ class ReferenzValidatorTest extends FhirValidatingTest {
             .chooseAppropriateParser(ctx::newXmlParser, ctx::newJsonParser);
     val resource = parser.parseResource(content);
     assertTrue(this.fhirValidator.isValid(resource));
+  }
+
+  @ParameterizedTest(name = "[{index}] Should not throw on invalid File ''{0}''")
+  @MethodSource
+  void shouldValidateInvalidResourceContents(String file, String content) {
+    assertFalse(this.fhirValidator.isValid(content));
+  }
+
+  static Stream<Arguments> shouldValidateInvalidResourceContents() {
+    val files = ResourceLoader.getResourceFilesInDirectory("examples/invalid", true);
+    return files.stream().map(f -> Arguments.arguments(f.getName(), ResourceLoader.readString(f)));
+  }
+
+  private static OperationOutcome createOperationOutcome() {
+    val issue = new OperationOutcome.OperationOutcomeIssueComponent();
+    issue.setCode(OperationOutcome.IssueType.VALUE);
+    issue.setSeverity(OperationOutcome.IssueSeverity.ERROR);
+    issue.getDetails().setText("error details");
+    issue.setDiagnostics("additional diagnostics about the error");
+    val oo = new OperationOutcome();
+    val issueList = new LinkedList<OperationOutcomeIssueComponent>();
+    issueList.add(issue);
+    oo.setIssue(issueList);
+
+    oo.getText().setStatus(Narrative.NarrativeStatus.GENERATED);
+    oo.getText().setDivAsString("<div>narrative</div>");
+    oo.setId(IdType.newRandomUuid());
+    return oo;
   }
 }

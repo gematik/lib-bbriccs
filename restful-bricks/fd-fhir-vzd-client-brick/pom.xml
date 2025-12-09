@@ -6,7 +6,7 @@
   <parent>
     <groupId>de.gematik.bbriccs</groupId>
     <artifactId>restful-bricks</artifactId>
-    <version>0.7.0</version>
+    <version>0.8.0</version>
   </parent>
 
   <artifactId>fd-fhir-vzd-client-brick</artifactId>
@@ -17,7 +17,7 @@
       <dependency>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>fhir-bricks</artifactId>
-        <version>0.7.0</version> <!-- TODO: remove me later -->
+        <version>0.8.0</version> <!-- TODO: remove me later -->
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -28,7 +28,7 @@
     <dependency>
       <groupId>de.gematik.bbriccs</groupId>
       <artifactId>fhir-vzd-brick</artifactId>
-      <version>0.7.0</version> <!-- TODO: remove me later -->
+      <version>0.8.0</version> <!-- TODO: remove me later -->
     </dependency>
     <dependency>
       <groupId>de.gematik.bbriccs</groupId>
@@ -37,7 +37,7 @@
     <dependency>
       <groupId>de.gematik.bbriccs</groupId>
       <artifactId>idp-flow-api-brick</artifactId>
-      <version>0.7.0</version> <!-- TODO: remove me later -->
+      <version>0.8.0</version> <!-- TODO: remove me later -->
     </dependency>
     <dependency>
       <groupId>de.gematik.bbriccs</groupId>

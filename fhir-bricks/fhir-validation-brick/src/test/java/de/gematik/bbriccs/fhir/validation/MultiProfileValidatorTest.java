@@ -72,6 +72,7 @@ class MultiProfileValidatorTest extends FhirValidatingTest {
     val content =
         ResourceLoader.readFileFromResource(
             "examples/fhir/valid/erp/erx/1.2.0/acceptbundle/cef4b960-7ce4-4755-b4ce-3b01a30ec2f0.xml");
+
     val ctx = this.fhirValidator.getContext();
     val parser = ctx.newXmlParser();
     val bundle = parser.parseResource(Bundle.class, content);

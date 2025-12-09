@@ -37,4 +37,14 @@ public enum TestBasisVersion implements ProfileVersion {
   public static TestBasisVersion fromString(String input) {
     return VersionUtil.fromString(TestBasisVersion.class, input);
   }
+
+  @Getter
+  @RequiredArgsConstructor
+  public enum TestBasisVersion2 implements ProfileVersion {
+    V0_9("0.9"),
+    V1_3("1.3");
+
+    private final String version;
+    private final String name = "test.basis.version";
+  }
 }

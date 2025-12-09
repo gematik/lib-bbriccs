@@ -20,11 +20,9 @@
 
 package de.gematik.bbriccs.fhir.validation;
 
-import static java.text.MessageFormat.format;
+import static de.gematik.bbriccs.fhir.validation.ValidationMessageUtil.createInfoMessage;
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.validation.ResultSeverityEnum;
-import ca.uhn.fhir.validation.SingleValidationMessage;
 import ca.uhn.fhir.validation.ValidationResult;
 import java.util.List;
 import lombok.val;
@@ -59,9 +57,7 @@ public class DummyValidator implements ValidatorFhir {
   }
 
   private ValidationResult getValidationResult() {
-    val svm = new SingleValidationMessage();
-    svm.setSeverity(ResultSeverityEnum.INFORMATION);
-    svm.setMessage(format("Information provided by {0}", this.getClass().getSimpleName()));
+    val svm = createInfoMessage("Dummy Validator without any validation");
     return new ValidationResult(this.ctx, List.of(svm));
   }
 }

@@ -6,17 +6,18 @@
   <parent>
     <groupId>de.gematik.bbriccs</groupId>
     <artifactId>auth-bricks</artifactId>
-    <version>0.7.0</version>
+    <version>0.8.0</version>
   </parent>
 
   <artifactId>idp-flow-api-brick</artifactId>
+  <name>IPD Flow API Brick</name>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>restful-bricks</artifactId>
-        <version>0.7.0</version>
+        <version>0.8.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

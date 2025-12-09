@@ -82,6 +82,9 @@ public class NonProfiledValidator extends ValidatorFhirBase {
 
   @Override
   public ValidationResult validate(String content) {
-    return this.validateSafely(() -> this.validator.validateWithResult(content));
+    val vr = this.validateSafely(() -> this.validator.validateWithResult(content));
+
+    val msg = "Generic Validator without any profiles is used";
+    return ValidationMessageUtil.prependWithInfo(vr, msg);
   }
 }

@@ -7,7 +7,7 @@
 
     <groupId>de.gematik.bbriccs</groupId>
     <artifactId>bbriccs-parent</artifactId>
-    <version>0.7.0</version>
+    <version>0.8.0</version>
     <name>Bbriccs Parent</name>
     <description>Bbriccs provides reusable and independent building bricks for flexible and maintainable TestSuites with Clean Code Principles</description>
     <packaging>pom</packaging>
@@ -46,7 +46,7 @@
         <version.slf4j-api>2.0.11</version.slf4j-api>
         <version.guava>33.3.1-jre</version.guava>
         <version.hapi-fhir>7.2.3</version.hapi-fhir>
-        <version.ref-validator>2.0.2</version.ref-validator>
+        <version.ref-validator>2.12.0</version.ref-validator>
         <version.fasterxml>2.18.1</version.fasterxml>
         <version.apache-commons-lang3>3.14.0</version.apache-commons-lang3>
         <version.faker>1.0.2</version.faker>
@@ -123,7 +123,7 @@
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
-                                <phase>verify</phase>
+                                <phase>install</phase>
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>

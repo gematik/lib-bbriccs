@@ -6,7 +6,7 @@
     <parent>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>utility-bricks</artifactId>
-        <version>0.7.0</version>
+        <version>0.8.0</version>
     </parent>
 
     <artifactId>ca-supplier-brick</artifactId>
@@ -50,6 +50,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -84,4 +85,35 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>publish</id>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <!-- maven-javadoc-plugin doesn't support kotlin code -->
+                        <groupId>org.jetbrains.dokka</groupId>
+                        <artifactId>dokka-maven-plugin</artifactId>
+                        <version>2.0.0</version>
+                        <executions>
+                            <execution>
+                                <id>javadocJar</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>javadocJar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <sourceDirectories>
+                                <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+                            </sourceDirectories>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

@@ -31,7 +31,7 @@ import lombok.Getter;
  * @see <a
  *     href="https://gemspec.gematik.de/downloads/gemSpec/gemSpec_OID/gemSpec_V3.12.3_Aend.html">gemSpec
  *     OID</a>
- *     <p>TODO: duplicates with {@link de.gematik.bbriccs.fhir.vzd.valueSet.ProfessionOID}
+ *     <p>TODO: duplicates with de.gematik.bbriccs.fhir.vzd.valueSet.ProfessionOID
  */
 @AllArgsConstructor
 @Getter

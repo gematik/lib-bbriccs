@@ -108,7 +108,7 @@ class CertificateAuthoritySupplierTest {
         Arguments.of("GEM.RCA3 TEST-ONLY", "GEM.RCA8 TEST-ONLY", listOf("GEM.RCA3 TEST-ONLY", "GEM.RCA4 TEST-ONLY", "GEM.RCA5 TEST-ONLY", "GEM.RCA6 TEST-ONLY", "GEM.RCA7 TEST-ONLY")),
         Arguments.of("GEM.RCA4 TEST-ONLY", "GEM.RCA7 TEST-ONLY", listOf("GEM.RCA4 TEST-ONLY", "GEM.RCA5 TEST-ONLY", "GEM.RCA6 TEST-ONLY")),
         Arguments.of("GEM.RCA5 TEST-ONLY", "GEM.RCA6 TEST-ONLY", listOf("GEM.RCA5 TEST-ONLY")),
-        Arguments.of("GEM.RCA7 TEST-ONLY", "GEM.RCA1 TEST-ONLY", listOf("GEM.RCA5 TEST-ONLY")),
+        Arguments.of("GEM.RCA7 TEST-ONLY", "GEM.RCA2 TEST-ONLY", listOf("GEM.RCA5 TEST-ONLY")),
       )
     }
   }
@@ -164,22 +164,39 @@ class CertificateAuthoritySupplierTest {
   fun `should calculate the correct chain of CrossCAs from a KOMP CA up to a RootCA`() {
     val rootCaFirst = rootCAs.getRootCABy("GEM.RCA5 TEST-ONLY") ?: throw AssertionError("RootCA5 not found")
 
-    assertDoesNotThrow { rootCAs.getChainOfCrossRootCAByCompCAs(listOf(), rootCaFirst) }
-
-    rootCAs.getChainOfCrossRootCAByCompCAs(listOf(Certs.KOMP_CA54.cert, Certs.KOMP_CA56.cert, Certs.KOMP_CA24.cert), rootCaFirst).let { list ->
-      assertEquals(6, list.size)
+    assertDoesNotThrow { rootCAs.getChainOfCrossRootCAByCompCAs(rootCaFirst, listOf(Certs.KOMP_CA54.cert)) }
+    rootCAs.getChainOfCrossRootCAByCompCAs(rootCaFirst, listOf(Certs.KOMP_CA54.cert)).let { list ->
+      assertEquals(1, list.size)
       list[0].let {
-        assertEquals("GEM.RCA4 TEST-ONLY", it.getSubjectCN())
+        assertEquals("GEM.RCA6 TEST-ONLY", it.getSubjectCN())
         assertEquals("GEM.RCA5 TEST-ONLY", it.getIssuerCN()) // Start Point to min (GEM.RCA2)
       }
-      assertEquals("GEM.RCA3 TEST-ONLY", list[1].getSubjectCN())
-      assertEquals("GEM.RCA2 TEST-ONLY", list[2].getSubjectCN()) // target min
-      list[3].let {
+    }
+  }
+
+  @Test
+  fun `should calculate the correct chain of CrossCAs for a given RootCA`() {
+    val rootCaFirst = rootCAs.getRootCABy("GEM.RCA5 TEST-ONLY") ?: throw AssertionError("RootCA5 not found")
+
+    assertDoesNotThrow { rootCAs.getChainOfCrossRootCAByCompCAs(rootCaFirst) }
+    rootCAs.getChainOfCrossRootCAByCompCAs(rootCaFirst).let { list ->
+      assertEquals(9, list.size)
+      list[0].let {
         assertEquals("GEM.RCA6 TEST-ONLY", it.getSubjectCN())
-        assertEquals("GEM.RCA5 TEST-ONLY", it.getIssuerCN()) // Start Point to max (GEM.RCA8)
+        assertEquals("GEM.RCA5 TEST-ONLY", it.getIssuerCN())
       }
-      assertEquals("GEM.RCA7 TEST-ONLY", list[4].getSubjectCN())
-      assertEquals("GEM.RCA8 TEST-ONLY", list[5].getSubjectCN()) // target max
+      list[1].let {
+        assertEquals("GEM.RCA7 TEST-ONLY", it.getSubjectCN())
+        assertEquals("GEM.RCA6 TEST-ONLY", it.getIssuerCN())
+      }
+      list[5].let {
+        assertEquals("GEM.RCA11 TEST-ONLY", it.getSubjectCN())
+        assertEquals("GEM.RCA10 TEST-ONLY", it.getIssuerCN())
+      }
+      list[8].let {
+        assertEquals("GEM.RCA2 TEST-ONLY", it.getSubjectCN())
+        assertEquals("GEM.RCA3 TEST-ONLY", it.getIssuerCN())
+      }
     }
   }
 
@@ -218,7 +235,7 @@ class CertificateAuthoritySupplierTest {
       assertNotNull(rootCAs.nextRootCA(it))
     }
 
-    rootCAs.getRootCABy("GEM.RCA8 TEST-ONLY")?.let {
+    rootCAs.getRootCABy("GEM.RCA11 TEST-ONLY")?.let {
       assertNull(rootCAs.nextRootCA(it))
       assertNotNull(rootCAs.prevRootCA(it))
     }
