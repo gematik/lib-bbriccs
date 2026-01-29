@@ -30,18 +30,18 @@ import java.util.List;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
-class CodeSystemFilterTest {
+class IgnoredCodeSystemsSupportTest {
 
   @Test
   void shouldNotSupportNullCodeSystems() {
-    val filter = new CodeSystemFilter(FhirContext.forR4(), List.of());
+    val filter = new IgnoredCodeSystemsSupport(FhirContext.forR4(), "test validator", List.of());
     val vsc = mock(ValidationSupportContext.class);
     assertFalse(filter.isCodeSystemSupported(vsc, null));
   }
 
   @Test
   void shouldNotValidateNullCodeSystem() {
-    val filter = new CodeSystemFilter(FhirContext.forR4(), List.of());
+    val filter = new IgnoredCodeSystemsSupport(FhirContext.forR4(), "test validator", List.of());
     val vsc = mock(ValidationSupportContext.class);
     val cvo = mock(ConceptValidationOptions.class);
     val result = filter.validateCode(vsc, cvo, null, "CODE", "display", "https://valueset.com");

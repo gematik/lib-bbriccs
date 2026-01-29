@@ -183,7 +183,7 @@ public class FhirCodec {
     }
 
     public FhirCodec andBbriccsValidator() {
-      val validator = ValidatorFhirFactory.createValidator(this.ctx);
+      val validator = ValidatorFhirFactory.createValidator();
       return andCustomValidator(validator);
     }
 

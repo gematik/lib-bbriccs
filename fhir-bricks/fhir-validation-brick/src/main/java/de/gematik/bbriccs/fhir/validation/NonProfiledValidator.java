@@ -30,7 +30,6 @@ import java.util.LinkedList;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hl7.fhir.common.hapi.validation.support.InMemoryTerminologyServerValidationSupport;
-import org.hl7.fhir.common.hapi.validation.support.SnapshotGeneratingValidationSupport;
 import org.hl7.fhir.common.hapi.validation.support.ValidationSupportChain;
 import org.hl7.fhir.common.hapi.validation.validator.FhirInstanceValidator;
 
@@ -52,7 +51,6 @@ public class NonProfiledValidator extends ValidatorFhirBase {
     val validationSupports = new ArrayList<IValidationSupport>();
     validationSupports.add(ctx.getValidationSupport());
     validationSupports.add(new InMemoryTerminologyServerValidationSupport(ctx));
-    validationSupports.add(new SnapshotGeneratingValidationSupport(ctx));
 
     // configure the HAPI FhirParser
     val fiv = new FhirInstanceValidator(ctx);
@@ -70,6 +68,7 @@ public class NonProfiledValidator extends ValidatorFhirBase {
     // the generic validator does not know any profiles!
     val filter = new LinkedList<String>();
     filter.add("^Profile reference '.*' has not been checked because it is unknown$");
+    filter.add("^Invalid profile. Failed to retrieve profile with url.*");
     filter.add("^Unknown extension .*");
 
     this.validator.registerValidatorModule(new ErrorMessageFilter(filter));

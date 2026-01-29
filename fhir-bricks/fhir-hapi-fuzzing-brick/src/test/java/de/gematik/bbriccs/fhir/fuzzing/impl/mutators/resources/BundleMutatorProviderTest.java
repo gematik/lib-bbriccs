@@ -54,7 +54,7 @@ class BundleMutatorProviderTest extends FhirFuzzingMutatorTest {
 
   static Stream<Arguments> shouldNotThrowAnything() {
     return ResourceLoader.getResourceFilesInDirectory(
-            "examples/fhir/valid/erp/kbv/1.0.2/bundle", true)
+            "examples/fhir/valid/erp/kbv/1.1.0/bundle", true)
         .stream()
         .map(Arguments::of);
   }

@@ -132,22 +132,13 @@ public class MultiProfileValidator extends ValidatorFhirBase {
 
     val chosenValidator = chosenParser.get();
     val profileUrl = profileUrlOpt.orElse("unknown profile");
-    log.trace("Choose Validator {} for {}", chosenValidator.getId(), profileUrl);
+    log.info("Choose Validator {} for {}", chosenValidator.getId(), profileUrl);
     return chosenValidator;
   }
 
   private ProfiledValidator chooseProfileValidator(String profileUrl) {
     val validator =
         this.profiledValidators.stream().filter(p -> p.doesSupport(profileUrl)).findFirst();
-
-    if (validator.isPresent()) {
-      log.trace("Use Validator Configuration ''{}'' for {}", validator.get().getId(), profileUrl);
-    } else {
-      log.warn(
-          "No supporting Validator found for {}, use Validator Configuration '{}' as default",
-          profileUrl,
-          this.defaultProfileValidator.getId());
-    }
 
     return validator.orElse(this.defaultProfileValidator);
   }

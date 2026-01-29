@@ -14,7 +14,7 @@
         </encoder>
     </appender>
 
-    <logger name="de.gematik" level="INFO" additivity="false">
+    <logger name="de.gematik" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
 

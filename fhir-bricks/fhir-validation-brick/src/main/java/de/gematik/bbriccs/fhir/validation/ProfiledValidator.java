@@ -26,17 +26,17 @@ import ca.uhn.fhir.parser.StrictErrorHandler;
 import ca.uhn.fhir.validation.FhirValidator;
 import ca.uhn.fhir.validation.ValidationResult;
 import de.gematik.bbriccs.fhir.validation.support.ErrorMessageFilter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.annotation.Nullable;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.hl7.fhir.common.hapi.validation.support.InMemoryTerminologyServerValidationSupport;
 import org.hl7.fhir.common.hapi.validation.support.SnapshotGeneratingValidationSupport;
 import org.hl7.fhir.common.hapi.validation.support.ValidationSupportChain;
 import org.hl7.fhir.common.hapi.validation.validator.FhirInstanceValidator;
+import org.hl7.fhir.r5.utils.validation.constants.BestPracticeWarningLevel;
 
 @Slf4j
 public class ProfiledValidator extends ValidatorFhirBase {
@@ -62,32 +62,49 @@ public class ProfiledValidator extends ValidatorFhirBase {
       String id,
       List<IValidationSupport> customProfileSupports,
       @Nullable ErrorMessageFilter errorFilter) {
+    this(ctx, id, customProfileSupports, errorFilter, true);
+  }
+
+  @SneakyThrows
+  public ProfiledValidator(
+      FhirContext ctx,
+      String id,
+      List<IValidationSupport> customProfileSupports,
+      @Nullable ErrorMessageFilter errorFilter,
+      boolean addSnapshotSupport) {
     this.ctx = ctx;
     this.id = id;
-    this.validator = ctx.newValidator();
     this.customProfileSupports = customProfileSupports;
 
     ctx.setParserErrorHandler(new StrictErrorHandler());
 
-    // create support chain for validation
-    // create support validators for custom profiles
-    val validationSupports = new ArrayList<>(customProfileSupports);
-    validationSupports.add(ctx.getValidationSupport());
-    validationSupports.add(new InMemoryTerminologyServerValidationSupport(ctx));
-    validationSupports.add(new SnapshotGeneratingValidationSupport(ctx));
+    // configure the HAPI validation supports
+    val validationSupportChain = new ValidationSupportChain();
 
-    // configure the HAPI FhirParser
+    // custom profiles validation support
+    customProfileSupports.forEach(validationSupportChain::addValidationSupport);
+
+    // add validation support for base resources
+    validationSupportChain.addValidationSupport(ctx.getValidationSupport());
+
+    // this is required to ensure legacy behavior
+    if (addSnapshotSupport) {
+      val snapshotSupport = new SnapshotGeneratingValidationSupport(ctx);
+      validationSupportChain.addValidationSupport(snapshotSupport);
+    }
+
     val fiv = new FhirInstanceValidator(ctx);
-    val validationSupportChain =
-        new ValidationSupportChain(validationSupports.toArray(IValidationSupport[]::new));
-
     fiv.setValidationSupport(validationSupportChain);
     fiv.setErrorForUnknownProfiles(true);
     fiv.setNoExtensibleWarnings(true);
     fiv.setAnyExtensionsAllowed(false);
+    fiv.setBestPracticeWarningLevel(BestPracticeWarningLevel.Ignore);
 
+    this.validator = ctx.newValidator();
     this.validator.registerValidatorModule(fiv);
-    if (errorFilter != null) this.validator.registerValidatorModule(errorFilter);
+    if (errorFilter != null) {
+      this.validator.registerValidatorModule(errorFilter);
+    }
   }
 
   @Override

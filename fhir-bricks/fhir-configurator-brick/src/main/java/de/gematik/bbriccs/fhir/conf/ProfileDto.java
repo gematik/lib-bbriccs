@@ -22,6 +22,7 @@ package de.gematik.bbriccs.fhir.conf;
 
 import static java.text.MessageFormat.format;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import java.util.LinkedList;
 import java.util.List;
 import lombok.Data;
@@ -31,9 +32,14 @@ import lombok.val;
 public class ProfileDto {
   private String name;
   private String version;
+
+  @JsonAlias("package")
+  private String snapshot; // this must be the tgz file
+
   private List<String> compatibleVersions = List.of();
   private List<String> canonicalClaims = List.of();
   private List<String> omitProfiles = List.of();
+  private List<String> dependsOn = List.of();
 
   @Override
   public String toString() {

@@ -1,0 +1,4 @@
+- id: "invalid-config-02"
+  note: "check guard statements for missing profile names"
+  profiles:
+    - version: "1.0.0"

@@ -22,7 +22,6 @@ package de.gematik.bbriccs.fhir.validation;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import ca.uhn.fhir.context.FhirContext;
 import de.gematik.bbriccs.fhir.EncodingType;
 import de.gematik.bbriccs.fhir.validation.utils.FhirValidatingTest;
 import de.gematik.bbriccs.utils.ResourceLoader;
@@ -38,8 +37,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class MultiProfileValidatorTest extends FhirValidatingTest {
 
-  private static final ValidatorFhir MY_VALIDATOR =
-      ValidatorFhirFactory.createValidator(FhirContext.forR4());
+  private static final ValidatorFhir MY_VALIDATOR = ValidatorFhirFactory.createValidator();
 
   static Stream<Arguments> validErpResources() {
     val files = ResourceLoader.getResourceFilesInDirectory("examples/fhir/valid/erp", true);

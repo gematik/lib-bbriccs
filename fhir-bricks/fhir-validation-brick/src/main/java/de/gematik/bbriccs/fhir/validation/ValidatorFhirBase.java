@@ -20,9 +20,10 @@
 
 package de.gematik.bbriccs.fhir.validation;
 
+import ca.uhn.fhir.validation.SingleValidationMessage;
 import ca.uhn.fhir.validation.ValidationResult;
 import com.google.common.base.Strings;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
@@ -41,13 +42,17 @@ public abstract class ValidatorFhirBase implements ValidatorFhir {
     try {
       return validationResultSupplier.get();
     } catch (Exception e) {
-      /*
-      some sort of error led to an Exception: handle this case via ValidationResult=ERROR
-       */
+      // some sort of error led to an Exception: handle this case via ValidationResult=ERROR
       log.error(
           "{} while validating FHIR content: {}", e.getClass().getSimpleName(), e.getMessage());
-      val svm = ValidationMessageUtil.createErrorMessage(e.getMessage());
-      return new ValidationResult(this.getContext(), List.of(svm));
+      val messages = new ArrayList<SingleValidationMessage>();
+      messages.add(ValidationMessageUtil.createErrorMessage(e.getMessage()));
+      Optional.ofNullable(e.getCause())
+          .map(Throwable::getMessage)
+          .map(ValidationMessageUtil::createErrorMessage)
+          .ifPresent(messages::add);
+
+      return new ValidationResult(this.getContext(), messages);
     }
   }
 

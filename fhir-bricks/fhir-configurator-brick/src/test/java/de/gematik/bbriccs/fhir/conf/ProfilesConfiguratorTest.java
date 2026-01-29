@@ -24,12 +24,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import de.gematik.bbriccs.fhir.conf.exceptions.FhirConfigurationException;
 import de.gematik.bbriccs.utils.ResourceFileException;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.junitpioneer.jupiter.SetSystemProperty;
 
+@Slf4j
 class ProfilesConfiguratorTest {
 
   @Test
@@ -42,6 +44,60 @@ class ProfilesConfiguratorTest {
   void shouldReadDefaultConfig() {
     val config = ProfilesConfigurator.getDefaultConfiguration();
     assertEquals("1.2.0", config.getDefaultProfile().getId());
+  }
+
+  @Test
+  void shouldFindDependencyProfileFromVirtualDefaultProfile() {
+    val config = ProfilesConfigurator.getDefaultConfiguration();
+    assertEquals("1.2.0", config.getDefaultProfile().getId());
+
+    val profile = ProfilesConfigurator.getVirtualDefaultProfile("de.basisprofil.r4");
+    assertTrue(profile.isPresent());
+
+    assertEquals("de.basisprofil.r4", profile.get().getName());
+    assertEquals("1.5.4", profile.get().getVersion());
+
+    // dependencies not following the convention of (e.g. erp-r5-backports-0.1.0.tgz) won't be found
+    // that's expected, and we'll see if we need to change that in the future
+    val p2 = ProfilesConfigurator.getVirtualDefaultProfile("erp-r5-backports");
+    assertTrue(p2.isEmpty());
+
+    val p3 = ProfilesConfigurator.getVirtualDefaultProfile("erp.r5.backports");
+    assertTrue(p3.isEmpty());
+  }
+
+  @Test
+  void shouldAutofillNamesProperlyFromPackage() {
+    val config = ProfilesConfigurator.getDefaultConfiguration();
+    val autofillerSetting =
+        config.getProfileConfigurations().stream()
+            .filter(it -> "autofiller".equals(it.getId()))
+            .findFirst();
+    assertTrue(autofillerSetting.isPresent());
+
+    val autofiller = autofillerSetting.get();
+    autofiller
+        .getProfiles()
+        .forEach(
+            p -> {
+              assertTrue(
+                  VersionParser.parseVersion(p.getVersion()).isPresent(),
+                  "Version could not be parsed for profile: " + p);
+              assertNotNull(p.getName(), "Name is null for profile: " + p);
+              assertFalse(p.getName().isBlank(), "Name is blank for profile: " + p);
+              log.debug("Autofilled profile: {} {}", p.getName(), p.getVersion());
+            });
+  }
+
+  @ParameterizedTest
+  @ValueSource(
+      strings = {"invalid-config-01.yaml", "invalid-config-02.yaml", "invalid-config-03.yaml"})
+  void shouldTriggerGuardsForInvalidConfigurations(String configName) {
+    val ex =
+        assertThrows(
+            FhirConfigurationException.class,
+            () -> ProfilesConfigurator.getConfiguration(configName));
+    log.debug(ex.getMessage());
   }
 
   @ParameterizedTest

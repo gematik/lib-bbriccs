@@ -1,0 +1,4 @@
+- id: "invalid-config-01"
+  note: "check guard statements for missing version"
+  profiles:
+    - name: "de.gematik.erezept-patientenrechnung.r4"

@@ -25,6 +25,7 @@ import static java.text.MessageFormat.format;
 import de.gematik.bbriccs.fhir.coding.exceptions.FhirVersionException;
 import de.gematik.bbriccs.fhir.conf.ProfileDto;
 import de.gematik.bbriccs.fhir.conf.ProfilesConfigurator;
+import de.gematik.bbriccs.fhir.conf.VersionParser;
 import de.gematik.bbriccs.toggle.FeatureToggle;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -32,59 +33,28 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
+import lombok.experimental.UtilityClass;
 import lombok.val;
 
+@UtilityClass
 public class VersionUtil {
 
-  public static final Pattern SEMVER_REGEX =
-      Pattern.compile("(\\d{1,3}+\\.\\d+(\\.(?<patch>\\d+))?)");
-  private static final String PATCH_GROUP = "patch";
-
-  private VersionUtil() {
-    throw new IllegalAccessError("Utility class");
-  }
-
   public static String parseVersion(String input) {
-    val matcher = SEMVER_REGEX.matcher(input);
-    if (!matcher.find()) {
-      throw new FhirVersionException(format("Given input does not contain a version: {0}", input));
-    }
-
-    return matcher.group(0);
+    return VersionParser.parseVersion(input)
+        .orElseThrow(
+            () ->
+                new FhirVersionException(
+                    format("Given input does not contain a version: {0}", input)));
   }
 
   public static String omitPatch(String input) {
-    val matcher = SEMVER_REGEX.matcher(input);
-    if (matcher.find()) {
-      val patchGroup = matcher.group(PATCH_GROUP);
-      return Optional.ofNullable(patchGroup)
-          .map(
-              v -> {
-                val patchIdx = matcher.start(PATCH_GROUP) - 1;
-                return input.substring(0, patchIdx);
-              })
-          .orElse(input);
-    } else {
-      return input;
-    }
+    return VersionParser.omitPatch(input);
   }
 
   public static String omitZeroPatch(String input) {
-    val matcher = SEMVER_REGEX.matcher(input);
-    if (matcher.find()) {
-      val patchGroup = matcher.group(PATCH_GROUP);
-      if (patchGroup != null && patchGroup.equals("0")) {
-        val patchIdx = matcher.start(PATCH_GROUP) - 1;
-        return input.substring(0, patchIdx);
-      } else {
-        return input;
-      }
-    } else {
-      return input;
-    }
+    return VersionParser.omitZeroPatch(input);
   }
 
   /**
@@ -122,36 +92,11 @@ public class VersionUtil {
    * @return true if both versions are equal
    */
   public static boolean areEqual(String left, String right) {
-    val leftTokens = left.split("\\.");
-    val rightTokens = right.split("\\.");
-
-    if (leftTokens.length < 3) {
-      left = format("{0}.0", left);
-    }
-
-    if (rightTokens.length < 3) {
-      right = format("{0}.0", right);
-    }
-
-    return left.equals(right);
+    return VersionParser.areEqual(left, right);
   }
 
   public static int compare(String left, String right) {
-    // make sure versions have minor and patch in any case!!
-    left += ".0.0";
-    right += ".0.0";
-
-    val leftTokens = left.split("\\.");
-    val rightTokens = right.split("\\.");
-    for (var i = 0; i < 3; i++) {
-      val lt = Integer.parseInt(leftTokens[i]); // my version token
-      val rt = Integer.parseInt(rightTokens[i]); // another version token
-      if (rt != lt) {
-        return (lt < rt) ? -1 : 1;
-      }
-    }
-
-    return 0;
+    return VersionParser.compare(left, right);
   }
 
   public static <T extends ProfileVersion> T fromString(Class<T> type, List<String> inputs) {
