@@ -25,17 +25,25 @@ import static java.text.MessageFormat.format;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.support.IValidationSupport;
 import ca.uhn.fhir.parser.IParser;
+import ca.uhn.fhir.parser.LenientErrorHandler;
+import ca.uhn.fhir.util.ClasspathUtil;
+import com.google.common.base.Strings;
 import com.google.common.reflect.ClassPath;
 import com.google.common.reflect.ClassPath.ResourceInfo;
 import de.gematik.bbriccs.fhir.EncodingType;
 import de.gematik.bbriccs.fhir.conf.ProfileDto;
 import de.gematik.bbriccs.fhir.conf.ProfileSettingsDto;
 import de.gematik.bbriccs.fhir.conf.ProfilesConfigurator;
+import de.gematik.bbriccs.fhir.conf.VersionParser;
 import de.gematik.bbriccs.fhir.conf.exceptions.FhirConfigurationException;
-import de.gematik.bbriccs.fhir.validation.support.CodeSystemFilter;
 import de.gematik.bbriccs.fhir.validation.support.ErrorMessageFilter;
+import de.gematik.bbriccs.fhir.validation.support.IgnoredCodeSystemsSupport;
+import de.gematik.bbriccs.fhir.validation.support.IgnoredValueSetsSupport;
+import de.gematik.bbriccs.fhir.validation.support.PrePopulatedValidationSupportBrick;
 import de.gematik.bbriccs.fhir.validation.support.ProfileValidationSupport;
 import de.gematik.bbriccs.utils.ResourceLoader;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +53,8 @@ import org.hl7.fhir.r4.model.CodeSystem;
 import org.hl7.fhir.r4.model.NamingSystem;
 import org.hl7.fhir.r4.model.StructureDefinition;
 import org.hl7.fhir.r4.model.ValueSet;
+import org.hl7.fhir.utilities.ByteProvider;
+import org.hl7.fhir.utilities.npm.NpmPackage;
 
 @Slf4j
 public class ValidatorFhirFactory {
@@ -59,76 +69,160 @@ public class ValidatorFhirFactory {
   }
 
   public static ValidatorFhir createValidator() {
-    return createValidator(FhirContext.forR4());
-  }
-
-  public static ValidatorFhir createValidator(FhirContext ctx) {
     val profileSettings = ProfilesConfigurator.getDefaultConfiguration();
-    return createValidator(ctx, profileSettings.getProfileConfigurations());
+    return createValidator(profileSettings.getProfileConfigurations());
   }
 
-  public static ValidatorFhir createValidator(
-      FhirContext ctx, List<ProfileSettingsDto> profileSettings) {
+  public static ValidatorFhir createValidator(List<ProfileSettingsDto> profileSettings) {
+    val cache = new HashMap<String, IValidationSupport>();
     if (profileSettings == null || profileSettings.isEmpty()) {
       throw new FhirConfigurationException(
           "FHIR Configuration does not contain any profile settings");
     } else if (profileSettings.size() == 1) {
-      return createSingleProfileValidator(ctx, profileSettings.get(0));
+      return createSingleProfileValidator(profileSettings.get(0), cache);
     }
 
     val validators =
-        profileSettings.stream().map(ps -> createSingleProfileValidator(ctx, ps)).toList();
+        profileSettings.stream().map(it -> createSingleProfileValidator(it, cache)).toList();
     return new MultiProfileValidator(validators);
   }
 
   private static ProfiledValidator createSingleProfileValidator(
-      FhirContext ctx, ProfileSettingsDto profileSettings) {
-    val supports = create(ctx, profileSettings);
+      ProfileSettingsDto profileSettings, HashMap<String, IValidationSupport> cache) {
+
+    log.info("Create ProfiledValidator for PVIEW '{}'", profileSettings.getId());
+    val ctx = FhirContext.forR4();
+    val supports = create(ctx, profileSettings, cache);
     val errorFilter = new ErrorMessageFilter(profileSettings.getErrorFilter());
     return new ProfiledValidator(ctx, profileSettings.getId(), supports, errorFilter);
   }
 
   private static List<IValidationSupport> create(
-      FhirContext ctx, ProfileSettingsDto profileSettings) {
+      FhirContext ctx,
+      ProfileSettingsDto profileSettings,
+      HashMap<String, IValidationSupport> cache) {
+
+    val ignoredCodeSystems =
+        new IgnoredCodeSystemsSupport(
+            ctx, profileSettings.getId(), profileSettings.getIgnoreCodeSystems());
+    val ignoredValuesSets =
+        new IgnoredValueSetsSupport(
+            ctx, profileSettings.getId(), profileSettings.getIgnoreValueSets());
 
     val supports = new ArrayList<IValidationSupport>(profileSettings.getProfiles().size() + 1);
-
-    Optional.ofNullable(profileSettings.getIgnoreCodeSystems())
-        .filter(ignoredCodeSystems -> !ignoredCodeSystems.isEmpty())
-        .ifPresent(
-            ignoredCodeSystems -> supports.add(new CodeSystemFilter(ctx, ignoredCodeSystems)));
+    supports.add(ignoredCodeSystems);
+    supports.add(ignoredValuesSets);
 
     val profileSupports =
-        profileSettings.getProfiles().stream().map(profile -> create(ctx, profile)).toList();
+        profileSettings.getProfiles().stream()
+            .map(profile -> create(cache, ctx, profile))
+            .map(Builder::build)
+            .toList();
     supports.addAll(profileSupports);
     return supports;
   }
 
-  private static IValidationSupport create(FhirContext ctx, ProfileDto profile) {
-    return new Builder(ctx, profile).build();
+  private static Builder create(
+      Map<String, IValidationSupport> cache, FhirContext ctx, ProfileDto profile) {
+    return new Builder(cache, ctx, profile);
   }
 
   private static class Builder {
-
     private final Map<String, StructureDefinition> structureDefinitions = new HashMap<>();
     private final Map<String, NamingSystem> namingSystems = new HashMap<>();
     private final Map<String, CodeSystem> codeSystems = new HashMap<>();
     private final Map<String, ValueSet> valueSets = new HashMap<>();
 
+    private final Map<String, IValidationSupport> cache;
     private final FhirContext ctx;
     private final IParser jsonParser;
     private final IParser xmlParser;
     private final ProfileDto profile;
 
-    private Builder(FhirContext ctx, ProfileDto profile) {
+    private Builder(Map<String, IValidationSupport> cache, FhirContext ctx, ProfileDto profile) {
+      this.cache = cache;
       this.ctx = ctx;
-      this.jsonParser = ctx.newJsonParser();
-      this.xmlParser = ctx.newXmlParser();
+      this.jsonParser = ctx.newJsonParser().setParserErrorHandler(new LenientErrorHandler(false));
+      this.xmlParser = ctx.newXmlParser().setParserErrorHandler(new LenientErrorHandler(false));
       this.profile = profile;
     }
 
+    public IValidationSupport build() {
+      if (Strings.isNullOrEmpty(profile.getSnapshot())) {
+        log.trace("Build ValidationSupport for {} from unzipt files", profile.getName());
+        return buildFromJsons();
+      } else {
+        if (Strings.isNullOrEmpty(profile.getName())) {
+          // we have a snapshot tgz file but no profile name - extract from tgz filename
+          val tokens = profile.getSnapshot().split("-");
+          if (tokens.length >= 1) profile.setName(tokens[0]);
+        }
+        if (Strings.isNullOrEmpty(profile.getVersion())) {
+          val pversion =
+              VersionParser.parseVersion(profile.getSnapshot())
+                  .orElseThrow(
+                      () -> {
+                        val msg =
+                            format(
+                                "Cannot extract version from package name: {0}",
+                                profile.getSnapshot());
+                        return new FhirConfigurationException(msg);
+                      });
+          profile.setVersion(pversion);
+        }
+
+        log.trace("Build ValidationSupport for {} from snapshot (as .tgz)", profile.getName());
+        return buildFromSnapshot();
+      }
+    }
+
+    private IValidationSupport buildFromSnapshot() {
+      val classPath = format("classpath:fhir/profiles/{0}", profile.getSnapshot());
+      return cache.computeIfAbsent(classPath, key -> loadPackageFromClasspath(profile, classPath));
+    }
+
     @SneakyThrows
-    private ProfileValidationSupport build() {
+    public IValidationSupport loadPackageFromClasspath(ProfileDto pdto, String theClasspath) {
+      val support = new PrePopulatedValidationSupportBrick(pdto, ctx);
+      log.debug("|-> Loading NPM package from {} into cache", theClasspath);
+      try (val is = ClasspathUtil.loadResourceAsStream(theClasspath)) {
+        val pkg = NpmPackage.fromPackage(is);
+        if (pkg.getFolders().containsKey("package")) {
+          loadResourcesFromPackageInto(support, pkg);
+          loadBinariesFromPackageInto(support, pkg);
+        } else {
+          log.warn("NPM package at {} does not contain a 'package' folder", pdto);
+        }
+      }
+      support.lock();
+      return support;
+    }
+
+    private void loadResourcesFromPackageInto(
+        PrePopulatedValidationSupportBrick support, NpmPackage thePackage) {
+      val packageFolder = thePackage.getFolders().get("package");
+      val files = packageFolder.listFiles();
+
+      for (val nextFile : files) {
+        if (nextFile.toLowerCase(Locale.US).endsWith(".json")) {
+          val input = new String(packageFolder.getContent().get(nextFile), StandardCharsets.UTF_8);
+          val resource = jsonParser.parseResource(input);
+          support.addResource(resource);
+        }
+      }
+    }
+
+    private void loadBinariesFromPackageInto(
+        PrePopulatedValidationSupportBrick support, NpmPackage thePackage) throws IOException {
+      val binaries = thePackage.list("other");
+      for (val binaryName : binaries) {
+        support.addBinary(
+            ByteProvider.forStream(thePackage.load("other", binaryName)).getBytes(), binaryName);
+      }
+    }
+
+    @SneakyThrows
+    private IValidationSupport buildFromJsons() {
       // Note: fhir/profiles is a convention for the resource path of FHIR profiles
       val packageName =
           format("fhir/profiles/{0}-{1}/package", profile.getName(), profile.getVersion());
@@ -150,13 +244,13 @@ public class ValidatorFhirFactory {
       val fileSizeMb = profileContent.length() / (1024 * 1024);
 
       if (fileSizeMb > 1) {
-        log.warn("Large Profile ({} MB) detected - {}", fileSizeMb, info.getResourceName());
+        log.warn("Large profile ({} MB) detected - {}", fileSizeMb, info.getResourceName());
         log.warn(
             "\tThis might lead to excessive memory consumption: make sure you really need {} and"
                 + " consider the ''omitProfiles'' option",
             info.getResourceName());
       } else {
-        log.trace("Load Profile ({} MB) - {}", fileSizeMb, info.getResourceName());
+        log.trace("Load profile ({} MB) - {}", fileSizeMb, info.getResourceName());
       }
 
       val parser =

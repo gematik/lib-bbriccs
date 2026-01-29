@@ -56,14 +56,10 @@ class ValidatorFhirTest extends FhirValidatingTest {
   }
 
   static Stream<Arguments> shouldValidateValidErpFhirResourcesWithRefValidator() {
-    val dav =
-        ResourceLoader.getResourceFilesInDirectory("examples/fhir/valid/erp/dav/1.2", true).stream()
-            .filter(f -> f.getName().endsWith(".xml"));
-    val kbv =
-        ResourceLoader.getResourceFilesInDirectory("examples/fhir/valid/erp/kbv/1.1.0", true)
-            .stream()
-            .filter(f -> f.getName().endsWith(".xml"));
-    return Stream.concat(dav, kbv).map(Arguments::of);
+    return ResourceLoader.getResourceFilesInDirectory("examples/fhir/valid/erp/kbv/1.1.0", true)
+        .stream()
+        .filter(f -> f.getName().endsWith(".xml"))
+        .map(Arguments::of);
   }
 
   static Stream<Arguments> shouldValidateWithSingleProfileValidatorWithoutSupport() {
@@ -157,9 +153,7 @@ class ValidatorFhirTest extends FhirValidatingTest {
     val files =
         List.of(
             ResourceLoader.getFileFromResource(
-                "examples/fhir/valid/erp/erx/1.2.0/acceptbundle/cef4b960-7ce4-4755-b4ce-3b01a30ec2f0.xml"),
-            ResourceLoader.getFileFromResource(
-                "examples/fhir/valid/erp/erx/mixed/task_bundle_01.json"));
+                "examples/fhir/valid/erp/erx/1.2.0/acceptbundle/cef4b960-7ce4-4755-b4ce-3b01a30ec2f0.xml"));
 
     return Stream.of(
             (Supplier<ValidatorFhir>)

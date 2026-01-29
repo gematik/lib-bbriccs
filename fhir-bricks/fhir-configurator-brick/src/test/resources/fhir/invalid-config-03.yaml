@@ -1,0 +1,4 @@
+- id: "invalid-config-03"
+  note: "check guard statements for missing missing version in package-based profile"
+  profiles:
+    - package: "de.gematik.erezept-patientenrechnung.r4-A.B.C-snapshots.tgz"

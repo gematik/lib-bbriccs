@@ -20,20 +20,20 @@
 
 package de.gematik.bbriccs.fhir.validation.support;
 
-import static java.text.MessageFormat.format;
-
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.support.ConceptValidationOptions;
-import ca.uhn.fhir.context.support.IValidationSupport;
 import ca.uhn.fhir.context.support.ValidationSupportContext;
 import java.util.*;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hl7.fhir.common.hapi.validation.support.BaseValidationSupport;
 
-public class CodeSystemFilter extends BaseValidationSupport {
+@Slf4j
+public class IgnoredCodeSystemsSupport extends BaseValidationSupport {
 
+  private final String validatorId;
   private final HashSet<String> ignoredCodeSystems;
 
   /**
@@ -41,8 +41,10 @@ public class CodeSystemFilter extends BaseValidationSupport {
    *
    * @param theFhirContext {@link FhirContext}
    */
-  public CodeSystemFilter(FhirContext theFhirContext, Collection<String> ignoredCodeSystems) {
+  public IgnoredCodeSystemsSupport(
+      FhirContext theFhirContext, String validatorId, Collection<String> ignoredCodeSystems) {
     super(theFhirContext);
+    this.validatorId = validatorId;
     this.ignoredCodeSystems = new HashSet<>(ignoredCodeSystems);
   }
 
@@ -63,11 +65,15 @@ public class CodeSystemFilter extends BaseValidationSupport {
       String theValueSetUrl) {
 
     if (isCodeSystemSupported(theValidationSupportContext, theCodeSystem)) {
-      val result = new IValidationSupport.CodeValidationResult();
-      result.setSeverity(IssueSeverity.INFORMATION);
+      log.info(
+          "(validator {}) Skip validation of code {} from system {}",
+          validatorId,
+          theCode,
+          theCodeSystem);
+      val result = new CodeValidationResult();
       result.setCodeSystemName(theCodeSystem);
       result.setCode(theCode);
-      result.setMessage(format("This module has no support for code system {0}", theCodeSystem));
+      result.setDisplay(theDisplay);
       return result;
     } else {
       return null;

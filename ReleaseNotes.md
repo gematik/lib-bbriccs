@@ -1,5 +1,10 @@
 # Release Notes $B^2riC^2s$
 
+## Release 0.9.0
+
+### FHIR-Bricks
+- Implement `PrePopulatedValidationSupportBrick` to enable FHIR validation with pre-populated profiles loaded from `.tgz`-Files.
+
 ## Release 0.5.0
 
 ### RESTful-Bricks

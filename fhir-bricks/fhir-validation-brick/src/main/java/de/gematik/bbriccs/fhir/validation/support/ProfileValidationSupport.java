@@ -20,6 +20,8 @@
 
 package de.gematik.bbriccs.fhir.validation.support;
 
+import static java.text.MessageFormat.format;
+
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.support.IValidationSupport;
 import ca.uhn.fhir.context.support.ValidationSupportContext;
@@ -74,6 +76,12 @@ public class ProfileValidationSupport implements IValidationSupport {
     this.namingSystems = namingSystems;
     this.codeSystems = codeSystems;
     this.valueSets = valueSets;
+  }
+
+  @Override
+  public String getName() {
+    return format(
+        "ProfileValidationSupport[{0}:{1}]", this.profile.getName(), this.profile.getVersion());
   }
 
   @Override

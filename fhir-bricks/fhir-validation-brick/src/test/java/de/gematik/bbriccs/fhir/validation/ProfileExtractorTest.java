@@ -83,8 +83,8 @@ class ProfileExtractorTest {
   @Test
   void shouldExtractXmlProfiles() {
     val kbvBundleResources =
-        ResourceLoader.getResourceFilesInDirectory("examples/fhir/valid/erp/kbv/1.0.2/bundle");
-    val expectedProfile = "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Bundle|1.0.2";
+        ResourceLoader.getResourceFilesInDirectory("examples/fhir/valid/erp/kbv/1.1.0/bundle");
+    val expectedProfile = "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Bundle|1.1.0";
 
     kbvBundleResources.forEach(
         file -> {

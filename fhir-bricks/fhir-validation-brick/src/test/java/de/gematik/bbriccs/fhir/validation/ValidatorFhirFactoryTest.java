@@ -22,8 +22,7 @@ package de.gematik.bbriccs.fhir.validation;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import ca.uhn.fhir.context.FhirContext;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,96 +30,83 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import de.gematik.bbriccs.fhir.conf.ProfileSettingsDto;
 import de.gematik.bbriccs.fhir.conf.exceptions.FhirConfigurationException;
 import de.gematik.bbriccs.fhir.exceptions.UnsupportedEncodingException;
-import de.gematik.bbriccs.utils.PrivateConstructorsUtil;
 import de.gematik.bbriccs.utils.ResourceLoader;
 import java.util.LinkedList;
 import java.util.List;
+import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
 class ValidatorFhirFactoryTest {
 
   @Test
-  void shouldNotInstantiate() {
-    assertTrue(PrivateConstructorsUtil.isUtilityConstructor(ValidatorFhirFactory.class));
-  }
-
-  @Test
   void shouldThrowOnEmptyConfiguration() {
     val configuredProfiles = new LinkedList<ProfileSettingsDto>();
-    val ctx = FhirContext.forR4();
     assertThrows(
         FhirConfigurationException.class,
-        () -> ValidatorFhirFactory.createValidator(ctx, configuredProfiles));
+        () -> ValidatorFhirFactory.createValidator(configuredProfiles));
   }
 
   @Test
   void shouldThrowOnNullConfiguration() {
-    val ctx = FhirContext.forR4();
     assertThrows(
-        FhirConfigurationException.class, () -> ValidatorFhirFactory.createValidator(ctx, null));
+        FhirConfigurationException.class, () -> ValidatorFhirFactory.createValidator(null));
   }
 
   @Test
-  void shouldThrowOnInvalidProfileFileExtensions() throws JsonProcessingException {
-    val profilesConfig = ResourceLoader.readFileFromResource("fhir/ihe-d_configuration_01.yaml");
-    val mapper =
-        new ObjectMapper(new YAMLFactory())
-            .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
-    val configuredProfiles =
-        mapper.readValue(profilesConfig, new TypeReference<List<ProfileSettingsDto>>() {});
+  void shouldThrowOnInvalidProfileFileExtensions() {
+    val configuredProfiles = readCustomConfiguration("fhir/ihe-d_configuration_01.yaml");
     configuredProfiles.stream()
         .flatMap(psd -> psd.getProfiles().stream())
         .forEach(p -> p.setOmitProfiles(List.of("invalid.json")));
-    val ctx = FhirContext.forR4();
     val uee =
         assertThrows(
             UnsupportedEncodingException.class,
-            () -> ValidatorFhirFactory.createValidator(ctx, configuredProfiles));
+            () -> ValidatorFhirFactory.createValidator(configuredProfiles));
     assertTrue(uee.getMessage().contains("invalid.txt"));
   }
 
   @Test
-  void shouldThrowOnInvalidProfileFile() throws JsonProcessingException {
-    val profilesConfig = ResourceLoader.readFileFromResource("fhir/ihe-d_configuration_01.yaml");
-    val mapper =
-        new ObjectMapper(new YAMLFactory())
-            .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
-    val configuredProfiles =
-        mapper.readValue(profilesConfig, new TypeReference<List<ProfileSettingsDto>>() {});
+  void shouldThrowOnInvalidProfileFile() {
+    val configuredProfiles = readCustomConfiguration("fhir/ihe-d_configuration_01.yaml");
     configuredProfiles.stream()
         .flatMap(psd -> psd.getProfiles().stream())
         .forEach(p -> p.setOmitProfiles(List.of("invalid.txt")));
-    val ctx = FhirContext.forR4();
     val uee =
         assertThrows(
             FhirConfigurationException.class,
-            () -> ValidatorFhirFactory.createValidator(ctx, configuredProfiles));
+            () -> ValidatorFhirFactory.createValidator(configuredProfiles));
     assertTrue(uee.getMessage().contains("invalid.json"));
   }
 
   @Test
-  void shouldNotThrowIfInvalidIsOmitted() throws JsonProcessingException {
-    val profilesConfig = ResourceLoader.readFileFromResource("fhir/ihe-d_configuration_02.yaml");
-    val mapper =
-        new ObjectMapper(new YAMLFactory())
-            .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
-    val configuredProfiles =
-        mapper.readValue(profilesConfig, new TypeReference<List<ProfileSettingsDto>>() {});
-    val ctx = FhirContext.forR4();
-    assertDoesNotThrow(() -> ValidatorFhirFactory.createValidator(ctx, configuredProfiles));
+  void shouldNotThrowIfInvalidIsOmitted() {
+    val configuredProfiles = readCustomConfiguration("fhir/ihe-d_configuration_02.yaml");
+    assertDoesNotThrow(() -> ValidatorFhirFactory.createValidator(configuredProfiles));
   }
 
   @Test
-  void shouldChooseSingleProfileValidator() throws JsonProcessingException {
-    val profilesConfig =
-        ResourceLoader.readFileFromResource("fhir/single_profile_configuration.yaml");
+  void shouldChooseSingleProfileValidator() {
+    val configuredProfiles = readCustomConfiguration("fhir/single_profile_configuration.yaml");
+    val validator = ValidatorFhirFactory.createValidator(configuredProfiles);
+    assertEquals(ProfiledValidator.class, validator.getClass());
+  }
+
+  @Test
+  void shouldThrowOnMissingProfileSnapshotFile() {
+    val configuredProfiles = readCustomConfiguration("fhir/ihe-d_configuration_01.yaml");
+    configuredProfiles.get(0).getProfiles().get(0).setSnapshot("my.profile-1.0.0-nonexistent.tgz");
+    assertThrows(
+        InternalErrorException.class,
+        () -> ValidatorFhirFactory.createValidator(configuredProfiles));
+  }
+
+  @SneakyThrows
+  private List<ProfileSettingsDto> readCustomConfiguration(String configFile) {
+    val profilesConfig = ResourceLoader.readFileFromResource(configFile);
     val mapper =
         new ObjectMapper(new YAMLFactory())
             .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
-    val configuredProfiles =
-        mapper.readValue(profilesConfig, new TypeReference<List<ProfileSettingsDto>>() {});
-    val validator = ValidatorFhirFactory.createValidator(FhirContext.forR4(), configuredProfiles);
-    assertEquals(ProfiledValidator.class, validator.getClass());
+    return mapper.readValue(profilesConfig, new TypeReference<>() {});
   }
 }

@@ -30,5 +30,6 @@ public class ProfileSettingsDto {
   private String mode; // dummy value for now which is not used yet
   private List<ProfileDto> profiles;
   private List<String> ignoreCodeSystems = List.of();
+  private List<String> ignoreValueSets = List.of();
   private List<String> errorFilter;
 }

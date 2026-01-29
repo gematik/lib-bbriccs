@@ -24,7 +24,6 @@ import de.gematik.bbriccs.rest.HttpBRequest;
 import de.gematik.bbriccs.rest.HttpBResponse;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 public class RestObserverManager {
 
@@ -37,15 +36,11 @@ public class RestObserverManager {
   }
 
   public void serveRequestObservers(HttpBRequest request) {
-    if (!this.requestObservers.isEmpty())
-      this.requestObservers.parallelStream()
-          .forEach(ro -> CompletableFuture.runAsync(() -> ro.onRequest(request)).join());
+    this.requestObservers.forEach(ro -> ro.onRequest(request));
   }
 
   public void serveResponseObservers(HttpBResponse response) {
-    if (!this.responseObservers.isEmpty())
-      this.responseObservers.parallelStream()
-          .forEach(ro -> CompletableFuture.runAsync(() -> ro.onResponse(response)).join());
+    this.responseObservers.forEach(ro -> ro.onResponse(response));
   }
 
   public static class RestObserverBuilder {

@@ -45,7 +45,7 @@ class PatientMutatorProviderTest extends FhirFuzzingMutatorTest {
         bundle.getEntry().stream()
             .map(Bundle.BundleEntryComponent::getResource)
             .filter(resource -> resource.getResourceType().equals(ResourceType.Patient))
-            .map(resource -> (Patient) resource)
+            .map(Patient.class::cast)
             .findFirst()
             .orElseThrow();
     val mutatorProvider = new PatientMutatorProvider();
@@ -63,13 +63,9 @@ class PatientMutatorProviderTest extends FhirFuzzingMutatorTest {
 
   static Stream<Arguments> shouldNotThrowAnything() {
     // choose some bundles from examples for fuzzing mutator to act on
-    val ciBundles =
-        ResourceLoader.getResourceFilesInDirectory(
-            "examples/fhir/valid/erp/kbv/1.1.0/bundle", true);
-    val kbvBundles =
-        ResourceLoader.getResourceFilesInDirectory(
-            "examples/fhir/valid/erp/kbv/1.0.2/bundle", true);
-
-    return Stream.concat(ciBundles.stream(), kbvBundles.stream()).map(Arguments::of);
+    return ResourceLoader.getResourceFilesInDirectory(
+            "examples/fhir/valid/erp/kbv/1.1.0/bundle", true)
+        .stream()
+        .map(Arguments::of);
   }
 }
