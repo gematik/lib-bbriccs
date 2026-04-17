@@ -40,8 +40,10 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 import javax.net.ssl.SSLContext;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+@Slf4j
 public class BasicHttpClient implements HttpBClient {
 
   private final String url;
@@ -74,11 +76,20 @@ public class BasicHttpClient implements HttpBClient {
         HttpRequest.newBuilder(URI.create(url + bRequest.urlPath()))
             .version(bRequest.version().asVersion());
 
-    // java.net.http does not allow you to set content-length by hand
-    bRequest.removeHeader(StandardHttpHeaderKey.CONTENT_LENGTH);
-    bRequest.headers().forEach(header -> rb.header(header.key(), header.value()));
+    // java.net.http does not allow you to set content-length header by hand
+    bRequest
+        .headerValues(StandardHttpHeaderKey.CONTENT_LENGTH)
+        .forEach(
+            v ->
+                log.warn(
+                    "Request contains Content-Length header with value '{}', which will be ignored"
+                        + " and automatically calculated by the underlying HTTP-Client!",
+                    v));
+    bRequest.headers().stream()
+        .filter(header -> !header.matches(StandardHttpHeaderKey.CONTENT_LENGTH))
+        .forEach(header -> rb.header(header.key(), header.value()));
 
-    val body = bRequest.body();
+    val body = Optional.ofNullable(bRequest.body()).orElse(new byte[0]);
 
     // automatically calculate content-length for the request!
     val bodyPublisher =

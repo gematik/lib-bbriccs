@@ -22,7 +22,7 @@ package de.gematik.bbriccs.vsdm.types;
 
 import static java.text.MessageFormat.format;
 
-import de.gematik.bbriccs.vsdm.exceptions.ParsingUpdateResonException;
+import de.gematik.bbriccs.vsdm.exceptions.ParsingUpdateReasonException;
 import lombok.Getter;
 
 @Getter
@@ -49,12 +49,12 @@ public enum VsdmUpdateReason {
     return format("Identifier {0} Description: {1}", this.identifier, this.description);
   }
 
-  public static VsdmUpdateReason fromChecksum(char value) throws ParsingUpdateResonException {
+  public static VsdmUpdateReason fromChecksum(char value) throws ParsingUpdateReasonException {
     return switch (value) {
       case 'U' -> UFS_UPDATE;
       case 'V' -> VSD_UPDATE;
       case 'C' -> CARD_MANAGEMENT_UPDATE;
-      default -> throw new ParsingUpdateResonException(value);
+      default -> throw new ParsingUpdateReasonException(value);
     };
   }
 }

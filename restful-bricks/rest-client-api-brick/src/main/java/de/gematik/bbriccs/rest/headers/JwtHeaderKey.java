@@ -22,7 +22,6 @@ package de.gematik.bbriccs.rest.headers;
 
 import static java.text.MessageFormat.format;
 
-import de.gematik.bbriccs.rest.HttpHeaderKey;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

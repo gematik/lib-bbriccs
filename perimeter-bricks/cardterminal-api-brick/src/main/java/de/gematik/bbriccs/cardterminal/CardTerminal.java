@@ -21,6 +21,7 @@
 package de.gematik.bbriccs.cardterminal;
 
 import de.gematik.bbriccs.smartcards.Smartcard;
+import java.util.List;
 import java.util.Optional;
 
 public interface CardTerminal {
@@ -46,4 +47,6 @@ public interface CardTerminal {
   default boolean hasFreeSlot() {
     return this.getFreeSlot().isPresent();
   }
+
+  List<CardTerminalSlot> getAllSlots();
 }

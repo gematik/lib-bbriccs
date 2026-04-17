@@ -23,6 +23,7 @@ package de.gematik.bbriccs.cardterminal;
 import static org.junit.jupiter.api.Assertions.*;
 
 import de.gematik.bbriccs.smartcards.Smartcard;
+import java.util.List;
 import java.util.Optional;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -56,6 +57,11 @@ class CardTerminalTest {
     @Override
     public Optional<CardTerminalSlot> getFreeSlot() {
       return Optional.empty();
+    }
+
+    @Override
+    public List<CardTerminalSlot> getAllSlots() {
+      return List.of();
     }
   }
 }

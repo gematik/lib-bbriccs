@@ -38,4 +38,16 @@ class SoftKonSubTypeConfigurationProviderTest {
     assertEquals("Konnektor", cfg.getName());
     assertEquals(SoftKonServiceConfiguration.class, cfg.getService().getClass());
   }
+
+  @Test
+  void shouldParseConfigurationWithoutSmartcards() {
+    val reader = ConfigurationReader.getConfigurationMapper();
+    val yaml =
+        ResourceLoader.readFileFromResource("cfg/konnektor_configuration_without_smartcards.yaml");
+
+    val cfg = assertDoesNotThrow(() -> reader.readValue(yaml, KonnektorConfiguration.class));
+    assertEquals("Konnektor", cfg.getName());
+    assertEquals(SoftKonServiceConfiguration.class, cfg.getService().getClass());
+    assertNull(((SoftKonServiceConfiguration) cfg.getService()).getSmartcards());
+  }
 }

@@ -35,6 +35,7 @@ import de.gematik.bbriccs.rest.HttpRequestMethod;
 import de.gematik.bbriccs.rest.UnirestHttpClient;
 import de.gematik.bbriccs.rest.headers.StandardHttpHeaderKey;
 import de.gematik.bbriccs.smartcards.Smartcard;
+import jakarta.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import kong.unirest.core.MimeTypes;
@@ -43,6 +44,8 @@ import lombok.*;
 public class CatsClient implements CardTerminal {
 
   private static final int CATS_DEFAULT_SLOT_COUNT = 4;
+  private static final int CATS_FIRST_SLOT_ID = 1;
+  private static final String OPERATION_FORMAT = "{0} {1}";
 
   @Getter private final String ctId;
   private final String configPath;
@@ -73,7 +76,8 @@ public class CatsClient implements CardTerminal {
 
   @Override
   public CardTerminal connect() {
-    for (int i = 0; i < CATS_DEFAULT_SLOT_COUNT; i++) {
+    this.slots.clear();
+    for (int i = CATS_FIRST_SLOT_ID; i < CATS_FIRST_SLOT_ID + CATS_DEFAULT_SLOT_COUNT; i++) {
       this.slots.put(i, new CardTerminalSlot(i));
     }
     return this;
@@ -87,19 +91,23 @@ public class CatsClient implements CardTerminal {
       throw new CardTerminalException(
           format("Slot {0} does not exist on CATS {1}", slotId, this.ctId));
 
-    // deactivate card
-    request("/config/card/insert", new CardStatusDto(slotId, false));
-    this.slots.get(slotId).remove();
-
     // change card configuration
     val cardType = card.getType().name().toLowerCase().replace("-", "_");
-    request(
-        "/config/card/configuration",
-        new CardConfigurationDto(slotId, toCatsConfigurationPath(cardType, card.getIccsn())));
+    send(
+        HttpRequestMethod.PUT,
+        format("/config/card/slot/{0}", slotId),
+        new CardConfigurationDto(toCatsConfigurationPath(cardType, card.getIccsn())));
+    this.slots.get(slotId).remove();
 
-    // activate card
-    request("/config/card/insert", new CardStatusDto(slotId, true));
-    this.slots.get(slotId).inserte(card.getIccsn());
+    send(
+        HttpRequestMethod.POST,
+        "/config/card/insert",
+        new CardStatusDto(slotId, true, toCatsConfigurationPath(cardType, card.getIccsn()), false));
+    send(
+        HttpRequestMethod.POST,
+        "/config/card/startedState",
+        new CardStatusDto(slotId, true, toCatsConfigurationPath(cardType, card.getIccsn()), true));
+    this.slots.get(slotId).setIccsn(card.getIccsn());
 
     // well, CATS requires some time until the card is inserted??
     TimeUnit.SECONDS.sleep(1);
@@ -114,30 +122,62 @@ public class CatsClient implements CardTerminal {
 
   @Override
   public void resetSlots() {
-    this.slots
-        .values()
-        .forEach(
-            slot -> {
-              request("/config/card/insert", new CardStatusDto(slot.getSlotId(), false));
-              slot.remove();
-            });
+    request(HttpRequestMethod.POST, "/config/card/slots/reset", null);
+    this.slots.values().forEach(CardTerminalSlot::remove);
   }
 
   @Override
   public Optional<CardTerminalSlot> getFreeSlot() {
-    return this.slots.values().stream().filter(CardTerminalSlot::isFree).findFirst();
+    return getAllSlots().stream().filter(CardTerminalSlot::isFree).findFirst();
+  }
+
+  @Override
+  public List<CardTerminalSlot> getAllSlots() {
+    initializeSlotsIfNecessary();
+    this.slots.values().forEach(this::refreshSlotState);
+    return this.slots.values().stream()
+        .sorted(Comparator.comparingInt(CardTerminalSlot::getSlotId))
+        .toList();
+  }
+
+  private void initializeSlotsIfNecessary() {
+    if (this.slots.isEmpty()) {
+      connect();
+    }
+  }
+
+  private void refreshSlotState(CardTerminalSlot slot) {
+    val configFile =
+        request(
+            HttpRequestMethod.GET,
+            format("/config/card/configurationFile/{0}", slot.getSlotId()),
+            null);
+
+    if (configFile.isEmpty()) {
+      slot.remove();
+    } else {
+      // parse ICCSN from filename like "configuration_hba_80276883110000170943.xml"
+      val withoutExtension = configFile.substring(0, configFile.lastIndexOf('.'));
+      val iccsn = withoutExtension.substring(withoutExtension.lastIndexOf('_') + 1);
+      slot.setIccsn(iccsn);
+    }
   }
 
   @SneakyThrows
-  private <T> void request(String path, T body) {
-    val bodyString = this.mapper.writeValueAsString(body);
-    val req = HttpBRequest.post().urlPath(path).withPayload(bodyString);
+  private <T> void send(HttpRequestMethod method, String path, T body) {
+    request(method, path, this.mapper.writeValueAsString(body));
+  }
+
+  private String request(HttpRequestMethod method, String path, @Nullable String body) {
+    val req = HttpBRequest.method(method).urlPath(path).withPayload(body);
     val resp = this.restClient.send(req);
 
     if (resp.statusCode() != 200) {
-      val operation = format("{0} {1}", HttpRequestMethod.POST, path);
+      val operation = format(OPERATION_FORMAT, method, path);
       throw new CardTerminalException(operation, resp.statusCode(), resp.bodyAsString());
     }
+
+    return resp.bodyAsString();
   }
 
   private String toCatsConfigurationPath(String cardType, String iccsn) {

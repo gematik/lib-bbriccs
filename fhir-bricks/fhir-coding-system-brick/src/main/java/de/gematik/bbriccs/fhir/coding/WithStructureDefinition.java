@@ -25,13 +25,7 @@ import static java.text.MessageFormat.format;
 import de.gematik.bbriccs.fhir.coding.version.ProfileVersion;
 import de.gematik.bbriccs.fhir.coding.version.VersionUtil;
 import org.hl7.fhir.instance.model.api.IBaseDatatype;
-import org.hl7.fhir.r4.model.BooleanType;
-import org.hl7.fhir.r4.model.CanonicalType;
-import org.hl7.fhir.r4.model.CodeType;
-import org.hl7.fhir.r4.model.Extension;
-import org.hl7.fhir.r4.model.StringType;
-import org.hl7.fhir.r4.model.UriType;
-import org.hl7.fhir.r4.model.UrlType;
+import org.hl7.fhir.r4.model.*;
 
 /**
  * This interface encapsulates the handling of StructureDefinitions for specific profiles and their
@@ -254,6 +248,32 @@ public interface WithStructureDefinition<T extends ProfileVersion> extends WithS
    */
   default Extension asUriExtension(String uri) {
     return asExtension(new UriType(uri));
+  }
+
+  /**
+   * This method creates an Extension object for this StructureDefinition that contains the provided
+   * value, encoded as a {@link MarkdownType}.
+   *
+   * <p>Example usage:
+   *
+   * <pre>{@code
+   * // where GKV_WOP is an instance of WithStructureDefinition and has a canonical URL of
+   * // "http://fhir.de/StructureDefinition/gkv/wop"
+   * DeBasisProfilStructDef.GKV_WOP.asMarkDownExtension("**Example text**");
+   *
+   * // will create the following extension when serialized to XML:
+   * <extension url="http://fhir.de/StructureDefinition/gkv/wop">
+   *   <valueMarkdown value="**Example text**"/>
+   * </extension>
+   * }</pre>
+   *
+   * @param value the value to be encoded as a {@link MarkdownType}
+   * @return an Extension object of this StructureDefinition containing the encoded value as a
+   *     {@link MarkdownType}
+   * @see <a href="https://build.fhir.org/datatypes.html#markdown">FHIR DataTypes Markdown</a>
+   */
+  default Extension asMarkDownExtension(String value) {
+    return asExtension(new MarkdownType(value));
   }
 
   /**

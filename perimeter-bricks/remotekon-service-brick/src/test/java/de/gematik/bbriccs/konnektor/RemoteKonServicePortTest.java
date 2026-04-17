@@ -31,13 +31,14 @@ import de.gematik.bbriccs.cfg.dto.TLSConfiguration;
 import de.gematik.bbriccs.konnektor.cfg.KonnektorContextConfiguration;
 import de.gematik.bbriccs.utils.ResourceLoader;
 import de.gematik.ws.conn.authsignatureservice.wsdl.v7_4.AuthSignatureServicePortType;
-import de.gematik.ws.conn.cardservice.wsdl.v8.CardServicePortType;
+import de.gematik.ws.conn.cardservice.wsdl.v8_2.CardServicePortType;
 import de.gematik.ws.conn.cardterminalservice.wsdl.v1.CardTerminalServicePortType;
 import de.gematik.ws.conn.certificateservice.wsdl.v6.CertificateServicePortType;
 import de.gematik.ws.conn.encryptionservice.wsdl.v6.EncryptionServicePortType;
 import de.gematik.ws.conn.eventservice.wsdl.v7.EventServicePortType;
 import de.gematik.ws.conn.signatureservice.wsdl.v7.SignatureServicePortType;
 import de.gematik.ws.conn.vsds.vsdservice.v5.VSDServicePortType;
+import jakarta.xml.ws.BindingProvider;
 import java.net.MalformedURLException;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -91,6 +92,12 @@ class RemoteKonServicePortTest {
   @SneakyThrows
   private void prepareKonnektorSdsResponse() {
     val sds = ResourceLoader.readFileFromResource("sds/cgm_connector_sds.xml");
+    wm1.stubFor(get(urlEqualTo("/connector.sds")).willReturn(aResponse().withBody(sds)));
+  }
+
+  @SneakyThrows
+  private void prepareIpBasedKonnektorSdsResponse() {
+    val sds = ResourceLoader.readFileFromResource("sds/ip_connector_sds.xml");
     wm1.stubFor(get(urlEqualTo("/connector.sds")).willReturn(aResponse().withBody(sds)));
   }
 
@@ -164,5 +171,42 @@ class RemoteKonServicePortTest {
     // the provided truststore won't verify for WireMock running on localhost!!
     val service = servicePort.getSignatureService();
     assertThrows(ClientTransportException.class, () -> service.getJobNumber(ctx));
+  }
+
+  @Test
+  void shouldReplaceIpWithBaseUrlInEndpointAddress() {
+    prepareIpBasedKonnektorSdsResponse();
+    val servicePort = RemoteKonServicePort.onRemote(url).build();
+
+    val signatureService = servicePort.getSignatureService();
+    val endpointAddress =
+        (String)
+            ((BindingProvider) signatureService)
+                .getRequestContext()
+                .get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
+
+    assertNotNull(endpointAddress);
+    assertFalse(
+        endpointAddress.contains("192.168.178.100"),
+        "IP should have been replaced by baseUrl host");
+    assertTrue(
+        endpointAddress.contains("localhost"), "Endpoint address should contain the baseUrl host");
+  }
+
+  @Test
+  void shouldKeepFqdnInEndpointAddress() {
+    prepareKonnektorSdsResponse();
+    val servicePort = RemoteKonServicePort.onRemote(url).build();
+
+    val signatureService = servicePort.getSignatureService();
+    val endpointAddress =
+        (String)
+            ((BindingProvider) signatureService)
+                .getRequestContext()
+                .get(BindingProvider.ENDPOINT_ADDRESS_PROPERTY);
+
+    assertNotNull(endpointAddress);
+    assertTrue(
+        endpointAddress.contains("ksp.ltuzd.telematik-test"), "FQDN should remain unchanged");
   }
 }

@@ -22,9 +22,11 @@ package de.gematik.bbriccs.rest;
 
 import com.google.common.base.Strings;
 import de.gematik.bbriccs.rest.headers.HttpHeader;
+import de.gematik.bbriccs.rest.headers.HttpHeaderKey;
 import de.gematik.bbriccs.rest.headers.StandardHttpHeaderKey;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Optional;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
@@ -37,7 +39,7 @@ interface HttpBEntity {
   byte[] body();
 
   default boolean isEmptyBody() {
-    return body().length == 0;
+    return Optional.ofNullable(body()).map(it -> it.length == 0).orElse(true);
   }
 
   default String bodyAsString() {

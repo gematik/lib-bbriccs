@@ -34,6 +34,7 @@ public enum DeBasisProfilNamingSystem implements WithNamingSystem {
   KVID("http://fhir.de/NamingSystem/gkv/kvid-10"),
   KVID_GKV_SID("http://fhir.de/sid/gkv/kvid-10"),
   KVID_PKV_SID("http://fhir.de/sid/pkv/kvid-10"),
+  EMP_IDENTIFIER("https://gematik.de/fhir/sid/emp-identifier"),
   TELEMATIK_ID_SID("https://gematik.de/fhir/sid/telematik-id"),
   STANDORTNUMMER("http://fhir.de/sid/dkgev/standortnummer"),
   KZBV_ZAHNARZTNUMMER("http://fhir.de/NamingSystem/kzbv/zahnarztnummer"),

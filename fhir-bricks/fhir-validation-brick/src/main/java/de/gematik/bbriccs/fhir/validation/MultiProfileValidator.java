@@ -132,7 +132,7 @@ public class MultiProfileValidator extends ValidatorFhirBase {
 
     val chosenValidator = chosenParser.get();
     val profileUrl = profileUrlOpt.orElse("unknown profile");
-    log.info("Choose Validator {} for {}", chosenValidator.getId(), profileUrl);
+    log.trace("Choose Validator {} for {}", chosenValidator.getId(), profileUrl);
     return chosenValidator;
   }
 

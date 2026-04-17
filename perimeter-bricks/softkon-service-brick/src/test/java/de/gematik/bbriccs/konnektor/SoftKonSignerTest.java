@@ -21,19 +21,14 @@
 package de.gematik.bbriccs.konnektor;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.mock;
 
 import de.gematik.bbriccs.crypto.CryptoSystem;
 import de.gematik.bbriccs.konnektor.exceptions.SmartcardException;
+import de.gematik.bbriccs.smartcards.InstituteSmartcardP12;
 import de.gematik.bbriccs.smartcards.SmartcardArchive;
-import de.gematik.bbriccs.smartcards.SmartcardP12;
-import eu.europa.esig.dss.model.DSSException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.stream.Stream;
 import lombok.val;
-import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -50,36 +45,27 @@ class SoftKonSignerTest {
 
   @ParameterizedTest
   @MethodSource
-  void shouldSignDocumentWithSmartcard(SmartcardP12 smartcard) {
-    val signer = new SoftKonSigner();
+  void shouldSignDocumentWithSmartcard(InstituteSmartcardP12 smartcard) {
+    val signer = SoftKonSigner.sign(smartcard, CryptoSystem.RSA_2048);
     val data = "HelloWorld".getBytes();
-    val signed =
-        assertDoesNotThrow(
-            () -> signer.signDocument(smartcard, CryptoSystem.RSA_2048, false, data));
+    byte[] signed = assertDoesNotThrow(() -> signer.signDocument(false, data));
     assertNotNull(signed);
     assertTrue(signed.length > 0);
   }
 
   @ParameterizedTest
   @MethodSource("shouldSignDocumentWithSmartcard")
-  void shouldThrowOnByteArrayOperation(SmartcardP12 smartcard) {
-    val signer = new SoftKonSigner();
-    val data = "HelloWorld".getBytes();
-    try (val mio = mockStatic(IOUtils.class)) {
-      mio.when(() -> IOUtils.toByteArray(any(InputStream.class))).thenThrow(new IOException());
-      assertThrows(
-          DSSException.class,
-          () -> signer.signDocument(smartcard, CryptoSystem.RSA_2048, false, data));
-    }
+  void shouldThrowOnNullData(InstituteSmartcardP12 smartcard) {
+    val signer = SoftKonSigner.sign(smartcard, CryptoSystem.RSA_2048);
+    assertThrows(NullPointerException.class, () -> signer.signDocument(false, (byte[]) null));
   }
 
   @ParameterizedTest
   @EnumSource(value = CryptoSystem.class, mode = EnumSource.Mode.EXCLUDE, names = "RSA_PSS_2048")
   void shouldSignDocumentWithHba(CryptoSystem cryptoSystem) {
     val smartcard = sca.getHba(0);
-    val signer = new SoftKonSigner();
-    val signed =
-        assertDoesNotThrow(() -> signer.signDocument(smartcard, cryptoSystem, false, "HelloWorld"));
+    val signer = SoftKonSigner.signQES(smartcard, cryptoSystem);
+    byte[] signed = assertDoesNotThrow(() -> signer.signDocument(false, "HelloWorld"));
     assertNotNull(signed);
     assertTrue(signed.length > 0);
   }
@@ -88,21 +74,16 @@ class SoftKonSignerTest {
   @EnumSource(value = CryptoSystem.class, mode = EnumSource.Mode.EXCLUDE, names = "RSA_PSS_2048")
   void shouldSignDocumentWithSmcb(CryptoSystem cryptoSystem) {
     val smartcard = sca.getSmcB(0);
-    val signer = new SoftKonSigner();
-    val signed =
-        assertDoesNotThrow(() -> signer.signDocument(smartcard, cryptoSystem, false, "HelloWorld"));
+    val signer = SoftKonSigner.signNonQES(smartcard, cryptoSystem);
+    byte[] signed = assertDoesNotThrow(() -> signer.signDocument(false, "HelloWorld"));
     assertNotNull(signed);
     assertTrue(signed.length > 0);
   }
 
   @Test
   void shouldThrowOnSigningWithInvalidSmartcard() {
-    val signer = new SoftKonSigner();
-
-    val smartcard = sca.getEgk(0);
-    val data = "HelloWorld".getBytes();
+    val smartcard = mock(InstituteSmartcardP12.class);
     assertThrows(
-        SmartcardException.class,
-        () -> signer.signDocument(smartcard, CryptoSystem.RSA_2048, false, data));
+        SmartcardException.class, () -> SoftKonSigner.sign(smartcard, CryptoSystem.RSA_2048));
   }
 }

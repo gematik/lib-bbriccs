@@ -22,8 +22,8 @@ package de.gematik.bbriccs.konnektor;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import de.gematik.bbriccs.konnektor.vsdm.VsdmService;
 import de.gematik.bbriccs.smartcards.SmartcardArchive;
+import de.gematik.bbriccs.vsdm.VsdmService;
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

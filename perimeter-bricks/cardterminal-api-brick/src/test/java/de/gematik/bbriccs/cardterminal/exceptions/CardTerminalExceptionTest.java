@@ -33,4 +33,19 @@ class CardTerminalExceptionTest {
     val cardTerminalClientException = new CardTerminalException(operationName, 400, "body");
     assertTrue(cardTerminalClientException.getMessage().contains(operationName));
   }
+
+  @Test
+  void shouldContainCardTerminalIdInNotFoundException() {
+    val ctId = "ct-42";
+    val ex = new CardTerminalNotFoundException(ctId);
+    assertTrue(ex.getMessage().contains(ctId));
+  }
+
+  @Test
+  void shouldBeInstanceOfCardTerminalException() {
+    // CardTerminalNotFoundException must extend CardTerminalException
+    // so callers catching the base type are still covered
+    val ex = new CardTerminalNotFoundException("ct-1");
+    assertInstanceOf(CardTerminalException.class, ex);
+  }
 }

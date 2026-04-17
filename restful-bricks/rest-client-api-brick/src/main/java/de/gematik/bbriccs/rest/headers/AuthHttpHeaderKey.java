@@ -20,7 +20,6 @@
 
 package de.gematik.bbriccs.rest.headers;
 
-import de.gematik.bbriccs.rest.HttpHeaderKey;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

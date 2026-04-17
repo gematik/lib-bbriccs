@@ -24,6 +24,9 @@ import static java.text.MessageFormat.*;
 
 import de.gematik.bbriccs.cardterminal.CardTerminal;
 import de.gematik.bbriccs.cardterminal.CardTerminalOperator;
+import de.gematik.bbriccs.cardterminal.exceptions.NoFreeSlotException;
+import de.gematik.bbriccs.konnektor.requests.GetCardsRequest;
+import de.gematik.bbriccs.smartcards.Smartcard;
 import de.gematik.ws.conn.connectorcontext.v2.*;
 import java.time.*;
 import java.util.*;
@@ -71,6 +74,32 @@ public final class KonnektorImpl implements Konnektor {
       log.warn("Execute {} produced an error: {}", cmd.getClass().getSimpleName(), e.getMessage());
       return Optional.empty();
     }
+  }
+
+  @Override
+  public void insertCard(Smartcard card) {
+    if (cardTerminalOperator.cardTerminals().isEmpty()) {
+      return;
+    }
+
+    if (cardTerminalOperator.hasFreeSlot()) {
+      cardTerminalOperator.insertCard(card);
+      return;
+    }
+
+    // No free slot – use GetCards to find the slot with the oldest insert time
+    val response = this.execute(new GetCardsRequest()).getPayload();
+    val oldestCard =
+        response.getCards().getCard().stream()
+            .filter(cit -> cit.getInsertTime() != null && cit.getSlotId() != null)
+            .min(Comparator.comparing(cit -> cit.getInsertTime().toGregorianCalendar().toInstant()))
+            .orElseThrow(() -> new NoFreeSlotException(card));
+
+    log.debug(
+        "No free slot available – replacing card in terminal '{}' slot {} (oldest insert time)",
+        oldestCard.getCtId(),
+        oldestCard.getSlotId());
+    cardTerminalOperator.insertCard(card, oldestCard.getCtId(), oldestCard.getSlotId().intValue());
   }
 
   @Override

@@ -20,27 +20,84 @@
 
 package de.gematik.bbriccs.cardterminal;
 
+import de.gematik.bbriccs.cardterminal.exceptions.CardTerminalNotFoundException;
 import de.gematik.bbriccs.cardterminal.exceptions.NoFreeSlotException;
 import de.gematik.bbriccs.smartcards.Smartcard;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Optional;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 @Slf4j
-public class CardTerminalOperator {
-
-  private final Set<CardTerminal> cardTerminals;
+public record CardTerminalOperator(Set<CardTerminal> cardTerminals) {
 
   public CardTerminalOperator(Collection<CardTerminal> cardTerminals) {
-    this.cardTerminals = new HashSet<>(cardTerminals);
+    this(Collections.unmodifiableSet(new LinkedHashSet<>(cardTerminals)));
+  }
+
+  public Set<CardTerminal> getCardTerminals() {
+    return this.cardTerminals;
+  }
+
+  public boolean hasFreeSlot() {
+    return this.cardTerminals.stream().anyMatch(CardTerminal::hasFreeSlot);
   }
 
   public void insertCard(Smartcard card) {
-    val cardTerminal =
+    if (cardTerminals().isEmpty()) {
+      return;
+    }
+    if (isCardAlreadyInserted(card)) {
+      return;
+    }
+    val ct =
         this.cardTerminals.stream()
             .filter(CardTerminal::hasFreeSlot)
             .findFirst()
             .orElseThrow(() -> new NoFreeSlotException(card));
-    cardTerminal.insertCard(card);
+    ct.insertCard(card);
+  }
+
+  public void insertCard(Smartcard card, String cardTerminalId, int slot) {
+    if (isCardAlreadyInserted(card)) {
+      return;
+    }
+    if (cardTerminals().isEmpty()) {
+      return;
+    }
+    val ct =
+        this.cardTerminals.stream()
+            .filter(it -> it.getCtId().equals(cardTerminalId))
+            .findFirst()
+            .orElseThrow(() -> new CardTerminalNotFoundException(cardTerminalId));
+    ct.insertCard(card, slot);
+  }
+
+  private boolean isCardAlreadyInserted(Smartcard card) {
+    // Find the terminal that already holds the card so we can include it in the log message
+    val terminalWithCard =
+        this.cardTerminals.stream()
+            .filter(
+                ct -> {
+                  val slots = ct.getAllSlots();
+                  return slots != null
+                      && slots.stream()
+                          .map(CardTerminalSlot::getIccsn)
+                          .flatMap(Optional::stream)
+                          .anyMatch(card.getIccsn()::equals);
+                })
+            .findFirst();
+
+    terminalWithCard.ifPresent(
+        ct ->
+            log.debug(
+                "smartcard {} is already inserted in card terminal {}",
+                card.getIccsn(),
+                ct.getCtId()));
+
+    return terminalWithCard.isPresent();
   }
 }

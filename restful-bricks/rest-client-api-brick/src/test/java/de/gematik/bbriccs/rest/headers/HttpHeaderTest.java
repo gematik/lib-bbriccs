@@ -33,6 +33,8 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class HttpHeaderTest {
 
@@ -103,5 +105,19 @@ class HttpHeaderTest {
     val map = Map.of("Accept", "application/json", "Content-Type", "application/xml");
     val headers = HttpHeader.from(map);
     assertEquals(2, headers.size());
+  }
+
+  @Test
+  void shouldMatchHttpHeaderByKey() {
+    assertTrue(
+        HttpHeader.forContentType(MediaType.JSON_UTF_8)
+            .matches(StandardHttpHeaderKey.CONTENT_TYPE));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"Content-Type", "content-type", "CONTENT-TYPE"})
+  void shouldMatchHttpHeaderByKey02(String headerName) {
+    val header = HttpHeader.from(headerName, "test");
+    assertTrue(header.matches(headerName));
   }
 }

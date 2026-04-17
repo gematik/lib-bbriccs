@@ -21,57 +21,50 @@
 package de.gematik.bbriccs.cats;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
-import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import de.gematik.bbriccs.cardterminal.exceptions.CardTerminalException;
 import de.gematik.bbriccs.smartcards.SmartcardArchive;
 import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 @WireMockTest
 class CatsClientTest {
 
-  @RegisterExtension
-  static WireMockExtension wm1 =
-      WireMockExtension.newInstance()
-          .options(wireMockConfig().dynamicPort().dynamicHttpsPort())
-          .build();
-
-  private static String url;
-
-  @BeforeAll
-  static void setup() {
-    url = "http://localhost:" + wm1.getPort();
-  }
-
   @SneakyThrows
   private void preparePositiveCatsMock() {
-    wm1.stubFor(post(urlEqualTo("/config/card/insert")).willReturn(aResponse().withBody("good")));
+    stubFor(
+        put(urlPathMatching("/config/card/slot/\\d+")).willReturn(aResponse().withBody("good")));
 
-    wm1.stubFor(
-        post(urlEqualTo("/config/card/configuration")).willReturn(aResponse().withBody("good")));
+    stubFor(post(urlEqualTo("/config/card/insert")).willReturn(aResponse().withBody("good")));
+
+    stubFor(post(urlEqualTo("/config/card/startedState")).willReturn(aResponse().withBody("good")));
+
+    stubFor(post(urlEqualTo("/config/card/slots/reset")).willReturn(aResponse().withBody("good")));
+
+    stubFor(
+        get(urlPathMatching("/config/card/configurationFile/\\d+"))
+            .willReturn(aResponse().withBody("")));
   }
 
   @Test
-  void shouldInsertCardToSlot() {
+  void shouldInsertCardToSlot(WireMockRuntimeInfo wireMockRuntimeInfo) {
     val sca = SmartcardArchive.fromResources();
+    val url = wireMockRuntimeInfo.getHttpBaseUrl();
 
     preparePositiveCatsMock();
     val catsClient = CatsClient.create(url).configPath("a/b/c").withTerminalId("001").connect();
-    assertDoesNotThrow(() -> catsClient.insertCard(sca.getEgk(0), 0));
+    assertDoesNotThrow(() -> catsClient.insertCard(sca.getEgk(0), 1));
     assertDoesNotThrow(catsClient::disconnect);
   }
 
   @Test
-  void shouldInsertCardToNextFreeSlot() {
+  void shouldInsertCardToNextFreeSlot(WireMockRuntimeInfo wireMockRuntimeInfo) {
     val sca = SmartcardArchive.fromResources();
+    val url = wireMockRuntimeInfo.getHttpBaseUrl();
 
     preparePositiveCatsMock();
     val catsClient = CatsClient.create(url).withTerminalId("001").connect();
@@ -79,8 +72,8 @@ class CatsClientTest {
   }
 
   @Test
-  void shouldResetAllSlots() {
-    val sca = SmartcardArchive.fromResources();
+  void shouldResetAllSlots(WireMockRuntimeInfo wireMockRuntimeInfo) {
+    val url = wireMockRuntimeInfo.getHttpBaseUrl();
 
     preparePositiveCatsMock();
     val catsClient = CatsClient.create(url).withTerminalId("001").connect();
@@ -88,20 +81,38 @@ class CatsClientTest {
   }
 
   @Test
-  void shouldThrowOnErrorWhileInsert() {
+  void shouldThrowOnErrorWhileInsert(WireMockRuntimeInfo wireMockRuntimeInfo) {
     val sca = SmartcardArchive.fromResources();
     val egk = sca.getEgk(0);
+    val url = wireMockRuntimeInfo.getHttpBaseUrl();
 
     val catsClient = CatsClient.create(url).withTerminalId("001").connect();
     assertThrows(CardTerminalException.class, () -> catsClient.insertCard(egk, 0));
   }
 
   @Test
-  void shouldThrowOnInsertToUnknownSlot() {
+  void shouldThrowOnInsertToUnknownSlot(WireMockRuntimeInfo wireMockRuntimeInfo) {
     val sca = SmartcardArchive.fromResources();
     val egk = sca.getEgk(0);
+    val url = wireMockRuntimeInfo.getHttpBaseUrl();
 
     val catsClient = CatsClient.create(url).withTerminalId("001").connect();
     assertThrows(CardTerminalException.class, () -> catsClient.insertCard(egk, 1000));
+  }
+
+  @Test
+  void shouldParseIccsnFromOccupiedSlot(WireMockRuntimeInfo wireMockRuntimeInfo) {
+    val url = wireMockRuntimeInfo.getHttpBaseUrl();
+    val expectedIccsn = "80276883110000170943";
+
+    stubFor(
+        get(urlPathMatching("/config/card/configurationFile/\\d+"))
+            .willReturn(aResponse().withBody("configuration_hba_" + expectedIccsn + ".xml")));
+
+    val catsClient = CatsClient.create(url).withTerminalId("001").connect();
+    val slots = catsClient.getAllSlots();
+
+    assertTrue(slots.stream().allMatch(s -> s.getIccsn().isPresent()));
+    assertTrue(slots.stream().allMatch(s -> expectedIccsn.equals(s.getIccsn().get())));
   }
 }

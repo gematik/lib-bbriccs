@@ -23,6 +23,7 @@ package de.gematik.bbriccs.konnektor;
 import static java.text.MessageFormat.format;
 
 import de.gematik.bbriccs.cfg.dto.TLSConfiguration;
+import de.gematik.bbriccs.crypto.BC;
 import java.nio.file.Path;
 import java.security.KeyStore;
 import java.security.SecureRandom;
@@ -36,6 +37,12 @@ import lombok.val;
 
 @Slf4j
 public class TrustProvider {
+
+  static {
+    // BouncyCastle is required as a security provider as long as we still use Brainpool curves,
+    // which are not natively supported by the JDK
+    BC.init();
+  }
 
   private final KeyManager[] keyManagers;
   private final X509TrustManager[] trustManagers;
@@ -70,17 +77,17 @@ public class TrustProvider {
   @SneakyThrows
   public static TrustProvider from(String ksf, String ksp, String tsf, String tsp) {
     log.trace(format("Create KeyManager from {0} and TrustManager from {1}", ksf, tsf));
+    val classloader = Thread.currentThread().getContextClassLoader();
     // build the KeyStore
     val keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
     val keyStore = KeyStore.getInstance(keyStoreTypeFromFilename(ksf));
     val keyStoreFilename = Path.of(ksf);
-    val keyStoreInputStream = ClassLoader.getSystemResourceAsStream(keyStoreFilename.toString());
+    val keyStoreInputStream = classloader.getResourceAsStream(keyStoreFilename.toString());
     keyStore.load(keyStoreInputStream, ksp.toCharArray());
     keyManagerFactory.init(keyStore, ksp.toCharArray());
 
     val trustStoreFilename = Path.of(tsf);
-    val trustStoreInputStream =
-        ClassLoader.getSystemResourceAsStream(trustStoreFilename.toString());
+    val trustStoreInputStream = classloader.getResourceAsStream(trustStoreFilename.toString());
     val trustStore = KeyStore.getInstance(keyStoreTypeFromFilename(tsf));
     trustStore.load(trustStoreInputStream, tsp.toCharArray());
     val konnektorTrustManagerFactory =
@@ -114,7 +121,7 @@ public class TrustProvider {
 
   @SneakyThrows
   public SSLSocketFactory getSocketFactory() {
-    val sslctx = SSLContext.getInstance("TLSv1.2");
+    val sslctx = SSLContext.getInstance("TLS");
     sslctx.init(keyManagers, trustManagers, new SecureRandom());
     return sslctx.getSocketFactory();
   }

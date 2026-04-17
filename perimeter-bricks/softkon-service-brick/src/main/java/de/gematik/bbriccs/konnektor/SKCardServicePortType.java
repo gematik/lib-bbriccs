@@ -20,8 +20,10 @@
 
 package de.gematik.bbriccs.konnektor;
 
-import de.gematik.ws.conn.cardservice.v8.PinStatusEnum;
-import de.gematik.ws.conn.cardservice.wsdl.v8.CardServicePortType;
+import de.gematik.ws.conn.cardservice.v8_2.PinStatusEnum;
+import de.gematik.ws.conn.cardservice.v8_2.SignedScenarioResponseType;
+import de.gematik.ws.conn.cardservice.wsdl.v8_2.CardServicePortType;
+import de.gematik.ws.conn.cardservice.wsdl.v8_2.FaultMessage;
 import de.gematik.ws.conn.cardservicecommon.v2.PinResultEnum;
 import de.gematik.ws.conn.connectorcommon.v5.Status;
 import de.gematik.ws.conn.connectorcontext.v2.ContextType;
@@ -81,7 +83,8 @@ public class SKCardServicePortType extends SoftKonServicePortType implements Car
       String pinTyp,
       Holder<Status> status,
       Holder<PinStatusEnum> pinStatus,
-      Holder<BigInteger> leftTries) {
+      Holder<BigInteger> leftTries)
+      throws FaultMessage {
     throw new NotImplementedException(EXCEPTION_MESSAGE);
   }
 
@@ -104,6 +107,27 @@ public class SKCardServicePortType extends SoftKonServicePortType implements Car
       Holder<Status> status,
       Holder<PinResultEnum> pinResult,
       Holder<BigInteger> leftTries) {
+    throw new NotImplementedException(EXCEPTION_MESSAGE);
+  }
+
+  @Override
+  public void secureSendAPDU(
+      String signedScenario,
+      Holder<Status> status,
+      Holder<SignedScenarioResponseType> signedScenarioResponse)
+      throws FaultMessage {
+    throw new NotImplementedException(EXCEPTION_MESSAGE);
+  }
+
+  @Override
+  public void startCardSession(
+      ContextType context, String cardHandle, Holder<Status> status, Holder<String> sessionId)
+      throws FaultMessage {
+    throw new NotImplementedException(EXCEPTION_MESSAGE);
+  }
+
+  @Override
+  public Status stopCardSession(String sessionId) throws FaultMessage {
     throw new NotImplementedException(EXCEPTION_MESSAGE);
   }
 }

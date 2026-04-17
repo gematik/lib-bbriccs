@@ -31,6 +31,7 @@ class CardTerminalSlotTest {
   void shouldBeFreeAfterCreation() {
     val slot = new CardTerminalSlot(0);
     assertTrue(slot.isFree());
+    assertTrue(slot.getIccsn().isEmpty());
   }
 
   @Test
@@ -38,13 +39,25 @@ class CardTerminalSlotTest {
     val slot = new CardTerminalSlot(0);
     assertDoesNotThrow(slot::remove);
     assertTrue(slot.isFree());
+    assertTrue(slot.getIccsn().isEmpty());
   }
 
   @Test
   void shouldInsert() {
     val slot = new CardTerminalSlot(0);
-    assertDoesNotThrow(() -> slot.inserte("iccsn"));
+    assertDoesNotThrow(() -> slot.setIccsn("iccsn"));
     assertFalse(slot.isFree());
     assertTrue(slot.isOccupied());
+    assertEquals("iccsn", slot.getIccsn().orElseThrow());
+  }
+
+  @Test
+  void shouldClearIccsnAfterRemove() {
+    val slot = new CardTerminalSlot(0);
+    slot.setIccsn("iccsn");
+
+    assertDoesNotThrow(slot::remove);
+
+    assertTrue(slot.getIccsn().isEmpty());
   }
 }

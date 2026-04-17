@@ -27,6 +27,7 @@ import ca.uhn.fhir.validation.ValidationResult;
 import de.gematik.bbriccs.fhir.codec.FhirCodec;
 import de.gematik.bbriccs.fhir.codec.exceptions.FhirCodecException;
 import de.gematik.bbriccs.rest.HttpBResponse;
+import de.gematik.bbriccs.rest.headers.StandardHttpHeaderKey;
 import java.time.Duration;
 import java.util.*;
 import java.util.function.BiFunction;
@@ -36,6 +37,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.*;
 import lombok.val;
 import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r4.model.Narrative.NarrativeStatus;
+import org.hl7.fhir.r4.model.OperationOutcome.IssueSeverity;
+import org.hl7.fhir.r4.model.OperationOutcome.IssueType;
 
 @Slf4j
 public class FhirBResponseCreator {
@@ -64,7 +68,7 @@ public class FhirBResponseCreator {
     private final BiFunction<Class<? extends Resource>, String, Resource> decoder;
     private final Class<R> expectResponseType;
     @Nullable private String usedAccessToken;
-    @Nullable private HttpBResponse httpResponse;
+    private HttpBResponse httpResponse;
 
     public FhirBResponseBuilder<R> usedAccessToken(String accessToken) {
       this.usedAccessToken = accessToken;
@@ -89,7 +93,7 @@ public class FhirBResponseCreator {
         log.error("Server Error {}: {}", httpResponse.statusCode(), httpResponse.bodyAsString());
       }
 
-      val vr = this.validateContent(httpResponse.bodyAsString());
+      val vr = this.validateContent();
       val resource = this.decode(httpResponse.bodyAsString(), expectResponseType);
       return FhirBResponse.forPayload(expectResponseType, resource)
           .withStatusCode(httpResponse.statusCode())
@@ -105,25 +109,59 @@ public class FhirBResponseCreator {
       try {
         ret = this.decoder.apply(expect, content);
       } catch (FhirCodecException | DataFormatException | IllegalArgumentException e) {
+        ret = decodeAsOperationOutcome(content, expect);
+      }
+      return ret;
+    }
+
+    private Resource decodeAsOperationOutcome(String content, Class<? extends Resource> expect) {
+      Resource ret;
+      try {
         // try to decode without an expected class (and let HAPI decide) as this case may occur:
         // 1. DataFormatException happens if the Backend responds with an OperationOutcome (or any
         // other unexpected resource) while another resource was expected
         // 2. IllegalArgumentException is thrown if an empty response is expected, but we still get
         // a resource (probably an OperationOutcome)
         log.info(
-            format(
-                "Given content of length {0} could not be decoded as {1}, try without expectation",
-                content.length(), expect.getSimpleName()));
+            "Given content of length {} could not be decoded as {}, try without expectation",
+            content.length(),
+            expect.getSimpleName());
         // although we assume an operation outcome here, let HAPI decide on the concrete type by
         // providing no information (null) about the expected type
         ret = this.decoder.apply(null, content);
+      } catch (FhirCodecException | DataFormatException | IllegalArgumentException e) {
+        ret = createOperationOutcome(content, expect);
       }
       return ret;
     }
 
-    private ValidationResult validateContent(String content) {
+    private OperationOutcome createOperationOutcome(
+        String content, Class<? extends Resource> expect) {
+      log.error(
+          "Given content could not be decoded as a FHIR resource: wrap response with auto-generated"
+              + " OperationOutcome");
+
+      val oo = new OperationOutcome();
+      oo.getText().setStatus(NarrativeStatus.GENERATED);
+      oo.getText().setDivAsString(content);
+      oo.setId(IdType.newRandomUuid());
+
+      val issue = oo.addIssue();
+      val severity =
+          this.httpResponse.statusCode() <= 299 ? IssueSeverity.INFORMATION : IssueSeverity.ERROR;
+      issue.setCode(IssueType.VALUE);
+      issue.setSeverity(severity);
+      issue.getDetails().setText(content);
+      issue.setDiagnostics(
+          format("Response payload is not a FHIR resource {0}", expect.getSimpleName()));
+      return oo;
+    }
+
+    private ValidationResult validateContent() {
+      val content = this.httpResponse.bodyAsString();
+      val isNotFhir = !isFhirContent();
       ValidationResult vr;
-      if (content.isBlank()) {
+      if (content.isBlank() || isNotFhir) {
         // create an empty validation results which will always be successful
         vr = new ValidationResult(this.fhir.getContext(), List.of());
       } else {
@@ -134,6 +172,12 @@ public class FhirBResponseCreator {
       }
 
       return vr;
+    }
+
+    private boolean isFhirContent() {
+      return this.httpResponse.headerValues(StandardHttpHeaderKey.CONTENT_TYPE).stream()
+          .map(String::toLowerCase)
+          .anyMatch(hv -> hv.contains("fhir"));
     }
   }
 }

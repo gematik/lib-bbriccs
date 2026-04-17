@@ -65,6 +65,8 @@ public interface Konnektor {
 
   CardTerminalOperator getCardTerminalOperator();
 
+  void insertCard(Smartcard card);
+
   static Konnektor create(KonnektorConfiguration cfg) {
     val serviceCfg = cfg.getService();
     val serviceFactory = loadKonnektorService(serviceCfg.getType());

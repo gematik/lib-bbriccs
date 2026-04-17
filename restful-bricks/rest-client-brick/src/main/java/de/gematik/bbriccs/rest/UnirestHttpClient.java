@@ -70,6 +70,7 @@ public class UnirestHttpClient implements HttpBClient {
   @Override
   public HttpBResponse send(HttpBRequest bRequest) {
     log.trace("Send HTTP Request:\n----------\n{}\n----------", bRequest);
+
     bRequest.addIfAbsentHeader(this.staticHeaders);
     this.dynamicHeaders.stream()
         .map(p -> p.forRequest(bRequest))
@@ -87,9 +88,18 @@ public class UnirestHttpClient implements HttpBClient {
       httpRequest = this.unirest.request(bRequest.method().name(), requestUrl);
     }
 
-    // unirest does not allow you to set content-length by hand
-    bRequest.removeHeader(StandardHttpHeaderKey.CONTENT_LENGTH);
-    bRequest.headers().forEach(h -> httpRequest.header(h.key(), h.value()));
+    // unirest does not allow you to set content-length header by hand
+    bRequest
+        .headerValues(StandardHttpHeaderKey.CONTENT_LENGTH)
+        .forEach(
+            v ->
+                log.warn(
+                    "Request contains Content-Length header with value '{}', which will be ignored"
+                        + " and automatically calculated by the underlying HTTP-Client!",
+                    v));
+    bRequest.headers().stream()
+        .filter(header -> !header.matches(StandardHttpHeaderKey.CONTENT_LENGTH))
+        .forEach(h -> httpRequest.header(h.key(), h.value()));
 
     val httpResponse = httpRequest.asBytes();
     val responseHeaders =

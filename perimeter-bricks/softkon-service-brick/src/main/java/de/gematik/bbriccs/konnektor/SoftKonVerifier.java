@@ -21,32 +21,90 @@
 package de.gematik.bbriccs.konnektor;
 
 import de.gematik.bbriccs.konnektor.utils.BNetzAVLCa;
+import eu.europa.esig.dss.enumerations.CertificateStatus;
 import eu.europa.esig.dss.enumerations.Indication;
+import eu.europa.esig.dss.model.DSSDocument;
 import eu.europa.esig.dss.model.InMemoryDocument;
 import eu.europa.esig.dss.model.x509.CertificateToken;
 import eu.europa.esig.dss.service.ocsp.OnlineOCSPSource;
+import eu.europa.esig.dss.spi.client.http.NativeHTTPDataLoader;
 import eu.europa.esig.dss.spi.x509.CommonTrustedCertificateSource;
-import eu.europa.esig.dss.validation.CommonCertificateVerifier;
-import eu.europa.esig.dss.validation.SignedDocumentValidator;
+import eu.europa.esig.dss.spi.x509.revocation.ocsp.OCSPToken;
+import eu.europa.esig.dss.validation.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 @Slf4j
 public class SoftKonVerifier {
 
-  public boolean verify(byte[] input) {
+  private final SignedDocumentValidator documentValidator;
+
+  private SoftKonVerifier(byte[] input) {
+    val trustedCertSource = new CommonTrustedCertificateSource();
+    for (BNetzAVLCa ca : BNetzAVLCa.values()) {
+      trustedCertSource.addCertificate(new CertificateToken(ca.getCertificate()));
+    }
+
+    val httpDataLoader = new NativeHTTPDataLoader();
+    httpDataLoader.setReadTimeout(5000);
+    httpDataLoader.setConnectTimeout(5000);
+
+    val ocspSource = new OnlineOCSPSource();
+    ocspSource.setDataLoader(httpDataLoader);
+
+    val cv = new CommonCertificateVerifier();
+    cv.setOcspSource(ocspSource);
+    cv.setTrustedCertSources(trustedCertSource);
+    documentValidator = SignedDocumentValidator.fromDocument(new InMemoryDocument(input));
+    documentValidator.setCertificateVerifier(cv);
+  }
+
+  public static SoftKonVerifier parse(byte[] input) {
+    return new SoftKonVerifier(input);
+  }
+
+  public static boolean verify(byte[] input) {
+    try {
+      return SoftKonVerifier.parse(input).verify();
+    } catch (Exception t) {
+      log.warn("Failed to parse/verify input document", t);
+      return false;
+    }
+  }
+
+  private static byte[] asByteArray(DSSDocument document) {
+    try (InputStream inputStream = document.openStream()) {
+      return inputStream.readAllBytes();
+    } catch (IOException e) {
+      throw new IllegalArgumentException("Failed to read document bytes", e);
+    }
+  }
+
+  public List<byte[]> getAllDocuments() {
+    return documentValidator.getSignatures().stream()
+        .map(documentValidator::getOriginalDocuments)
+        .flatMap(Collection::stream)
+        .map(SoftKonVerifier::asByteArray)
+        .toList();
+  }
+
+  public byte[] getFirstDocument() {
+    return getAllDocuments().stream()
+        .findFirst()
+        .orElseThrow(() -> new NoSuchElementException("No document found"));
+  }
+
+  public String getDocument() {
+    return new String(getFirstDocument(), StandardCharsets.UTF_8);
+  }
+
+  public boolean verify() {
     var isCompletelyValid = true;
     try {
-      val cv = new CommonCertificateVerifier();
-      cv.setOcspSource(new OnlineOCSPSource());
-
-      val trustedCertSource = new CommonTrustedCertificateSource();
-      for (BNetzAVLCa ca : BNetzAVLCa.values()) {
-        trustedCertSource.addCertificate(new CertificateToken(ca.getCertificate()));
-      }
-      cv.setTrustedCertSources(trustedCertSource);
-      val documentValidator = SignedDocumentValidator.fromDocument(new InMemoryDocument(input));
-      documentValidator.setCertificateVerifier(cv);
       val reports = documentValidator.validateDocument();
       val report = reports.getSimpleReport();
       val signatures = documentValidator.getSignatures();
@@ -59,16 +117,14 @@ public class SoftKonVerifier {
         val signatureIsValid =
             report.isValid(signature.getId())
                 || report.getIndication(signature.getId()) == Indication.INDETERMINATE;
-        isCompletelyValid = isCompletelyValid && signatureIsValid;
-        val signingCertToken = signature.getSigningCertificateToken();
-        val caToken = new CertificateToken(BNetzAVLCa.getCA(signingCertToken.getCertificate()));
-        val ocsp = signature.getOCSPSource().getRevocationToken(signingCertToken, caToken);
-        if (ocsp != null) {
-          log.info(
-              "Ocsp Status for signing certificate with {} is {}",
-              signingCertToken.getSubject().getCanonical(),
-              ocsp.getStatus());
+        isCompletelyValid &= signatureIsValid;
+
+        val ocspToken = getOcspToken(signature);
+        if (ocspToken.isPresent()) {
+          isCompletelyValid &=
+              verifyOcspToken(ocspToken.get(), signature.getSigningCertificateToken());
         }
+
         log.info(
             "CAdES signature signed by {} is {}valid",
             report.getSignedBy(signature.getId()),
@@ -80,5 +136,45 @@ public class SoftKonVerifier {
     }
 
     return isCompletelyValid;
+  }
+
+  public List<OCSPToken> getOcspTokens() {
+    return documentValidator.getSignatures().stream()
+        .map(this::getOcspToken)
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .toList();
+  }
+
+  private Optional<OCSPToken> getOcspToken(AdvancedSignature signature) {
+    val signingCertToken = signature.getSigningCertificateToken();
+    val caToken = new CertificateToken(BNetzAVLCa.getCA(signingCertToken.getCertificate()));
+
+    val httpDataLoader = new NativeHTTPDataLoader();
+    httpDataLoader.setConnectTimeout(5000);
+    httpDataLoader.setReadTimeout(5000);
+
+    val revocationToken = signature.getOCSPSource().getRevocationToken(signingCertToken, caToken);
+    return revocationToken == null ? Optional.empty() : Optional.of((OCSPToken) revocationToken);
+  }
+
+  /* package */ boolean verifyOcspToken(OCSPToken ocspToken, CertificateToken signingCertToken) {
+    log.info(
+        "Ocsp Status for signing certificate with {} is {}",
+        signingCertToken.getSubject().getCanonical(),
+        ocspToken.getStatus());
+    if (ocspToken.getStatus() == CertificateStatus.REVOKED) {
+      log.warn(
+          "The signing certificate with {} has been revoked!",
+          signingCertToken.getSubject().getCanonical());
+      return false;
+    }
+    if (!ocspToken.isValid()) {
+      log.warn(
+          "Ocsp Signature for signing certificate with {} is not valid!",
+          signingCertToken.getSubject().getCanonical());
+      return false;
+    }
+    return true;
   }
 }

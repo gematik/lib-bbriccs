@@ -21,7 +21,7 @@
 package de.gematik.bbriccs.konnektor;
 
 import de.gematik.ws.conn.authsignatureservice.wsdl.v7_4.AuthSignatureServicePortType;
-import de.gematik.ws.conn.cardservice.wsdl.v8.CardServicePortType;
+import de.gematik.ws.conn.cardservice.wsdl.v8_2.CardServicePortType;
 import de.gematik.ws.conn.cardterminalservice.wsdl.v1.CardTerminalServicePortType;
 import de.gematik.ws.conn.certificateservice.wsdl.v6.CertificateServicePortType;
 import de.gematik.ws.conn.encryptionservice.wsdl.v6.EncryptionServicePortType;
