@@ -4,13 +4,18 @@
     <parent>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>perimeter-bricks</artifactId>
-        <version>0.9.0</version>
+        <version>0.10.0</version>
     </parent>
 
     <artifactId>softkon-service-brick</artifactId>
     <name>SoftKon Service Brick</name>
 
     <dependencies>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>4.0.2</version>
+        </dependency>
         <dependency>
             <groupId>de.gematik.bbriccs</groupId>
             <artifactId>konnektor-client-brick</artifactId>
@@ -22,6 +27,11 @@
         <dependency>
             <groupId>de.gematik.bbriccs</groupId>
             <artifactId>crypto-brick</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.gematik.bbriccs</groupId>
+            <artifactId>vsdm-check-digit-generator-brick</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>de.gematik.bbriccs</groupId>

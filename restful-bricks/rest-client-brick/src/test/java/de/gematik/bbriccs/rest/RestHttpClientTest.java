@@ -36,13 +36,17 @@ import de.gematik.bbriccs.rest.plugins.BasicHeaderProvider;
 import de.gematik.bbriccs.rest.plugins.BasicHttpLogger;
 import de.gematik.bbriccs.rest.plugins.HttpBObserver;
 import de.gematik.bbriccs.rest.tls.EmptyTrustManager;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 import javax.net.ssl.SSLContext;
 import kong.unirest.core.Interceptor;
+import lombok.Getter;
 import lombok.SneakyThrows;
+import lombok.experimental.Accessors;
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -164,6 +168,35 @@ class RestHttpClientTest {
 
   @ParameterizedTest
   @MethodSource("clientBuilder")
+  void shouldThrowOnImmutableHeaders(HttpClientBuilder<?> clientBuilder) {
+    prepareGetResponse("/test", "Hello, World!".getBytes());
+
+    val client =
+        clientBuilder
+            .header(BasicHeaderProvider.forAutoContentLength())
+            .withoutTlsVerification()
+            .init();
+    val request = new CustomHttpRequestWithImmutableHeaders();
+    assertThrows(UnsupportedOperationException.class, () -> client.send(request));
+  }
+
+  @ParameterizedTest
+  @MethodSource("clientBuilder")
+  void shouldHandleNullBodyAsEmptyBody(HttpClientBuilder<?> clientBuilder) {
+    prepareGetResponse("/test", "Hello, World!".getBytes());
+
+    val client =
+        clientBuilder
+            .header(BasicHeaderProvider.forAutoContentLength())
+            .register(BasicHttpLogger.toStdout())
+            .withoutTlsVerification()
+            .init();
+    val request = new CustomHttpRequestWithNullBody();
+    assertDoesNotThrow(() -> client.send(request));
+  }
+
+  @ParameterizedTest
+  @MethodSource("clientBuilder")
   void shouldServeObserverOk(HttpClientBuilder<?> clientBuilder) {
     prepareGetResponse("/test", "Hello, World!".getBytes());
 
@@ -233,6 +266,44 @@ class RestHttpClientTest {
     @Override
     public void onResponse(HttpBResponse response) {
       this.responses.add(response);
+    }
+  }
+
+  @Getter
+  @Accessors(fluent = true)
+  private static class CustomHttpRequestWithImmutableHeaders implements HttpBRequest {
+
+    private HttpRequestMethod method;
+    private String urlPath;
+    private byte[] body;
+    private HttpVersion version;
+    private List<HttpHeader> headers;
+
+    public CustomHttpRequestWithImmutableHeaders() {
+      this.method = HttpRequestMethod.GET;
+      this.urlPath = "/test";
+      this.body = "HelloWorld".getBytes(StandardCharsets.UTF_8);
+      this.version = HttpVersion.HTTP_1_1;
+      this.headers = List.of(); // this leads to issues because headers must be mutable!
+    }
+  }
+
+  @Getter
+  @Accessors(fluent = true)
+  private static class CustomHttpRequestWithNullBody implements HttpBRequest {
+
+    private HttpRequestMethod method;
+    private String urlPath;
+    private byte[] body;
+    private HttpVersion version;
+    private List<HttpHeader> headers;
+
+    public CustomHttpRequestWithNullBody() {
+      this.method = HttpRequestMethod.GET;
+      this.urlPath = "/test";
+      this.body = null;
+      this.version = HttpVersion.HTTP_1_1;
+      this.headers = new ArrayList<>();
     }
   }
 }

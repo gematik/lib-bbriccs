@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jaxws:bindings
+  wsdlLocation="../main/resources/gematik_schemes/conn/CardService_v8_2_1.wsdl"
+  xmlns:jaxws="https://jakarta.ee/xml/ns/jaxws">
+  <jaxws:package name="de.gematik.ws.conn.cardservice.wsdl.v8_2"/>
+</jaxws:bindings>

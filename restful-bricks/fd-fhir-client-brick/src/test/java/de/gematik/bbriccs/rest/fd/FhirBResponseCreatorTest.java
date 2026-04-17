@@ -38,6 +38,7 @@ import java.util.*;
 import java.util.stream.Stream;
 import lombok.val;
 import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r4.model.OperationOutcome.IssueSeverity;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -54,7 +55,7 @@ class FhirBResponseCreatorTest {
 
   private static final HttpVersion DEFAULT_HTTP_VERSION = HttpVersion.HTTP_1_1;
 
-  private static final String testToken =
+  private static final String TEST_TOKEN =
       "eyJhbGciOiJCUDI1NlIxIiwidHlwIjoiYXQrSldUIiwia2lkIjoicHVrX2lkcF9zaWcifQ.eyJzdWIiOiJJWERkLTNyUVpLS0ZYVWR4R0dqNFBERG9WNk0wUThaai1xdzF2cjF1XzU4IiwicHJvZmVzc2lvbk9JRCI6IjEuMi4yNzYuMC43Ni40LjQ5Iiwib3JnYW5pemF0aW9uTmFtZSI6ImdlbWF0aWsgTXVzdGVya2Fzc2UxR0tWTk9ULVZBTElEIiwiaWROdW1tZXIiOiJYMTEwNTAyNDE0IiwiYW1yIjpbIm1mYSIsInNjIiwicGluIl0sImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTUwMTEvYXV0aC9yZWFsbXMvaWRwLy53ZWxsLWtub3duL29wZW5pZC1jb25maWd1cmF0aW9uIiwiZ2l2ZW5fbmFtZSI6IlJvYmluIEdyYWYiLCJjbGllbnRfaWQiOiJlcnAtdGVzdHN1aXRlLWZkIiwiYWNyIjoiZ2VtYXRpay1laGVhbHRoLWxvYS1oaWdoIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwLyIsImF6cCI6ImVycC10ZXN0c3VpdGUtZmQiLCJzY29wZSI6Im9wZW5pZCBlLXJlemVwdCIsImF1dGhfdGltZSI6MTY0MzgwNDczMywiZXhwIjoxNjQzODA1MDMzLCJmYW1pbHlfbmFtZSI6IlbDs3Jtd2lua2VsIiwiaWF0IjoxNjQzODA0NjEzLCJqdGkiOiI2Yjg3NmU0MWNmMGViNGJkIn0.MV5cDnL3JBZ4b6xr9SqiYDmZ7qtZFEWBd1vCrHzVniZeDhkyuSYc7xhf577h2S21CzNgrMp0M6JALNW9Qjnw_g";
 
   @BeforeAll
@@ -77,7 +78,7 @@ class FhirBResponseCreatorTest {
     val response =
         responseCreator
             .expecting(resourceType)
-            .usedAccessToken(testToken)
+            .usedAccessToken(TEST_TOKEN)
             .received(httpResponse)
             .withoutDuration();
     val auditEvent = response.getAsBaseResource();
@@ -102,7 +103,7 @@ class FhirBResponseCreatorTest {
     val response =
         responseCreator
             .expecting(OperationOutcome.class)
-            .usedAccessToken(testToken)
+            .usedAccessToken(TEST_TOKEN)
             .received(httpResponse)
             .withoutDuration();
     val resource = response.getAsBaseResource();
@@ -118,6 +119,40 @@ class FhirBResponseCreatorTest {
         concreteResource, format("Resource must be castable to Type {0}", OperationOutcome.class));
   }
 
+  @ParameterizedTest
+  @ValueSource(ints = {200, 500})
+  void shouldWrapNonFhirPayloadAsOperationOutcome(int statusCode) {
+    val payload = "{ \"not\": \"a fhir resource\" }";
+    val httpResponse =
+        HttpBResponse.status(statusCode)
+            .headers(
+                List.of(
+                    StandardHttpHeaderKey.CONTENT_TYPE.createHeader(
+                        com.google.common.net.MediaType.JSON_UTF_8.type())))
+            .withPayload(payload);
+    val response =
+        responseCreator
+            .expecting(OperationOutcome.class)
+            .usedAccessToken(TEST_TOKEN)
+            .received(httpResponse)
+            .withoutDuration();
+    val resource = response.getAsBaseResource();
+    assertNotNull(
+        resource, format("Response must contain a Resource of Type {0}", OperationOutcome.class));
+    assertInstanceOf(
+        OperationOutcome.class, resource, "Resource is expected to be OperationOutcome");
+    assertTrue(response.isOfExpectedType());
+
+    // get the concrete OperationOutcome
+    val concreteResource = response.getAsOperationOutcome();
+    assertNotNull(
+        concreteResource, format("Resource must be castable to Type {0}", OperationOutcome.class));
+
+    // check the issue severity based on the status code
+    val expectedSeverity = statusCode == 200 ? IssueSeverity.INFORMATION : IssueSeverity.ERROR;
+    assertEquals(expectedSeverity, concreteResource.getIssueFirstRep().getSeverity());
+  }
+
   @Test
   void expectedOperationOutcome() {
     val testOperationOutcome = encodeTestRessource(createOperationOutcome(), EncodingType.JSON);
@@ -127,7 +162,7 @@ class FhirBResponseCreatorTest {
     val response =
         responseCreator
             .expecting(OperationOutcome.class)
-            .usedAccessToken(testToken)
+            .usedAccessToken(TEST_TOKEN)
             .received(httpResponse)
             .withoutDuration();
 
@@ -152,7 +187,7 @@ class FhirBResponseCreatorTest {
     val response =
         responseCreator
             .expecting(OperationOutcome.class)
-            .usedAccessToken(testToken)
+            .usedAccessToken(TEST_TOKEN)
             .received(httpResponse)
             .withoutDuration();
 
@@ -169,7 +204,7 @@ class FhirBResponseCreatorTest {
     val response =
         responseCreator
             .expecting(AuditEvent.class)
-            .usedAccessToken(testToken)
+            .usedAccessToken(TEST_TOKEN)
             .received(httpResponse)
             .withoutDuration();
     assertThrows(UnexpectedResponseResourceError.class, response::getExpectedResource);
@@ -182,13 +217,13 @@ class FhirBResponseCreatorTest {
     val content = ResourceLoader.readFileFromResource(filePath);
 
     val expectation = Task.class;
-    assertNotEquals(resourceType, expectation); // enusre methodsource does not provide a task
+    assertNotEquals(expectation, resourceType); // enusre methodsource does not provide a task
 
     val httpResponse = HttpBResponse.status(204).headers(HEADERS_JSON).withPayload(content);
     val response =
         responseCreator
             .expecting(expectation)
-            .usedAccessToken(testToken)
+            .usedAccessToken(TEST_TOKEN)
             .received(httpResponse)
             .withoutDuration();
     assertThrows(UnexpectedResponseResourceError.class, response::getExpectedResource);
@@ -203,7 +238,7 @@ class FhirBResponseCreatorTest {
     val response =
         responseCreator
             .expecting(AuditEvent.class)
-            .usedAccessToken(testToken)
+            .usedAccessToken(TEST_TOKEN)
             .received(httpResponse)
             .withoutDuration();
 
@@ -220,7 +255,7 @@ class FhirBResponseCreatorTest {
     val response =
         responseCreator
             .expecting(AuditEvent.class)
-            .usedAccessToken(testToken)
+            .usedAccessToken(TEST_TOKEN)
             .received(httpResponse)
             .withoutDuration();
 
@@ -237,7 +272,7 @@ class FhirBResponseCreatorTest {
     val response =
         responseCreator
             .takeExpectationFrom(fdRequest)
-            .usedAccessToken(testToken)
+            .usedAccessToken(TEST_TOKEN)
             .received(httpResponse)
             .withoutDuration();
     assertTrue(response.isValidPayload());
@@ -251,7 +286,7 @@ class FhirBResponseCreatorTest {
     val response =
         responseCreator
             .expecting(AuditEvent.class)
-            .usedAccessToken(testToken)
+            .usedAccessToken(TEST_TOKEN)
             .received(httpResponse)
             .withoutDuration();
     assertTrue(response.isValidPayload());
@@ -266,7 +301,7 @@ class FhirBResponseCreatorTest {
     val response =
         responseCreator
             .expecting(AuditEvent.class)
-            .usedAccessToken(testToken)
+            .usedAccessToken(TEST_TOKEN)
             .received(httpResponse)
             .withoutDuration();
     assertFalse(response.isValidPayload());
@@ -285,7 +320,7 @@ class FhirBResponseCreatorTest {
     val response =
         responseCreator
             .expecting(AuditEvent.class)
-            .usedAccessToken(testToken)
+            .usedAccessToken(TEST_TOKEN)
             .received(httpResponse)
             .withoutDuration();
 
@@ -307,7 +342,7 @@ class FhirBResponseCreatorTest {
     val response =
         responseCreator
             .expecting(AuditEvent.class)
-            .usedAccessToken(testToken)
+            .usedAccessToken(TEST_TOKEN)
             .received(httpResponse)
             .withoutDuration();
 
@@ -331,7 +366,7 @@ class FhirBResponseCreatorTest {
     val response =
         responseCreator
             .expecting(AuditEvent.class)
-            .usedAccessToken(testToken)
+            .usedAccessToken(TEST_TOKEN)
             .received(httpResponse)
             .withoutDuration();
 
@@ -355,7 +390,7 @@ class FhirBResponseCreatorTest {
     val response =
         responseCreator
             .expecting(AuditEvent.class)
-            .usedAccessToken(testToken)
+            .usedAccessToken(TEST_TOKEN)
             .received(httpResponse)
             .withoutDuration();
 

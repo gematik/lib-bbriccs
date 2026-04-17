@@ -6,7 +6,7 @@
   <parent>
     <groupId>de.gematik.bbriccs</groupId>
     <artifactId>auth-bricks</artifactId>
-    <version>0.9.0</version>
+    <version>0.10.0</version>
   </parent>
 
   <artifactId>idp-flow-api-brick</artifactId>
@@ -17,7 +17,7 @@
       <dependency>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>restful-bricks</artifactId>
-        <version>0.9.0</version>
+        <version>0.10.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

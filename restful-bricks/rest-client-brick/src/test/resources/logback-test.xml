@@ -32,4 +32,7 @@
         <appender-ref ref="STDOUT"/>
     </logger>
 
+    <root level="WARN">
+        <appender-ref ref="STDOUT"/>
+    </root>
 </configuration>

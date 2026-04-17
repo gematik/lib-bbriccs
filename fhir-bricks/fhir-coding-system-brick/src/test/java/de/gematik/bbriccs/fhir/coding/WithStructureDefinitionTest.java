@@ -26,11 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import de.gematik.bbriccs.fhir.coding.utils.TestProfileStructureDefinition;
 import de.gematik.bbriccs.fhir.coding.version.GenericProfileVersion;
 import lombok.val;
-import org.hl7.fhir.r4.model.BooleanType;
-import org.hl7.fhir.r4.model.CodeType;
-import org.hl7.fhir.r4.model.StringType;
-import org.hl7.fhir.r4.model.UriType;
-import org.hl7.fhir.r4.model.UrlType;
+import org.hl7.fhir.r4.model.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -144,6 +140,18 @@ class WithStructureDefinitionTest {
     assertNotNull(e);
     assertEquals(tsd.getCanonicalUrl(), e.getUrl());
     assertInstanceOf(CodeType.class, e.getValue());
+    assertEquals(extensionValue, e.getValue().castToCode(e.getValue()).getValue());
+  }
+
+  @Test
+  void shouldBuildAsMarkDownExtension() {
+    val tsd = new TestProfileStructureDefinition();
+    val extensionValue = "Hello World";
+    val e = tsd.asMarkDownExtension(extensionValue);
+
+    assertNotNull(e);
+    assertEquals(tsd.getCanonicalUrl(), e.getUrl());
+    assertInstanceOf(MarkdownType.class, e.getValue());
     assertEquals(extensionValue, e.getValue().castToCode(e.getValue()).getValue());
   }
 

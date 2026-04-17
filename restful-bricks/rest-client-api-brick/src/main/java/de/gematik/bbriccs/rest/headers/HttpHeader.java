@@ -23,7 +23,6 @@ package de.gematik.bbriccs.rest.headers;
 import static java.text.MessageFormat.format;
 
 import com.google.common.net.MediaType;
-import de.gematik.bbriccs.rest.HttpHeaderKey;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -35,6 +34,14 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 
 public record HttpHeader(String key, String value) {
+
+  public boolean matches(HttpHeaderKey headerKey) {
+    return this.matches(headerKey.getKey());
+  }
+
+  public boolean matches(String headerKey) {
+    return this.key.equalsIgnoreCase(headerKey);
+  }
 
   public void apply(BiConsumer<String, String> headerConsumer) {
     headerConsumer.accept(key, value);

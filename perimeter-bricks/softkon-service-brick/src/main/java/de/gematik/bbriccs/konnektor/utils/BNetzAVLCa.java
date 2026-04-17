@@ -20,11 +20,10 @@
 
 package de.gematik.bbriccs.konnektor.utils;
 
-import static java.text.MessageFormat.format;
-
 import de.gematik.bbriccs.crypto.certificate.X509CertificateWrapper;
 import de.gematik.bbriccs.utils.ResourceLoader;
 import java.security.cert.X509Certificate;
+import java.text.MessageFormat;
 import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -34,6 +33,7 @@ public enum BNetzAVLCa {
   GEM_HBA_QCA6_TEST_ONLY("GEM.HBA-qCA6 TEST-ONLY"),
   GEM_HBA_QCA24_TEST_ONLY("GEM.HBA-qCA24 TEST-ONLY"),
   GEM_HBA_QCA51_TEST_ONLY("GEM.HBA-qCA51 TEST-ONLY"),
+  GEM_KOMP_CA56_TEST_ONLY("GEM.Komp-CA56 TEST-ONLY"),
   ;
 
   private final String subjectCA;
@@ -46,7 +46,7 @@ public enum BNetzAVLCa {
         .orElseThrow(
             () ->
                 new IllegalArgumentException(
-                    format("No BNetzAVL CA found with subjectCN: {0}", subjectCN)));
+                    MessageFormat.format("No BNetzAVL CA found with subjectCN: {0}", subjectCN)));
   }
 
   public static X509Certificate getCA(X509Certificate eeCert) {
@@ -54,18 +54,13 @@ public enum BNetzAVLCa {
     return certWrapper
         .getIssuerCN()
         .map(BNetzAVLCa::getCA)
-        .orElseThrow(
-            () ->
-                new IllegalArgumentException(
-                    format(
-                        "No BNetzAVL CA found for ee-certificate: {0}",
-                        eeCert.getSubjectX500Principal())));
+        .orElseThrow(() -> new IllegalArgumentException("No issuer CN found in EE certificate"));
   }
 
   public X509Certificate getCertificate() {
     val value =
         ResourceLoader.readFileFromResource(
-            format("ca/{0}.pem", subjectCA.toLowerCase().replace(" ", "_")));
+            MessageFormat.format("ca/{0}.pem", subjectCA.toLowerCase().replace(" ", "_")));
     return X509CertificateWrapper.fromPem(value).toCertificate();
   }
 }

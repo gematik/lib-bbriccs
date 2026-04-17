@@ -20,6 +20,7 @@
 
 package de.gematik.bbriccs.konnektor.cfg;
 
+import de.gematik.bbriccs.vsdm.cfg.VsdmServiceConfiguration;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

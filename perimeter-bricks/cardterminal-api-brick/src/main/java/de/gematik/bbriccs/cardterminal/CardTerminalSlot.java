@@ -21,13 +21,15 @@
 package de.gematik.bbriccs.cardterminal;
 
 import jakarta.annotation.Nullable;
+import java.util.Optional;
 import lombok.Getter;
+import lombok.Setter;
 
 public class CardTerminalSlot {
 
   @Getter private final int slotId;
 
-  @Nullable private String iccsn;
+  @Nullable @Setter private String iccsn;
 
   public CardTerminalSlot(int slotId) {
     this.slotId = slotId;
@@ -37,8 +39,8 @@ public class CardTerminalSlot {
     this.iccsn = null;
   }
 
-  public void inserte(String iccsn) {
-    this.iccsn = iccsn;
+  public Optional<String> getIccsn() {
+    return Optional.ofNullable(this.iccsn);
   }
 
   public boolean isOccupied() {

@@ -1,89 +1,116 @@
-# Release 4.0.2-3
-- Konnektor: Context added to GetSignatureMode request. CardHandle, Context removed from GetSignatureModeResponse (C_10555)
-- Konnektor: Minus character escaped in pattern attribute Shorttext (C_10614)
- - FdV: GetNotificationInfoList, GetNotificationInformationRequestDTO added; Spelling corrected (testtreiber_fdv.yaml)
- - ePA: Bugfix in AuthorizationService
+<img align="right" width="250" height="47" src="images/Gematik_Logo_Flag_With_Background.png"/> <br/>    
+ 
+# Release Notes api-telematik
+
+## Release 6.0.3
+- C_12578: Remove obsolete ePA 2.x Schema as the providing Fachmodul has been removed from the Konnektor
+- C_12578: Remove redundant SignatureService_V7_5_7.xsd
+- C_12405: Semantic Change of CheckCertificateExpiration
+
+## Release 6.0.1
+- C_12154: Adaptations of schema in CardService to be compliant with api-popp 3.0.0
+- C_12203: New WSDL-version of CertificatService because of semantic change
+
+## Release Consumer 1.2.1
+- Add OptionalInputs to ExternalAuthenticate
+  
+## Release Consumer 1.2.0
+- C_12110: Enable Consumer to sign an access permission to the ePA 3.0 using plain ECDSA signatures
+
+## Release 6.0.0-2
+- Fix of invalid Schema in CardService
+
+## Release Consumer 1.1.0
+- Remove OptionalInputs from Operation ExternalAuthenticate
+- C_11771: Semantic Changes in EncryptionService
+
+## Release 6.0.0
+- Extension of operating data in CertificateDataType with Cryptography
+- Clarification of connector status information format (similar to GetResourceInformation)
+- Removal of Elements "TlsCertSource" and "TlsKeyCrypt" in order to avoid adaptations of OperatingData_vpnzugd_hardened.xsd
+- Support of PoPP-26 Feature by adding operations SecureSendAPDU, StartCardSession and StopCardSession in CardService
+- Comfort Signature: Integrate error handling of error 4018 inside the operation ActivateComfortSignature
+- eIDAS compliant semantic changes in SignatureService 7.4
+- Removal of older 7.4 and 7.5 versions of SignatureService
+
+## Release 5.0.8
+- C_11600: Extend OperatingData with used TLS-Certificate Source and Algorithm at the Client System Interface
+
+## Release Consumer 1.0.0-1
+- Fix: add missing SOAP operations for ReadCertificate
+- Fix: update Consumer SOAP actions to match correct WSDL namespace versions
+
+## Release Consumer 1.0.0
+- Extend Consumer Operations for "ePA für alle"
+
+## Release 5.0.7
+- VSDM: add new DMP elements to documentation in xsd schema
+- (editorial) refine project readme
+- (editorial) add security and contribution notes with code of conduct
+- (editorial) add project license information
+- (editorial) add release notes file
+- ePA: fix inconsistency in formatCode for ePA service
+
+## Release 5.0.6
+- Konnektor: Semantic Changes (C_11276)
 
 
-# Release 4.0.2-2
-- FdV: GetNotificationInfoList added
- - FdV: GetNotificationInformationRequestDTO added
- - FdV: Spelling corrected
+## Release 5.0.5
+- ePA: Semantic change => If some operation calls are not ePA capable the processing is aborted and returns an error (C_11334)
+
+- ePA: PHRManagementService V2.0.2 added (C_11334)
+
+- Release process: Pipelines for publishing project added
 
 
-# Release 4.0.2-1
-epa: Bugfix in AuthenticationService
+## Release 5.0.4
+- ePA: ePA 1.0 interface added (C_11265)
 
-# Release 4.0.2
-- KSR: limit FQDN according to RFC1035
- - VZD/DirectoryAdministration: new operation read_Directory_Entry_for_Sync and removal of enum formats for attribute usage
- - VZD/DirectoryAdministraton: renamed owner to holder
- - ePA: simplifying APPC Policies (C_10475)
- - ePA: new interface GetNotificationInfo (C_10469)
- - FDV/testtreiber: interface update
- - FDV/testtreiber: errorMessage renamed to statusMessages (C_10385)
- - VSDS: update schema Schema_VSD_PKV.xsd and new schema Pruefungsnachweis_PKV.xsd
- - VSDS: new values for DMP_Kennzeichnung in Schema_VSD.xsd
+ 
+- Konnektor: Vesion of xmldsig_hardened.xsd and xmldsig_NFDM_hardened.xsd incremented (correction of C_11022)
+
+ 
+- ePA: PHRManagementService_V2_5_1.xsd and PHRManagementService_V2_5_1.wsdl removed (correction of C_11196)
+
+ 
+- ePA: PHRManagementService_V2_0.xsd and PHRManagementService_V2_0.wsdl removed (C_11252)
 
 
-# Release 4.0.2-Pre1
-- Konnektor: add schema for operating data (C_10340)
- - VPNZugD: add operation sendData (C_10340)
- - ePA: add operation GetSignedAuditEvents (C_10360)
- - ePA: add operation RemoveDocuments (C_10383)
- - ePA: fix in operation DeleteDocumentSet
- - KSR: limit String length in InfrastrukturKonfig.xsd (C_10314)
- - KSR: limit character set for strings (ID, Name, DomainName) (C_10365)
- - VSDM: add VSD Schema for PKV (C_10435)
- - VZD: updated I_ Directory_Administration read_Directory_Entry: add unlimited results & search parameters telematikID and telematikID-SubStr (C_10334)
- - VZD: add attributes countryCode and changeDateTime in data model (C_10334)
- - VZD: removed I_Directory_Search (C_10334)
+## Release 5.0.4-Pre2
+- ePA: ePA 1.0 interface added (C_11265)
+
+ 
+- Konnektor: Vesion of xmldsig_hardened.xsd and xmldsig_NFDM_hardened.xsd incremented (correction of C_11022)
+
+ 
+- ePA: PHRManagementService_V2_5_1.xsd and PHRManagementService_V2_5_1.wsdl removed (correction of C_11196)
+
+ 
+- ePA: PHRManagementService_V2_0.xsd and PHRManagementService_V2_0.wsdl removed (C_11252)
 
 
-# Release 4.0.1
-- Konnektor: C_7009: remove of LDSM
- - Konnektor: AuthSignatureService in 2 versions (C_10306)
- - Konnektor: fix: version mismatches
- - Konnektor: fix: CardService filenames and includes (C_10308)
- - Konnektor/ePA: version V2.0.1 is consistent to WSDL
- - Konnektor/ePA: renaming in V2_0: changes for V2.0.1 are also included 
- - FD/ePA: operations for rekeying R4.0.1
- - FD/ePA: correction: <fault name="FaultMessage"> must not contain use="literal"
- - Consumer: fix: version mismatches
- - VZD: fix: version mismatches
- - VZD: Rel. 3.1.3 Hotfix 5 added (C_10299)
+## Release 5.0.4-Pre1
+- ePA: maxOccur changed to 25 in DocumentCategoryList (C_11196)
 
 
-# Release 4.0.1-Pre2
-- vzd: baseEntryOnly Suchparameter in GET Operation hinzugefügt
- - Konnektor: C_10282 - Defaultwert für Parameter "Crypt" aus XML-Schema entfernen
- - Konnektor, NFDM: revert C_7098 NFD_Document_1_5 -> 1_4
+## Release 5.0.3
+- VPN-ZugD: In Operating Data schema locations corrected for namespace imports.
 
 
-# Release 4.0.1-Pre1
-- VZD: changes in admin interface
- - Konnektor: SignatureService hardening of attribute ShortText (C_10147)
- - Konnektor: added old schema versions, which must be supported (C_10215)
- - Konnektor (Fachmodul ePA): DocumentCategoryEnum improved
- - Konnektor (Fachmodul ePA): operation RemoveDocuments removed
- - Konnektor (Fachmodul ePA): operation DeleteDocumentSet added
- - ePA: Policies for 4.0.1 improved
- - ePA: Policy for eArztbrief added
+- VZD: Dummy DirectoryAdministration.yaml removed.
 
 
-# Release 4.0.0
-- ePA: Fehlerkorrektur im PHRManagement- und PHRService
- - ePA: APPC-Policies für das kommende Release (neues Berechtigungssystem) angepasst.
- - ePA: Einarbeitung von Kommentaren von Aktensystemherstellern (C_10121, C_10117)
- - ePA: Berechtigungserteilung zum Zugriff auf die Akte grob-, mittel- und feingranular
- - Konnektor (Fachmodul ePA): Unterstützung der Berechtigungserteilung zum Zugriff auf die Akte grob-, mittelgranular
- - Konnektor: SignatureService V7.5 unterstützt jetzt die Komfortsignatur (C_6997)
- - Basis-KTR-Consumer: Änderungen der Außenschnittstelle EncryptionService und SignatureService in Bezug auf XML-Dokumente (C_10068 und C_10070)
+## Release 5.0.3-Pre1
+C_11076: Made some elements optional in Operating Data
+
+## Release 5.0.2
+- ePA: RegEx for UserAgent pattern added
 
 
-# Release 4.0.0-Pre1
-- Änderungen die für ePA 2.0 notwendig wurden 
-- Änderungen an der Schnittstelle des VZD, die für das eRezept notwendig wurden 
-- Aufnahme von Schemahärtungen für die Signatur Schnittstelle des Konnektors 
-- Aufnahme notwendiger Korrekturen und Optimierungen, die sich aus den laufenden Entwicklungs- bzw. Zulassungsprozessen ergeben haben
+## Release 5.0.1
+- Konnektor: Datatype of manifest/Reference/@URI corrected in hardened schemas (C_11022)
 
+
+
+## Release 5.0.0
+- ePA 2.5: new interface Version PHRManagementService for Feature DiGA; no more support of interfaces for ePA1

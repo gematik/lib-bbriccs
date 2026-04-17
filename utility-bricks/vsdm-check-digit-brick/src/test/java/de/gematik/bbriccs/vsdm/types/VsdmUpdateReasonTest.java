@@ -22,61 +22,17 @@ package de.gematik.bbriccs.vsdm.types;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import de.gematik.bbriccs.vsdm.VsdmCheckDigitVersion;
-import de.gematik.bbriccs.vsdm.exceptions.ParsingException;
-import de.gematik.bbriccs.vsdm.exceptions.ParsingUpdateResonException;
+import de.gematik.bbriccs.vsdm.exceptions.ParsingUpdateReasonException;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class VsdmUpdateReasonTest {
-
-  @Test
-  void shouldThrowParsingUpdateResonExceptionForInvalidIdentifier() {
-    char invalidIdentifier = 'X';
-    assertThrows(
-        ParsingUpdateResonException.class, () -> VsdmUpdateReason.fromChecksum(invalidIdentifier));
-  }
-
-  @Test
-  void shouldThrowParsingExceptionForInvalidDataV1() {
-    byte[] data = new byte[1];
-    assertThrows(ParsingException.class, () -> VsdmKvnr.parse(data, VsdmCheckDigitVersion.V1));
-  }
-
-  @Test
-  void shouldThrowParsingExceptionForInvalidDataV2() {
-    byte[] data = new byte[1];
-    assertThrows(ParsingException.class, () -> VsdmKvnr.parse(data, VsdmCheckDigitVersion.V2));
-  }
-
-  @Test
-  void shouldReturnCorrectDescriptionForUfsUpdate() {
-    VsdmUpdateReason reason = VsdmUpdateReason.UFS_UPDATE;
-    assertEquals("Update Flag Service (UFS) Anfrage", reason.getDescription());
-  }
-
-  @Test
-  void shouldReturnCorrectIdentifierForVsdUpdate() {
-    VsdmUpdateReason reason = VsdmUpdateReason.VSD_UPDATE;
-    assertEquals('V', reason.getIdentifier());
-  }
-
-  @Test
-  void shouldGenerateCorrectByteForCardManagementUpdate() {
-    VsdmUpdateReason reason = VsdmUpdateReason.CARD_MANAGEMENT_UPDATE;
-    assertEquals((byte) 'C', reason.generate());
-  }
-
-  @Test
-  void shouldReturnCorrectStringRepresentationForInvalidReason() {
-    VsdmUpdateReason reason = VsdmUpdateReason.INVALID;
-    assertEquals("Identifier I Description: Invalid Reason (Test purpose)", reason.toString());
-  }
-
-  static Stream<Arguments> shouldReturnCorrectUpdateReasonFromChecksum() {
+  static Stream<Arguments> shouldResolveValidIdentifiers() {
     return Stream.of(
         Arguments.of('U', VsdmUpdateReason.UFS_UPDATE),
         Arguments.of('V', VsdmUpdateReason.VSD_UPDATE),
@@ -84,17 +40,78 @@ class VsdmUpdateReasonTest {
   }
 
   @ParameterizedTest
-  @MethodSource("shouldReturnCorrectUpdateReasonFromChecksum")
-  void shouldReturnCorrectUpdateReasonFromChecksum(char identifier, VsdmUpdateReason expectedReason)
-      throws ParsingUpdateResonException {
-    VsdmUpdateReason reason = VsdmUpdateReason.fromChecksum(identifier);
-    assertEquals(expectedReason, reason);
+  @MethodSource("shouldResolveValidIdentifiers")
+  void shouldResolveValidIdentifiers(char identifier, VsdmUpdateReason expected)
+      throws ParsingUpdateReasonException {
+    assertEquals(expected, VsdmUpdateReason.fromChecksum(identifier));
+  }
+
+  @ParameterizedTest
+  @ValueSource(chars = {'X', 'Z', 'I', '0', ' '})
+  void shouldThrowForUnknownIdentifier(char unknown) {
+    assertThrows(ParsingUpdateReasonException.class, () -> VsdmUpdateReason.fromChecksum(unknown));
+  }
+
+  @ParameterizedTest
+  @EnumSource(VsdmUpdateReason.class)
+  void shouldGenerateByteMatchingIdentifier(VsdmUpdateReason reason) {
+    assertEquals((byte) reason.getIdentifier(), reason.generate());
+  }
+
+  @ParameterizedTest
+  @EnumSource(VsdmUpdateReason.class)
+  void shouldContainIdentifierAndDescriptionInToString(VsdmUpdateReason reason) {
+    String s = reason.toString();
+    assertTrue(s.contains(String.valueOf(reason.getIdentifier())));
+    assertTrue(s.contains(reason.getDescription()));
   }
 
   @Test
-  void shouldThrowParsingUpdateResonExceptionForUnknownIdentifier() {
-    char unknownIdentifier = 'Z';
-    assertThrows(
-        ParsingUpdateResonException.class, () -> VsdmUpdateReason.fromChecksum(unknownIdentifier));
+  void shouldHaveCorrectIdentifierForUfsUpdate() {
+    assertEquals('U', VsdmUpdateReason.UFS_UPDATE.getIdentifier());
+  }
+
+  @Test
+  void shouldHaveCorrectDescriptionForUfsUpdate() {
+    assertEquals("Update Flag Service (UFS) Anfrage", VsdmUpdateReason.UFS_UPDATE.getDescription());
+  }
+
+  @Test
+  void shouldHaveCorrectIdentifierForVsdUpdate() {
+    assertEquals('V', VsdmUpdateReason.VSD_UPDATE.getIdentifier());
+  }
+
+  @Test
+  void shouldHaveCorrectDescriptionForVsdUpdate() {
+    assertEquals(
+        "Versichertenstammdaten (VSD) Update", VsdmUpdateReason.VSD_UPDATE.getDescription());
+  }
+
+  @Test
+  void shouldHaveCorrectIdentifierForCardManagementUpdate() {
+    assertEquals('C', VsdmUpdateReason.CARD_MANAGEMENT_UPDATE.getIdentifier());
+  }
+
+  @Test
+  void shouldHaveCorrectDescriptionForCardManagementUpdate() {
+    assertEquals(
+        "Kartenmanagement (CMS) Update", VsdmUpdateReason.CARD_MANAGEMENT_UPDATE.getDescription());
+  }
+
+  @Test
+  void shouldHaveCorrectIdentifierForInvalid() {
+    assertEquals('I', VsdmUpdateReason.INVALID.getIdentifier());
+  }
+
+  @Test
+  void shouldHaveCorrectDescriptionForInvalid() {
+    assertEquals("Invalid Reason (Test purpose)", VsdmUpdateReason.INVALID.getDescription());
+  }
+
+  @Test
+  void shouldProduceExpectedToStringForInvalid() {
+    assertEquals(
+        "Identifier I Description: Invalid Reason (Test purpose)",
+        VsdmUpdateReason.INVALID.toString());
   }
 }

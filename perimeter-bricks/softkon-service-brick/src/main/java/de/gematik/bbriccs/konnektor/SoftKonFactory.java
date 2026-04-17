@@ -22,8 +22,8 @@ package de.gematik.bbriccs.konnektor;
 
 import de.gematik.bbriccs.konnektor.cfg.KonnektorConfiguration;
 import de.gematik.bbriccs.konnektor.cfg.SoftKonServiceConfiguration;
-import de.gematik.bbriccs.konnektor.vsdm.VsdmService;
 import de.gematik.bbriccs.smartcards.SmartcardArchive;
+import de.gematik.bbriccs.vsdm.VsdmService;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +43,11 @@ public class SoftKonFactory implements KonnektorFactory {
     val skscdto = cfg.getService().castTo(this, SoftKonServiceConfiguration.class);
     log.info("Build Konnektor-Client {} for {}", cfg.getName(), skscdto.getType());
 
-    val smartcards = SmartcardArchive.from(skscdto.getSmartcards());
+    val smartcards =
+        Optional.ofNullable(skscdto.getSmartcards())
+            .filter(path -> !path.isBlank())
+            .map(SmartcardArchive::from)
+            .orElseGet(SmartcardArchive::fromResources);
     val vsdmService =
         Optional.ofNullable(skscdto.getVsdmConfiguration())
             .map(VsdmService::createFrom)

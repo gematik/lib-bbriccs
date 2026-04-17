@@ -4,7 +4,7 @@
     <parent>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>perimeter-bricks</artifactId>
-        <version>0.9.0</version>
+        <version>0.10.0</version>
     </parent>
 
     <artifactId>konnektor-ws-api-brick</artifactId>
@@ -14,17 +14,17 @@
         <dependency>
             <groupId>jakarta.xml.ws</groupId>
             <artifactId>jakarta.xml.ws-api</artifactId>
-            <version>4.0.2</version>
+            <version>${artefact.jakarta}</version>
         </dependency>
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>4.0.2</version>
+            <version>${artefact.jakarta}</version>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-ri</artifactId>
-            <version>4.0.2</version>
+            <version>${artefact.jakarta}</version>
             <type>pom</type>
         </dependency>
     </dependencies>
@@ -98,15 +98,74 @@
                                 src/main/resources/gematik_schemes
                             </wsdlDirectory>
                             <wsdlFiles>
-                                <wsdlFile>conn/SignatureService_V7_5_5.wsdl</wsdlFile>
-                                <wsdlFile>conn/EventService.wsdl</wsdlFile>
-                                <wsdlFile>conn/CertificateService_v6_0_1.wsdl</wsdlFile>
-                                <wsdlFile>conn/CardService_v8_1_2.wsdl</wsdlFile>
+                                <wsdlFile>conn/SignatureService_V7_5_6.wsdl</wsdlFile>
+                                <wsdlFile>conn/CertificateService_v6_0_3.wsdl</wsdlFile>
                                 <wsdlFile>conn/CardTerminalService.wsdl</wsdlFile>
                                 <wsdlFile>conn/vsds/VSDService.wsdl</wsdlFile>
                                 <wsdlFile>conn/EncryptionService_v6_1_1.wsdl</wsdlFile>
                             </wsdlFiles>
                             <wsdlLocation>/gematik_schemes/*</wsdlLocation>
+                            <keep>true</keep>
+                            <sourceDestDir>${project.build.directory}/generated/src/main/java</sourceDestDir>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>card_service_v8_1</id>
+                        <goals>
+                            <goal>wsimport</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlDirectory>
+                                src/main/resources/gematik_schemes
+                            </wsdlDirectory>
+                            <wsdlFiles>
+                                <wsdlFile>conn/CardService_v8_1_2.wsdl</wsdlFile>
+                            </wsdlFiles>
+                            <bindingFiles>
+                                <bindingFile>cardService_v8_1.jaxws.xjb</bindingFile>
+                            </bindingFiles>
+                            <wsdlLocation>/gematik_schemes/conn/CardService_v8_1_2.wsdl</wsdlLocation>
+                            <keep>true</keep>
+                            <sourceDestDir>${project.build.directory}/generated/src/main/java</sourceDestDir>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>card_service_v8_2</id>
+                        <goals>
+                            <goal>wsimport</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlDirectory>
+                                src/main/resources/gematik_schemes
+                            </wsdlDirectory>
+                            <wsdlFiles>
+                                <wsdlFile>conn/CardService_v8_2_1.wsdl</wsdlFile>
+                            </wsdlFiles>
+                            <bindingFiles>
+                                <bindingFile>cardService_v8_2.jaxws.xjb</bindingFile>
+                                <bindingFile>cardService_v8_2_types.jaxb.xjb</bindingFile>
+                            </bindingFiles>
+                            <wsdlLocation>/gematik_schemes/conn/CardService_v8_2_1.wsdl</wsdlLocation>
+                            <keep>true</keep>
+                            <sourceDestDir>${project.build.directory}/generated/src/main/java</sourceDestDir>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>event_service</id>
+                        <goals>
+                            <goal>wsimport</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlDirectory>
+                                src/main/resources/gematik_schemes
+                            </wsdlDirectory>
+                            <wsdlFiles>
+                                <wsdlFile>conn/EventService.wsdl</wsdlFile>
+                            </wsdlFiles>
+                            <bindingFiles>
+                                <bindingFile>eventService.jaxws.xjb</bindingFile>
+                            </bindingFiles>
+                            <wsdlLocation>/gematik_schemes/conn/EventService.wsdl</wsdlLocation>
                             <keep>true</keep>
                             <sourceDestDir>${project.build.directory}/generated/src/main/java</sourceDestDir>
                         </configuration>

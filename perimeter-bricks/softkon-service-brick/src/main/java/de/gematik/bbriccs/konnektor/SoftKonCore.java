@@ -37,16 +37,12 @@ import lombok.val;
 public class SoftKonCore {
 
   private final SmartcardArchive smartcards;
-  private final SoftKonSigner signer;
-  private final SoftKonVerifier verifier;
   private final CardHandleMapper cardsProvider;
 
   private int jobNumber = 0;
 
   public SoftKonCore(SmartcardArchive smartcards) {
     this.smartcards = smartcards;
-    this.signer = new SoftKonSigner();
-    this.verifier = new SoftKonVerifier();
     this.cardsProvider = new CardHandleMapper(smartcards);
   }
 
@@ -78,8 +74,9 @@ public class SoftKonCore {
                     new FaultMessage(
                         format("No card found with CardHandle {0}", cardHandle),
                         createError(cardHandle)));
-    if (smartcard instanceof InstituteSmartcardP12) {
-      return signer.signDocument(smartcard, cryptoSystem, isIncludeRevocationInfo, data);
+    if (smartcard instanceof InstituteSmartcardP12 smartcardP12) {
+      return SoftKonSigner.sign(smartcardP12, cryptoSystem)
+          .signDocument(isIncludeRevocationInfo, data);
     } else {
       throw new FaultMessage(
           format("Given CardHandle {0} does not belong to a institute card", cardHandle),
@@ -88,7 +85,7 @@ public class SoftKonCore {
   }
 
   public boolean verifyDocument(byte[] data) {
-    return this.verifier.verify(data);
+    return SoftKonVerifier.verify(data);
   }
 
   public String getJobNumber(

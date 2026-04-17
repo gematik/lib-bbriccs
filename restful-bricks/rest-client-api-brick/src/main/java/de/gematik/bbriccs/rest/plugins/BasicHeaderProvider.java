@@ -23,11 +23,11 @@ package de.gematik.bbriccs.rest.plugins;
 import de.gematik.bbriccs.rest.HttpBRequest;
 import de.gematik.bbriccs.rest.headers.HttpHeader;
 import java.time.ZonedDateTime;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.val;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class BasicHeaderProvider implements RequestHeaderProvider {
@@ -70,7 +70,9 @@ public class BasicHeaderProvider implements RequestHeaderProvider {
    * creates a {@link BasicHeaderProvider} which will dynamically calculate the "Content-Length"
    * header for the request payload
    *
-   * <p>*Attention*: Some libraries like unirest do not allow you to set this Header by hand
+   * <p>*Note*: Some libraries like unirest do not allow you to set this Header by hand. Using this
+   * provider will set the "Content-Length" header automatically (mainly for logging purposes) but
+   * the concrete HttpBClient will calculate it on its own.
    *
    * @param skipOnEmptyBody controls if "Content-Length: 0" headers should be skipped
    * @return a BasicHeaderProvider which automatically calculates the content-length header
@@ -78,7 +80,7 @@ public class BasicHeaderProvider implements RequestHeaderProvider {
   public static BasicHeaderProvider forAutoContentLength(boolean skipOnEmptyBody) {
     return fromProvider(
         req -> {
-          val contentLength = req.body().length;
+          int contentLength = Optional.ofNullable(req.body()).map(b -> b.length).orElse(0);
           if (contentLength == 0 && skipOnEmptyBody) return null;
           else return HttpHeader.forContentLength(contentLength);
         });

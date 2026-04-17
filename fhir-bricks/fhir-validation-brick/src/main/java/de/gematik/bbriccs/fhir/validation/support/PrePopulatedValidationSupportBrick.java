@@ -209,7 +209,7 @@ public class PrePopulatedValidationSupportBrick extends BaseValidationSupport
     }
 
     val retVal = Sets.newHashSet(url, urlWithoutVersion);
-    profile.getCompatibleVersions().forEach(v -> retVal.add(urlWithoutVersion + "|" + v));
+    profile.getAllVersions().forEach(v -> retVal.add(urlWithoutVersion + "|" + v));
 
     // add the version extracted from the resource itself as well
     resourceDef

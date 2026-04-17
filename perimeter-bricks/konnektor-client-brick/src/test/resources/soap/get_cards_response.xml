@@ -1,0 +1,59 @@
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+  <SOAP-ENV:Header/>
+  <SOAP-ENV:Body>
+    <ns6:GetCardsResponse
+        xmlns:ns2="http://ws.gematik.de/conn/ConnectorCommon/v5.0"
+        xmlns:ns3="http://ws.gematik.de/tel/error/v2.0"
+        xmlns:ns4="http://ws.gematik.de/conn/CardServiceCommon/v2.0"
+        xmlns:ns5="http://ws.gematik.de/conn/CardService/v8.1"
+        xmlns:ns6="http://ws.gematik.de/conn/EventService/v7.2">
+      <ns2:Status>
+        <ns2:Result>OK</ns2:Result>
+      </ns2:Status>
+      <ns5:Cards>
+        <ns5:Card>
+          <ns2:CardHandle>SMC-B-6</ns2:CardHandle>
+          <ns4:CardType>SMC-B</ns4:CardType>
+          <ns4:Iccsn>80276883110000163973</ns4:Iccsn>
+          <ns2:CtId>CT_ID_1</ns2:CtId>
+          <ns4:SlotId>1</ns4:SlotId>
+          <ns4:InsertTime>2024-01-01T00:00:00.000Z</ns4:InsertTime>
+          <ns5:CardHolderName>Test Arztpraxis 1</ns5:CardHolderName>
+          <ns4:CertificateExpirationDate>2028-01-01</ns4:CertificateExpirationDate>
+        </ns5:Card>
+        <ns5:Card>
+          <ns2:CardHandle>SMC-B-7</ns2:CardHandle>
+          <ns4:CardType>SMC-B</ns4:CardType>
+          <ns4:Iccsn>80276883110000163972</ns4:Iccsn>
+          <ns2:CtId>CT_ID_1</ns2:CtId>
+          <ns4:SlotId>2</ns4:SlotId>
+          <ns4:InsertTime>2024-01-01T00:00:01.000Z</ns4:InsertTime>
+          <ns5:CardHolderName>Test Arztpraxis 2</ns5:CardHolderName>
+          <ns4:CertificateExpirationDate>2028-02-01</ns4:CertificateExpirationDate>
+        </ns5:Card>
+        <ns5:Card>
+          <ns2:CardHandle>HBA-2</ns2:CardHandle>
+          <ns4:CardType>HBA</ns4:CardType>
+          <ns4:Iccsn>80276883110000161759</ns4:Iccsn>
+          <ns2:CtId>CT_ID_1</ns2:CtId>
+          <ns4:SlotId>3</ns4:SlotId>
+          <ns4:InsertTime>2024-01-01T00:00:02.000Z</ns4:InsertTime>
+          <ns5:CardHolderName>Dr. Max Mustermann</ns5:CardHolderName>
+          <ns4:CertificateExpirationDate>2028-06-01</ns4:CertificateExpirationDate>
+        </ns5:Card>
+        <ns5:Card>
+          <ns2:CardHandle>HBA-4</ns2:CardHandle>
+          <ns4:CardType>HBA</ns4:CardType>
+          <ns4:Iccsn>80276883110000170943</ns4:Iccsn>
+          <ns2:CtId>CT_ID_1</ns2:CtId>
+          <ns4:SlotId>4</ns4:SlotId>
+          <ns4:InsertTime>2024-01-01T00:00:03.000Z</ns4:InsertTime>
+          <ns5:CardHolderName>Dr. Erika Musterfrau</ns5:CardHolderName>
+          <ns4:CertificateExpirationDate>2029-01-01</ns4:CertificateExpirationDate>
+        </ns5:Card>
+      </ns5:Cards>
+    </ns6:GetCardsResponse>
+  </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+
+

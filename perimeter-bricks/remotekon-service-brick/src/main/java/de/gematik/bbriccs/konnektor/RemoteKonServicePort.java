@@ -27,8 +27,8 @@ import de.gematik.bbriccs.cfg.dto.BasicAuthConfiguration;
 import de.gematik.bbriccs.cfg.dto.TLSConfiguration;
 import de.gematik.ws.conn.authsignatureservice.wsdl.v7_4.AuthSignatureService;
 import de.gematik.ws.conn.authsignatureservice.wsdl.v7_4.AuthSignatureServicePortType;
-import de.gematik.ws.conn.cardservice.wsdl.v8.CardService;
-import de.gematik.ws.conn.cardservice.wsdl.v8.CardServicePortType;
+import de.gematik.ws.conn.cardservice.wsdl.v8_2.CardService;
+import de.gematik.ws.conn.cardservice.wsdl.v8_2.CardServicePortType;
 import de.gematik.ws.conn.cardterminalservice.wsdl.v1.CardTerminalService;
 import de.gematik.ws.conn.cardterminalservice.wsdl.v1.CardTerminalServicePortType;
 import de.gematik.ws.conn.certificateservice.wsdl.v6.CertificateService;
@@ -48,6 +48,7 @@ import jakarta.xml.ws.BindingProvider;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.Objects;
 import java.util.Optional;
@@ -117,7 +118,7 @@ public class RemoteKonServicePort extends ServicePort {
   }
 
   @Override
-  public final CardServicePortType getCardService() {
+  public CardServicePortType getCardService() {
     val service = new CardService();
     val servicePort = service.getCardServicePort();
     setEndpointAddress((BindingProvider) servicePort, this.getSds().getCardService());
@@ -148,10 +149,32 @@ public class RemoteKonServicePort extends ServicePort {
     return servicePort;
   }
 
+  @SneakyThrows
+  private String replaceIpWithBaseUrl(String path) {
+    val uri = new URI(path);
+    val host = uri.getHost();
+    if (host != null && host.matches("\\d{1,3}(\\.\\d{1,3}){3}")) {
+      val basePath = baseUrl.toURI();
+      val replaced =
+          new URI(
+              basePath.getScheme(),
+              uri.getUserInfo(),
+              basePath.getHost(),
+              basePath.getPort(),
+              uri.getPath(),
+              uri.getQuery(),
+              uri.getFragment());
+      log.info("Replaced IP {} with baseUrl host {}", host, basePath.getHost());
+      return replaced.toString();
+    }
+    return path;
+  }
+
   @SuppressWarnings("java:S1874")
   private void setEndpointAddress(BindingProvider servicePort, String path) {
-    log.info("Prepare ServicePort {} for {}", servicePort, path);
-    servicePort.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, path);
+    val resolvedPath = replaceIpWithBaseUrl(path);
+    log.info("Prepare ServicePort {} for {}", servicePort, resolvedPath);
+    servicePort.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, resolvedPath);
 
     if (this.username != null) {
       servicePort.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, this.username);
@@ -164,7 +187,6 @@ public class RemoteKonServicePort extends ServicePort {
       servicePort
           .getRequestContext()
           .put(JAXWSProperties.SSL_SOCKET_FACTORY, trustProvider.getSocketFactory());
-
       servicePort.getRequestContext().put(JAXWSProperties.HOSTNAME_VERIFIER, this.hostnameVerifier);
     }
   }

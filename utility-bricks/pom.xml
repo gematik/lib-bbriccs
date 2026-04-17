@@ -6,7 +6,7 @@
     <parent>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>bbriccs-parent</artifactId>
-        <version>0.9.0</version>
+        <version>0.10.0</version>
     </parent>
 
     <artifactId>utility-bricks</artifactId>
@@ -20,6 +20,7 @@
         <module>crypto-brick</module>
         <module>ca-supplier-brick</module>
         <module>vsdm-check-digit-brick</module>
+        <module>vsdm-check-digit-generator-brick</module>
     </modules>
 
     <dependencyManagement>
@@ -50,6 +51,11 @@
             <dependency>
                 <groupId>de.gematik.bbriccs</groupId>
                 <artifactId>vsdm-check-digit-brick</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.gematik.bbriccs</groupId>
+                <artifactId>vsdm-check-digit-generator-brick</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

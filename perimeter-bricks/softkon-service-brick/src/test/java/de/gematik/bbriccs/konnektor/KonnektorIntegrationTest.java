@@ -41,10 +41,10 @@ import de.gematik.bbriccs.konnektor.exceptions.MissingKonnektorServiceException;
 import de.gematik.bbriccs.konnektor.exceptions.SOAPRequestException;
 import de.gematik.bbriccs.konnektor.exceptions.SmartcardMissmatchException;
 import de.gematik.bbriccs.konnektor.requests.*;
-import de.gematik.bbriccs.konnektor.vsdm.VsdmService;
 import de.gematik.bbriccs.smartcards.SmartcardArchive;
 import de.gematik.bbriccs.smartcards.SmartcardP12;
 import de.gematik.bbriccs.utils.ResourceLoader;
+import de.gematik.bbriccs.vsdm.VsdmService;
 import de.gematik.ws.conn.cardservice.v8.CardInfoType;
 import de.gematik.ws.conn.cardservicecommon.v2.CardTypeType;
 import de.gematik.ws.conn.cardservicecommon.v2.PinResponseType;
@@ -61,6 +61,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class KonnektorIntegrationTest {
 
@@ -95,6 +97,29 @@ class KonnektorIntegrationTest {
     val scfg = new SoftKonServiceConfiguration();
     scfg.setType("Soft-Kon");
     scfg.setSmartcards(ResourceLoader.getFileFromResource("smartcards").getAbsolutePath());
+    val cfg = new KonnektorConfiguration();
+    cfg.setContext(new KonnektorContextConfiguration());
+    cfg.setService(scfg);
+    assertDoesNotThrow(() -> Konnektor.create(cfg));
+  }
+
+  @Test
+  void shouldInstantiateSoftKonFromConfigWithoutSmartcardsProperty() {
+    val scfg = new SoftKonServiceConfiguration();
+    scfg.setType("Soft-Kon");
+    val cfg = new KonnektorConfiguration();
+    cfg.setContext(new KonnektorContextConfiguration());
+    cfg.setService(scfg);
+    assertDoesNotThrow(() -> Konnektor.create(cfg));
+  }
+
+  @ParameterizedTest
+  @NullSource
+  @ValueSource(strings = {"", "   "})
+  void shouldInstantiateSoftKonFromConfigWithUnsetSmartcards(String smartcardsPath) {
+    val scfg = new SoftKonServiceConfiguration();
+    scfg.setType("Soft-Kon");
+    scfg.setSmartcards(smartcardsPath);
     val cfg = new KonnektorConfiguration();
     cfg.setContext(new KonnektorContextConfiguration());
     cfg.setService(scfg);
