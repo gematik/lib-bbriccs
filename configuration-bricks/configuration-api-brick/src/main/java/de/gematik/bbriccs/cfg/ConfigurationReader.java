@@ -20,12 +20,12 @@
 
 package de.gematik.bbriccs.cfg;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.NamedType;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import java.util.ServiceLoader;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.jsontype.NamedType;
+import tools.jackson.dataformat.yaml.YAMLFactory;
 
 @Slf4j
 public class ConfigurationReader {
@@ -43,7 +43,15 @@ public class ConfigurationReader {
         .forEach(
             csts -> {
               log.info("Register Configuration-SubType {}", csts.getSubType().getSimpleName());
-              mapper.registerSubtypes(new NamedType(csts.getSubType(), csts.getSubTypeName()));
+
+              mapper
+                  .deserializationConfig()
+                  .getSubtypeResolver()
+                  .registerSubtypes(new NamedType(csts.getSubType(), csts.getSubTypeName()));
+              mapper
+                  .serializationConfig()
+                  .getSubtypeResolver()
+                  .registerSubtypes(new NamedType(csts.getSubType(), csts.getSubTypeName()));
             });
 
     return mapper;

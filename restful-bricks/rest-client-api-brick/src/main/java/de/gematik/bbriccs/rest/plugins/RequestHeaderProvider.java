@@ -22,7 +22,7 @@ package de.gematik.bbriccs.rest.plugins;
 
 import de.gematik.bbriccs.rest.HttpBRequest;
 import de.gematik.bbriccs.rest.headers.HttpHeader;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 public interface RequestHeaderProvider {
 

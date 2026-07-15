@@ -6,7 +6,7 @@
   <parent>
     <groupId>de.gematik.bbriccs</groupId>
     <artifactId>bbriccs-parent</artifactId>
-    <version>0.10.0</version>
+    <version>0.11.0</version>
   </parent>
 
   <artifactId>fhir-bricks</artifactId>
@@ -150,7 +150,7 @@
       <artifactId>hapi-fhir-structures-r4</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <groupId>tools.jackson.dataformat</groupId>
       <artifactId>jackson-dataformat-xml</artifactId>
     </dependency>
     <dependency>

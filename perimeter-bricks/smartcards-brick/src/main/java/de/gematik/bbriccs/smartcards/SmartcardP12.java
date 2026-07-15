@@ -22,7 +22,6 @@ package de.gematik.bbriccs.smartcards;
 
 import static java.text.MessageFormat.format;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.gematik.bbriccs.crypto.CryptoSystem;
 import de.gematik.bbriccs.crypto.certificate.CertificateTypeOid;
 import de.gematik.bbriccs.smartcards.cfg.SmartcardConfigDto;
@@ -42,6 +41,7 @@ import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.util.encoders.Base64;
+import tools.jackson.databind.ObjectMapper;
 
 @EqualsAndHashCode
 @Slf4j

@@ -22,15 +22,15 @@ package de.gematik.bbriccs.rest;
 
 import static java.text.MessageFormat.format;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.gematik.bbriccs.rest.exceptions.UnexpectedResponseTypeError;
+import jakarta.annotation.Nullable;
 import java.util.Optional;
 import java.util.function.Function;
-import javax.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Delegate;
 import lombok.val;
+import tools.jackson.databind.ObjectMapper;
 
 @RequiredArgsConstructor(access = AccessLevel.PUBLIC)
 public class ApplicationResponse<P, E> implements HttpBResponse {

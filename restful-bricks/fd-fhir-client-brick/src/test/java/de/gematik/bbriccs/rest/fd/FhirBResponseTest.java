@@ -28,7 +28,7 @@ import de.gematik.bbriccs.fhir.codec.EmptyResource;
 import de.gematik.bbriccs.rest.fd.exceptions.UnexpectedResponseResourceError;
 import de.gematik.bbriccs.rest.headers.HttpHeader;
 import de.gematik.bbriccs.rest.headers.StandardHttpHeaderKey;
-import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import lombok.val;
@@ -77,7 +77,7 @@ class FhirBResponseTest {
   void shouldProvideContentLength(HttpHeader contentLength) {
     val response =
         FhirBResponse.forPayload(Bundle.class, new Task())
-            .withHeaders(List.of(contentLength))
+            .withHeaders(contentLength)
             .andValidationResult(null);
     assertEquals(0, response.getContentLength());
   }
@@ -115,6 +115,7 @@ class FhirBResponseTest {
     val response =
         FhirBResponse.forPayload(Bundle.class, resource)
             .withStatusCode(200)
+            .withHeaders(Map.of())
             .andValidationResult(createEmptyValidationResult());
     Function<FhirBResponse<? extends Resource>, RuntimeException> errorFunction =
         r -> new RuntimeException("test");

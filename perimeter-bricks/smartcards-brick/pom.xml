@@ -4,7 +4,7 @@
     <parent>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>perimeter-bricks</artifactId>
-        <version>0.10.0</version>
+        <version>0.11.0</version>
     </parent>
 
     <artifactId>smartcards-brick</artifactId>
@@ -20,7 +20,7 @@
             <artifactId>resource-loader-brick</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <groupId>tools.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-xml</artifactId>
         </dependency>
     </dependencies>
@@ -46,5 +46,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

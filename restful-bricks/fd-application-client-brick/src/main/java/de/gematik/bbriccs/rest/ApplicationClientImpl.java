@@ -20,12 +20,14 @@
 
 package de.gematik.bbriccs.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -60,7 +62,11 @@ public class ApplicationClientImpl implements ApplicationClient {
     private final HttpBClient httpBClient;
 
     public ApplicationClient withSimpleObjectMapper() {
-      return withObjectMapper(new ObjectMapper());
+      val mapper =
+          JsonMapper.builder()
+              .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true)
+              .build();
+      return withObjectMapper(mapper);
     }
 
     public ApplicationClient withObjectMapper(ObjectMapper objectMapper) {

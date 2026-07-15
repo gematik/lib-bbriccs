@@ -23,10 +23,6 @@ package de.gematik.bbriccs.fhir.validation;
 import static org.junit.jupiter.api.Assertions.*;
 
 import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import de.gematik.bbriccs.fhir.conf.ProfileSettingsDto;
 import de.gematik.bbriccs.fhir.conf.exceptions.FhirConfigurationException;
 import de.gematik.bbriccs.fhir.exceptions.UnsupportedEncodingException;
@@ -36,6 +32,9 @@ import java.util.List;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.dataformat.yaml.YAMLMapper;
 
 class ValidatorFhirFactoryTest {
 
@@ -105,8 +104,9 @@ class ValidatorFhirFactoryTest {
   private List<ProfileSettingsDto> readCustomConfiguration(String configFile) {
     val profilesConfig = ResourceLoader.readFileFromResource(configFile);
     val mapper =
-        new ObjectMapper(new YAMLFactory())
-            .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+        YAMLMapper.builder()
+            .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true)
+            .build();
     return mapper.readValue(profilesConfig, new TypeReference<>() {});
   }
 }

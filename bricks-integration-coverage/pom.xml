@@ -6,7 +6,7 @@
   <parent>
     <groupId>de.gematik.bbriccs</groupId>
     <artifactId>bbriccs-parent</artifactId>
-    <version>0.10.0</version>
+    <version>0.11.0</version>
   </parent>
 
   <artifactId>bricks-integration-coverage</artifactId>
@@ -43,6 +43,11 @@
     <dependency>
       <groupId>de.gematik.bbriccs</groupId>
       <artifactId>vsdm-check-digit-generator-brick</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>de.gematik.bbriccs</groupId>
+      <artifactId>popp-token-generator-brick</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
 

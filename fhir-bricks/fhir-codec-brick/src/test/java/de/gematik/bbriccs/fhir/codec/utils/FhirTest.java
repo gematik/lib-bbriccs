@@ -27,6 +27,7 @@ import ca.uhn.fhir.validation.SingleValidationMessage;
 import ca.uhn.fhir.validation.ValidationResult;
 import de.gematik.bbriccs.fhir.EncodingType;
 import de.gematik.bbriccs.fhir.codec.FhirCodec;
+import de.gematik.bbriccs.fhir.codec.FhirCodecImpl;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -47,12 +48,12 @@ public abstract class FhirTest {
     this.initialize();
 
     if (fhirCodec == null) {
-      this.fhirCodec = FhirCodec.forR4().andNonProfiledValidator();
+      this.fhirCodec = FhirCodecImpl.forR4().andNonProfiledValidator();
     }
   }
 
   /**
-   * Initialization of a FhirTest CAN initialize its own instance of @see {@link FhirCodec}. By
+   * Initialization of a FhirTest CAN initialize its own instance of @see {@link FhirCodecImpl}. By
    * default, a FhirTest will initialize a generic FhirCodec without loading any profiles
    *
    * <p>Additionally, you can change for debugging purposes

@@ -6,7 +6,7 @@
     <parent>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>utility-bricks</artifactId>
-        <version>0.10.0</version>
+        <version>0.11.0</version>
     </parent>
 
     <artifactId>ca-supplier-brick</artifactId>
@@ -19,13 +19,13 @@
             <version>${kotlin.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
+            <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
 
         <!-- Jackson Core -->
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
+            <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
         </dependency>
 

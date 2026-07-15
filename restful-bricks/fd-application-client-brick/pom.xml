@@ -6,7 +6,7 @@
   <parent>
     <groupId>de.gematik.bbriccs</groupId>
     <artifactId>restful-bricks</artifactId>
-    <version>0.10.0</version>
+    <version>0.11.0</version>
   </parent>
 
   <artifactId>fd-application-client-brick</artifactId>
@@ -20,9 +20,8 @@
     </dependency>
 
     <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
+      <groupId>tools.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <!-- TODO: make provided?? -->
     </dependency>
   </dependencies>
 

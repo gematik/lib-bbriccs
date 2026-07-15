@@ -20,7 +20,6 @@
 
 package de.gematik.bbriccs.smartcards;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.gematik.bbriccs.crypto.CryptoSystem;
 import de.gematik.bbriccs.crypto.certificate.CertificateTypeOid;
 import de.gematik.bbriccs.smartcards.cfg.SmartcardConfigDto;
@@ -33,6 +32,7 @@ import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * This is a dummy eGK required for the use-cases where we only have the KVNR and no private keys
