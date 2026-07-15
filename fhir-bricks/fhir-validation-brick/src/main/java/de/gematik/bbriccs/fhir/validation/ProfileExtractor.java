@@ -22,12 +22,6 @@ package de.gematik.bbriccs.fhir.validation;
 
 import static java.text.MessageFormat.format;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.databind.node.JsonNodeType;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import de.gematik.bbriccs.fhir.EncodingType;
 import java.util.Arrays;
 import java.util.Optional;
@@ -37,6 +31,12 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hl7.fhir.exceptions.FHIRException;
 import org.hl7.fhir.r4.model.Bundle.BundleType;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.node.JsonNodeType;
+import tools.jackson.dataformat.xml.XmlMapper;
 
 @Slf4j
 public class ProfileExtractor {
@@ -76,7 +76,7 @@ public class ProfileExtractor {
     try {
       val root = mapper.readTree(content);
       return Optional.of(root);
-    } catch (JsonProcessingException jpe) {
+    } catch (JacksonException jpe) {
       log.warn("Given content cannot be parsed as JSON/XML: {}", shortenContentForLogging(content));
       return Optional.empty();
     }
@@ -114,8 +114,12 @@ public class ProfileExtractor {
     // 4. filter out empty strings as these won't ever give any benefit on choosing a validator
     // 5. log info about missing profile
     return profileNode
-        .map(profile -> profile.isArray() ? profile.get(0) : profile.get(VALUE_LITERAL))
-        .map(JsonNode::asText)
+        .map(
+            profile ->
+                profile.getNodeType().equals(JsonNodeType.ARRAY)
+                    ? profile.get(0)
+                    : profile.get(VALUE_LITERAL))
+        .map(JsonNode::asString)
         .filter(Predicate.not(String::isEmpty))
         .or(
             () -> {
@@ -172,31 +176,38 @@ public class ProfileExtractor {
     if (profile == null) return false;
     profile = profile.isArray() ? profile.get(0) : profile.get(VALUE_LITERAL);
     if (profile == null) return false;
-    return !profile.asText("").isEmpty();
+    return !profile.asString("").isEmpty();
   }
 
   private boolean isOfType(JsonNode root, BundleType... types) {
-    val extractedType = extractBundleType(root);
-    return Arrays.asList(types).contains(extractedType);
+    val typeNode = root.get(TYPE_LITERAL);
+    if (typeNode == null) return false;
+
+    if (typeNode.getNodeType().equals(JsonNodeType.ARRAY)) {
+      return typeNode.asArray().elements().stream()
+          .map(this::extractBundleType)
+          .anyMatch(t -> Arrays.asList(types).contains(t));
+    } else {
+      val extractedType = extractBundleType(typeNode);
+      return Arrays.asList(types).contains(extractedType);
+    }
   }
 
   /**
    * Extracts the type of bundle resource
    *
-   * @param root node
+   * @param typeNode node
    * @return the BundleType which might be also NULL-Type from {@link BundleType}
    */
   @Nonnull
   @SuppressWarnings("java:S2637") // null is properly handled via BundleType.NULL here!
-  private BundleType extractBundleType(JsonNode root) {
-    val typeNode = root.get(TYPE_LITERAL);
-
+  private BundleType extractBundleType(JsonNode typeNode) {
     try {
       return Optional.ofNullable(typeNode)
           .map(
               node ->
                   node.getNodeType().equals(JsonNodeType.OBJECT) ? node.get(VALUE_LITERAL) : node)
-          .map(node -> BundleType.fromCode(node.asText()))
+          .map(node -> BundleType.fromCode(node.asString()))
           .orElse(BundleType.NULL);
     } catch (FHIRException fe) {
       log.warn("Unable to extract FHIR BundleType from type-node {}", typeNode);

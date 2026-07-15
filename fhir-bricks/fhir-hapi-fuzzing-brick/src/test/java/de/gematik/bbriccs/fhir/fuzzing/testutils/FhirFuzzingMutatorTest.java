@@ -21,6 +21,7 @@
 package de.gematik.bbriccs.fhir.fuzzing.testutils;
 
 import de.gematik.bbriccs.fhir.codec.FhirCodec;
+import de.gematik.bbriccs.fhir.codec.FhirCodecImpl;
 import de.gematik.bbriccs.fhir.codec.utils.FhirTest;
 import de.gematik.bbriccs.fhir.fuzzing.FuzzingContext;
 import de.gematik.bbriccs.fhir.fuzzing.FuzzingEngine;
@@ -28,7 +29,7 @@ import de.gematik.bbriccs.fhir.fuzzing.impl.FuzzingEngineImpl;
 
 public abstract class FhirFuzzingMutatorTest extends FhirTest {
 
-  private static final FhirCodec staticFhirCodec = FhirCodec.forR4().andNonProfiledValidator();
+  private static final FhirCodec staticFhirCodec = FhirCodecImpl.forR4().andNonProfiledValidator();
 
   protected FuzzingEngine fuzzer;
   protected FuzzingContext ctx;

@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import de.gematik.bbriccs.fhir.EncodingType;
 import de.gematik.bbriccs.fhir.codec.EmptyResource;
 import de.gematik.bbriccs.fhir.codec.FhirCodec;
+import de.gematik.bbriccs.fhir.codec.FhirCodecImpl;
 import de.gematik.bbriccs.rest.HttpBResponse;
 import de.gematik.bbriccs.rest.HttpRequestMethod;
 import de.gematik.bbriccs.rest.HttpVersion;
@@ -60,7 +61,7 @@ class FhirBResponseCreatorTest {
 
   @BeforeAll
   static void setUp() {
-    fhir = FhirCodec.forR4().andNonProfiledValidator();
+    fhir = FhirCodecImpl.forR4().andNonProfiledValidator();
     responseCreator =
         new FhirBResponseCreator(fhir, (expect, content) -> fhir.decode(expect, content));
   }
@@ -259,6 +260,7 @@ class FhirBResponseCreatorTest {
             .received(httpResponse)
             .withoutDuration();
 
+    assertTrue(response.isResourceOfType(Resource.class));
     assertTrue(response.isResourceOfType(OperationOutcome.class));
     assertFalse(response.isResourceOfType(AuditEvent.class));
     assertTrue(response.isOperationOutcome());

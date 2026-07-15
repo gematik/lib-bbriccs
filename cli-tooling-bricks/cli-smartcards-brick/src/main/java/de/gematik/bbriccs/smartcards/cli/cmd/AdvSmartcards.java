@@ -20,7 +20,6 @@
 
 package de.gematik.bbriccs.smartcards.cli.cmd;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.gematik.bbriccs.cli.param.InputOutputDirectoryParameter;
 import de.gematik.bbriccs.smartcards.Egk;
 import de.gematik.bbriccs.smartcards.SmartcardArchive;
@@ -33,6 +32,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import picocli.CommandLine;
+import tools.jackson.databind.ObjectMapper;
 
 @CommandLine.Command(
     name = "adv",

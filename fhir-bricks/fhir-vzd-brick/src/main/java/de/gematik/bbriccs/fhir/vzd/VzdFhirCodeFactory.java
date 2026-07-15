@@ -21,6 +21,7 @@
 package de.gematik.bbriccs.fhir.vzd;
 
 import de.gematik.bbriccs.fhir.codec.FhirCodec;
+import de.gematik.bbriccs.fhir.codec.FhirCodecImpl;
 import de.gematik.bbriccs.fhir.validation.ValidatorFhir;
 import de.gematik.bbriccs.fhir.vzd.r4.VzdHealthcareService;
 import de.gematik.bbriccs.fhir.vzd.r4.VzdLocation;
@@ -36,8 +37,8 @@ public interface VzdFhirCodeFactory {
     return initializeWithTypeHints().andCustomValidator(validator);
   }
 
-  static FhirCodec.FhirCodecBuilder initializeWithTypeHints() {
-    return FhirCodec.forR4()
+  static FhirCodecImpl.FhirCodecBuilder initializeWithTypeHints() {
+    return FhirCodecImpl.forR4()
         .withTypeHint(VzdStructDef.HEALTH_CARE_SERVICE, VzdHealthcareService.class)
         .withTypeHint(VzdStructDef.HEALTH_CARE_SERVICE_STRICT, VzdHealthcareService.class)
         .withTypeHint(VzdStructDef.ORGANIZATION, VzdOrganization.class)

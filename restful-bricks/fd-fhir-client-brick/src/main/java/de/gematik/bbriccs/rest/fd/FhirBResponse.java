@@ -115,9 +115,9 @@ public final class FhirBResponse<R extends Resource> {
   }
 
   /**
-   * @param clazz
-   * @return
-   * @param <U>
+   * @param clazz the class of the resource to retrieve
+   * @return the resource of the specified class
+   * @param <U> the type of the resource
    */
   private <U extends Resource> U getResourceAs(Class<U> clazz) {
     return getResourceOptional(clazz)
@@ -143,7 +143,12 @@ public final class FhirBResponse<R extends Resource> {
   }
 
   public boolean isResourceOfType(Class<? extends Resource> clazz) {
-    return clazz.equals(getResourceType());
+    if (clazz.equals(Resource.class)) {
+      // any type of resource is a Resource as well
+      return true;
+    } else {
+      return clazz.equals(getResourceType());
+    }
   }
 
   public boolean isOfExpectedType() {
@@ -212,7 +217,7 @@ public final class FhirBResponse<R extends Resource> {
     private int statusCode;
     private String usedJwt;
     private Duration duration = Duration.ZERO;
-    private List<HttpHeader> headers = new LinkedList<>();
+    private final List<HttpHeader> headers = new LinkedList<>();
 
     public FhirBResponseBuilder<E> withStatusCode(int statusCode) {
       this.statusCode = statusCode;
@@ -231,6 +236,16 @@ public final class FhirBResponse<R extends Resource> {
 
     public FhirBResponseBuilder<E> withHeaders(List<HttpHeader> headers) {
       this.headers.addAll(headers);
+      return this;
+    }
+
+    public FhirBResponseBuilder<E> withHeaders(HttpHeader... headers) {
+      this.headers.addAll(List.of(headers));
+      return this;
+    }
+
+    public FhirBResponseBuilder<E> withHeaders(Map<String, String> headers) {
+      this.headers.addAll(HttpHeader.from(headers));
       return this;
     }
 

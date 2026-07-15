@@ -20,16 +20,17 @@
 
 package de.gematik.bbriccs.utils.dto
 
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.core.JsonProcessingException
-import com.fasterxml.jackson.databind.DeserializationContext
-import com.fasterxml.jackson.databind.JsonDeserializer
-import com.fasterxml.jackson.databind.JsonNode
 import de.gematik.bbriccs.utils.exceptions.MissingRootCertificateAuthorityNumber
 import de.gematik.bbriccs.utils.toCertificate
+import tools.jackson.core.JsonParser
+import tools.jackson.databind.DeserializationContext
+import tools.jackson.databind.JsonNode
+import tools.jackson.databind.ValueDeserializer
+import tools.jackson.databind.annotation.JsonDeserialize
 import java.io.IOException
 import java.security.cert.X509Certificate
 
+@JsonDeserialize(using = RootCASerializer::class)
 class RootCertificateAuthorityDto(cert: X509Certificate, val nextCrossCA: X509Certificate? = null, val prevCrossCA: X509Certificate? = null) :
   CertificateAuthorityDto(cert), Comparable<RootCertificateAuthorityDto> {
   override fun compareTo(other: RootCertificateAuthorityDto): Int {
@@ -46,11 +47,11 @@ class RootCertificateAuthorityDto(cert: X509Certificate, val nextCrossCA: X509Ce
   override fun toString() = "Issuer: ${this.getIssuerCN()} -> Subject: ${this.getSubjectCN()}, Serial: ${this.cert.serialNumber}"
 }
 
-class RootCASerializer : JsonDeserializer<RootCertificateAuthorityDto>() {
+class RootCASerializer : ValueDeserializer<RootCertificateAuthorityDto>() {
 
-  @Throws(IOException::class, JsonProcessingException::class)
+  @Throws(IOException::class)
   override fun deserialize(jp: JsonParser, ctxt: DeserializationContext?): RootCertificateAuthorityDto {
-    val node: JsonNode = jp.codec.readTree(jp)
+    val node = jp.readValueAsTree<JsonNode>()
     return RootCertificateAuthorityDto(
       node["cert"].asText().toCertificate(),
       node["next"].asText().takeIf(String::isNotEmpty)?.toCertificate(),

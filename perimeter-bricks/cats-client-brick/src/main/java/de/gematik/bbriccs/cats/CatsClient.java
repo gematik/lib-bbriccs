@@ -22,8 +22,6 @@ package de.gematik.bbriccs.cats;
 
 import static java.text.MessageFormat.format;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import de.gematik.bbriccs.cardterminal.CardTerminal;
 import de.gematik.bbriccs.cardterminal.CardTerminalSlot;
 import de.gematik.bbriccs.cardterminal.exceptions.CardTerminalException;
@@ -40,6 +38,8 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import kong.unirest.core.MimeTypes;
 import lombok.*;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 public class CatsClient implements CardTerminal {
 

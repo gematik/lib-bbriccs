@@ -243,7 +243,7 @@ class FhirCodecTest extends FhirTest {
                 .forVersion(version)
                 .mappingTo(TestKbvBundle.class));
 
-    val typedFhir = FhirCodec.forR4().withTypeHints(typeHints).andNonProfiledValidator();
+    val typedFhir = FhirCodecImpl.forR4().withTypeHints(typeHints).andNonProfiledValidator();
 
     val bundle = assertDoesNotThrow(() -> typedFhir.decode(TestKbvBundle.class, content));
     assertEquals(TestKbvBundle.class, bundle.getClass());
@@ -264,7 +264,7 @@ class FhirCodecTest extends FhirTest {
                 .forAllVersionsFrom(TestKbvVersion.class)
                 .mappingTo(TestKbvBundle.class));
 
-    val typedFhir = FhirCodec.forR4().withTypeHints(typeHints).andNonProfiledValidator();
+    val typedFhir = FhirCodecImpl.forR4().withTypeHints(typeHints).andNonProfiledValidator();
 
     val bundle = assertDoesNotThrow(() -> typedFhir.decode(TestKbvBundle.class, content));
     assertEquals(TestKbvBundle.class, bundle.getClass());
@@ -307,7 +307,7 @@ class FhirCodecTest extends FhirTest {
       validatorFactory
           .when(ValidatorFhirFactory::createValidator)
           .thenReturn(new DummyValidator(FhirContext.forR4()));
-      profiledCodec = FhirCodec.forR4().andBbriccsValidator();
+      profiledCodec = FhirCodecImpl.forR4().andBbriccsValidator();
     }
 
     val bundle = assertDoesNotThrow(() -> profiledCodec.decode(TestKbvBundle.class, content));
@@ -316,7 +316,7 @@ class FhirCodecTest extends FhirTest {
 
   @Test
   void shouldDisableErrors() {
-    val fc = FhirCodec.forR4().disableErrors().andDummyValidator();
+    val fc = FhirCodecImpl.forR4().disableErrors().andDummyValidator();
 
     val t = new Task();
     val e = t.addExtension();

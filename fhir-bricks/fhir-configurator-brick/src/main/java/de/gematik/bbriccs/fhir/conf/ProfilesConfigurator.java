@@ -22,10 +22,6 @@ package de.gematik.bbriccs.fhir.conf;
 
 import static java.text.MessageFormat.format;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.base.Strings;
 import de.gematik.bbriccs.fhir.conf.exceptions.FhirConfigurationException;
 import de.gematik.bbriccs.toggle.FeatureToggle;
@@ -41,6 +37,9 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FilenameUtils;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.dataformat.yaml.YAMLMapper;
 
 @Slf4j
 @Getter
@@ -227,8 +226,9 @@ public class ProfilesConfigurator {
   private static ProfilesConfigurator createConfigurator(String cfgFile, String featureToggleName) {
     val profilesConfig = ResourceLoader.readFileFromResource(cfgFile);
     val mapper =
-        new ObjectMapper(new YAMLFactory())
-            .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+        YAMLMapper.builder()
+            .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true)
+            .build();
     val configuredProfiles =
         mapper.readValue(profilesConfig, new TypeReference<List<ProfileSettingsDto>>() {});
 

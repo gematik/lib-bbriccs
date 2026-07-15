@@ -22,8 +22,6 @@ package de.gematik.bbriccs.smartcards;
 
 import static java.text.MessageFormat.format;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.gematik.bbriccs.smartcards.cfg.SmartcardConfigDto;
 import de.gematik.bbriccs.smartcards.exceptions.CardNotFoundException;
 import de.gematik.bbriccs.smartcards.exceptions.SmartcardFactoryException;
@@ -40,6 +38,10 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import tools.jackson.core.exc.JacksonIOException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.exc.MismatchedInputException;
 
 @Slf4j
 class SmartcardFactory {
@@ -103,7 +105,7 @@ class SmartcardFactory {
       Path basePath, Supplier<InputStream> indexFile) {
     try (val is = indexFile.get()) {
       return new ObjectMapper().readValue(is, new TypeReference<>() {});
-    } catch (IOException e) {
+    } catch (JacksonIOException | IOException | MismatchedInputException e) {
       throw new SmartcardFactoryException(
           format("Unable to load Smartcard-Index from {0}", basePath), e);
     }

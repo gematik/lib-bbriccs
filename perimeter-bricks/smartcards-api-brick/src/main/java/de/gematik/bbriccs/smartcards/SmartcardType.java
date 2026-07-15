@@ -20,6 +20,7 @@
 
 package de.gematik.bbriccs.smartcards;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import de.gematik.bbriccs.smartcards.exceptions.InvalidSmartcardTypeException;
 import lombok.Getter;
 
@@ -36,6 +37,7 @@ public enum SmartcardType {
     this.name = name;
   }
 
+  @JsonCreator
   public static SmartcardType fromString(String type) {
     return switch (type.toLowerCase().strip().replaceAll("[-_]", "")) {
       case "egk" -> EGK;

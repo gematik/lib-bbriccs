@@ -1,5 +1,9 @@
 # Release Notes $B^2riC^2s$
 
+## Release 0.11.0
+- Update from Jackson 2 to Jackson 3
+- Update more critical dependencies to latest versions
+
 ## Release 0.9.0
 
 ### FHIR-Bricks

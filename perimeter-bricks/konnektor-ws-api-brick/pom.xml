@@ -4,7 +4,7 @@
     <parent>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>perimeter-bricks</artifactId>
-        <version>0.10.0</version>
+        <version>0.11.0</version>
     </parent>
 
     <artifactId>konnektor-ws-api-brick</artifactId>
@@ -186,6 +186,7 @@
                                 <bindingFile>authSignatureService_V7_4.jaxws.xjb</bindingFile>
                                 <bindingFile>signatureService_V7_4.jaxws.xjb</bindingFile>
                             </bindingFiles>
+                            <wsdlLocation>/gematik_schemes/conn/AuthSignatureService_v7_4_1.wsdl</wsdlLocation>
                             <keep>true</keep>
                             <sourceDestDir>${project.build.directory}/generated/src/main/java</sourceDestDir>
                         </configuration>

@@ -6,7 +6,7 @@
     <parent>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>bbriccs-parent</artifactId>
-        <version>0.10.0</version>
+        <version>0.11.0</version>
     </parent>
 
     <artifactId>utility-bricks</artifactId>
@@ -21,6 +21,7 @@
         <module>ca-supplier-brick</module>
         <module>vsdm-check-digit-brick</module>
         <module>vsdm-check-digit-generator-brick</module>
+        <module>popp-token-generator-brick</module>
     </modules>
 
     <dependencyManagement>
@@ -57,6 +58,16 @@
                 <groupId>de.gematik.bbriccs</groupId>
                 <artifactId>vsdm-check-digit-generator-brick</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.gematik.bbriccs</groupId>
+                <artifactId>popp-token-generator-brick</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bitbucket.b_c</groupId>
+                <artifactId>jose4j</artifactId>
+                <version>0.9.6</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

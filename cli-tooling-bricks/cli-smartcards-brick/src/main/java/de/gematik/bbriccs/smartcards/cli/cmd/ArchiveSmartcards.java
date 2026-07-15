@@ -24,8 +24,6 @@ import static java.text.MessageFormat.format;
 import static picocli.CommandLine.Command;
 import static picocli.CommandLine.Mixin;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.gematik.bbriccs.cli.param.InputOutputDirectoryParameter;
 import de.gematik.bbriccs.cli.utils.FileWalker;
 import de.gematik.bbriccs.smartcards.*;
@@ -46,6 +44,7 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
+import tools.jackson.databind.ObjectMapper;
 
 @Command(
     name = "archive",
@@ -59,7 +58,7 @@ public class ArchiveSmartcards implements Callable<Integer> {
   @Mixin protected InputOutputDirectoryParameter inputOutputDirectory;
 
   @Override
-  public Integer call() throws Exception {
+  public Integer call() {
     log.info("Archive Smartcards from {}", inputOutputDirectory.getInputDirectory().toString());
 
     List<SmartcardConfigDto> configs = new LinkedList<>();
@@ -73,10 +72,7 @@ public class ArchiveSmartcards implements Callable<Integer> {
     this.walkSmartcardsDirectory("hba", SmartcardType.HBA, this::createHBAConfig).stream()
         .collect(Collectors.toCollection(() -> configs));
 
-    val om =
-        new ObjectMapper()
-            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-            .writerWithDefaultPrettyPrinter();
+    val om = new ObjectMapper().writerWithDefaultPrettyPrinter();
     val out = om.writeValueAsString(configs);
 
     this.inputOutputDirectory.writeFile("smartcards.json", out);
@@ -92,9 +88,9 @@ public class ArchiveSmartcards implements Callable<Integer> {
       return smartcardDirs.stream().map(creator).toList();
     } else {
       log.warn(
-          format(
-              "Directory {0} is not walkable: no {1}-Smartcards will be read",
-              basePath.toAbsolutePath(), type.name()));
+          "Directory {} is not walkable: no {}-Smartcards will be read",
+          basePath.toAbsolutePath(),
+          type.name());
       return List.of();
     }
   }
@@ -147,7 +143,7 @@ public class ArchiveSmartcards implements Callable<Integer> {
     if (!ICCSN_PATTERN.matcher(iccsn).matches()) {
       throw new IllegalArgumentException(
           format(
-              "Convention violation: given diretory does not conform ICCSN structure: {0}",
+              "Convention violation: given directory does not conform ICCSN structure: {0}",
               path.toAbsolutePath()));
     }
 

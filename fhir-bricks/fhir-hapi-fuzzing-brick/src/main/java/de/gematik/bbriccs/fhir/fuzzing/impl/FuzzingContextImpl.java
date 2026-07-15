@@ -22,6 +22,7 @@ package de.gematik.bbriccs.fhir.fuzzing.impl;
 
 import static java.text.MessageFormat.format;
 
+import de.gematik.bbriccs.fhir.codec.EmptyResource;
 import de.gematik.bbriccs.fhir.fuzzing.*;
 import de.gematik.bbriccs.fhir.fuzzing.PrimitiveType;
 import de.gematik.bbriccs.fhir.fuzzing.exceptions.FuzzerException;
@@ -60,7 +61,7 @@ public class FuzzingContextImpl implements FuzzingContext {
     val rClass = (Class<R>) resource.getClass();
     val rClassFuzzers = this.getAllResourceFuzzersFor(rClass);
 
-    if (rClassFuzzers.isEmpty()) {
+    if (rClassFuzzers.isEmpty() && !(resource instanceof EmptyResource)) {
       throw new FuzzerException(
           format("Unable to start Fuzzing because no Fuzzer found for {0}", resource.getClass()));
     }

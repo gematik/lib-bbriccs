@@ -23,6 +23,7 @@ package de.gematik.bbriccs.rest.fd;
 import ca.uhn.fhir.validation.ValidationResult;
 import de.gematik.bbriccs.fhir.EncodingType;
 import de.gematik.bbriccs.fhir.codec.FhirCodec;
+import de.gematik.bbriccs.fhir.codec.FhirCodecImpl;
 import de.gematik.bbriccs.fhir.validation.ValidatorFhir;
 import de.gematik.bbriccs.fhir.validation.ValidatorFhirFactory;
 import de.gematik.bbriccs.rest.HttpBClient;
@@ -157,11 +158,11 @@ public class FhirClientImpl implements FhirClient {
 
     public FdClientBuilder usingDefaultFhir(boolean withValidation) {
       if (withValidation) return this.usingDefaultFhir(ValidatorFhirFactory.createValidator());
-      else return usingFhir(FhirCodec.forR4().andDummyValidator());
+      else return usingFhir(FhirCodecImpl.forR4().andDummyValidator());
     }
 
     public FdClientBuilder usingDefaultFhir(ValidatorFhir fhirValidator) {
-      return usingFhir(FhirCodec.forR4().andCustomValidator(fhirValidator));
+      return usingFhir(FhirCodecImpl.forR4().andCustomValidator(fhirValidator));
     }
 
     public FdClientBuilder acceptingUtf8Charset() {

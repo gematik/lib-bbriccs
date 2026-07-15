@@ -20,15 +20,15 @@
 
 package de.gematik.bbriccs.utils
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.module.SimpleModule
 import de.gematik.bbriccs.rest.HttpBClient
 import de.gematik.bbriccs.rest.HttpBRequest
 import de.gematik.bbriccs.rest.UnirestHttpClient
 import de.gematik.bbriccs.utils.dto.CertificateAuthorityDto
 import de.gematik.bbriccs.utils.dto.RootCASerializer
 import de.gematik.bbriccs.utils.dto.RootCertificateAuthorityDto
+import tools.jackson.core.type.TypeReference
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.databind.module.SimpleModule
 import java.nio.charset.Charset
 
 class CertificateAuthoritySupplier private constructor(private val environmentAnchor: TrustedEnvironmentAnchor, private val httpClient: HttpBClient) {
@@ -36,10 +36,9 @@ class CertificateAuthoritySupplier private constructor(private val environmentAn
     val path = environmentAnchor.getCaDownloadPath(CaType.ROOT_CA)
     return RootCertificateAuthorityList(
       httpClient.send(HttpBRequest.get().urlPath(path).withoutPayload()).let {
-        val mapper = ObjectMapper()
-        val module = SimpleModule()
-        module.addDeserializer(RootCertificateAuthorityDto::class.java, RootCASerializer())
-        mapper.registerModule(module)
+        val module = SimpleModule().addDeserializer(RootCertificateAuthorityDto::class.java, RootCASerializer())
+        val mapper = JsonMapper.builder().addModule(module).build()
+
         mapper.readValue(String(it.body(), Charset.defaultCharset()), object : TypeReference<Set<RootCertificateAuthorityDto>>() {})
       },
     )

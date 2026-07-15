@@ -20,8 +20,7 @@
 
 package de.gematik.bbriccs.rest.vzd;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.gematik.bbriccs.fhir.codec.FhirCodec.FhirCodecBuilder;
+import de.gematik.bbriccs.fhir.codec.FhirCodecImpl.FhirCodecBuilder;
 import de.gematik.bbriccs.fhir.vzd.VzdFhirCodeFactory;
 import de.gematik.bbriccs.rest.ApplicationClient;
 import de.gematik.bbriccs.rest.HttpBClient;
@@ -31,6 +30,7 @@ import de.gematik.bbriccs.rest.fd.FhirClientImpl.FdClientBuilder;
 import de.gematik.bbriccs.rest.fd.MediaType;
 import lombok.experimental.Delegate;
 import lombok.val;
+import tools.jackson.databind.ObjectMapper;
 
 public class VzdClient implements FhirClient, ApplicationClient {
 

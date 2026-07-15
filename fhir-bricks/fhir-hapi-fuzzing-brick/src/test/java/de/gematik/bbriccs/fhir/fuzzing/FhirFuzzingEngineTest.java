@@ -22,10 +22,8 @@ package de.gematik.bbriccs.fhir.fuzzing;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import de.gematik.bbriccs.fhir.codec.FhirCodec;
+import de.gematik.bbriccs.fhir.codec.FhirCodecImpl;
 import de.gematik.bbriccs.fhir.codec.utils.FhirTest;
 import de.gematik.bbriccs.fhir.fuzzing.exceptions.FuzzerException;
 import de.gematik.bbriccs.fhir.fuzzing.impl.FuzzingEngineImpl;
@@ -45,11 +43,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import tools.jackson.databind.ObjectMapper;
 
 class FhirFuzzingEngineTest extends FhirTest {
 
   private static final FhirCodec staticFhirCodec =
-      FhirCodec.forR4().disableErrors().andDummyValidator();
+      FhirCodecImpl.forR4().disableErrors().andDummyValidator();
   private boolean withDebug;
 
   @Override
@@ -268,10 +267,7 @@ class FhirFuzzingEngineTest extends FhirTest {
 
   @SneakyThrows
   private void printFuzzingLog(FuzzingSessionLogbook sessionLogbook) {
-    val mapper =
-        new ObjectMapper()
-            .registerModule(new JavaTimeModule())
-            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+    val mapper = new ObjectMapper();
     val writer = this.prettyPrint ? mapper.writerWithDefaultPrettyPrinter() : mapper.writer();
 
     val logsOutput = writer.writeValueAsString(sessionLogbook);

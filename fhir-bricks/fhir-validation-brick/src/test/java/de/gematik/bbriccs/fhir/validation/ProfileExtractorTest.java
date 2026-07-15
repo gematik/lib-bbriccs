@@ -71,6 +71,7 @@ class ProfileExtractorTest {
   @ParameterizedTest(name = "Should not fail on missing profile/meta tags in collections on {0}")
   @ValueSource(
       strings = {
+        "examples/fhir/valid/ncpeh/organization/eu_organization_01.xml",
         "examples/fhir/edgecases/empty_root_profile_collection.xml",
         "examples/fhir/edgecases/missing_root_profile_collection.xml"
       })
@@ -129,6 +130,7 @@ class ProfileExtractorTest {
   @ParameterizedTest
   @ValueSource(
       strings = {
+        "examples/fhir/valid/ncpeh/organization/eu_organization_01.xml",
         "examples/fhir/valid/erp/dav/1.2/ad80703d-8c62-44a3-b12b-2ea66eda0aa2.xml",
         "examples/fhir/valid/erp/erx/1.2.0/receiptbundle/dffbfd6a-5712-4798-bdc8-07201eb77ab8.json",
         "examples/fhir/valid/erp/erx/1.2.0/receiptbundle/dffbfd6a-5712-4798-bdc8-07201eb77ab8.xml",
