@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.Generated;
 import lombok.Getter;
@@ -93,11 +94,11 @@ public class HttpBRequestImpl implements HttpBRequest {
   public static class HttpBRequestBuilder {
     private HttpVersion version = HttpVersion.HTTP_1_1;
     private final HttpRequestMethod method;
-    private String urlPath;
+    private String urlPath = "";
     private final List<HttpHeader> headers = new ArrayList<>();
 
     public HttpBRequestBuilder urlPath(String urlPath) {
-      this.urlPath = urlPath;
+      this.urlPath = Optional.ofNullable(urlPath).orElse("");
       return this;
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,11 @@ class FixedBearerTokenHeaderProviderTest {
   @Test
   void shouldProvideFixedBearerToken() {
     val provider = FixedBearerTokenHeaderProvider.withFixedToken("123");
-    val header = provider.forRequest(null);
-    assertNotNull(header);
+    val headers = provider.forRequest(null);
+    assertNotNull(headers);
+    assertFalse(headers.isEmpty());
+
+    val header = headers.get(0);
     assertEquals("Authorization", header.key());
     assertEquals("Bearer 123", header.value());
   }

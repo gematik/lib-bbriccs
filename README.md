@@ -1,4 +1,5 @@
-<img width="250" height="47" src="adocs/images/gematik_logo.png" style="float: right"/> <br/> 
+<div style="text-align:right"><img src="https://raw.githubusercontent.com/gematik/gematik.github.io/master/Gematik_Logo_Flag_With_Background.png" width="250" height="47" alt="gematik GmbH Logo"/> 
+ </div>
 
 
 # Bricks
@@ -20,7 +21,7 @@ If you want to contribute, please check our [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ## License
 
-Copyright 2025 gematik GmbH
+Copyright 2026 gematik GmbH
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 

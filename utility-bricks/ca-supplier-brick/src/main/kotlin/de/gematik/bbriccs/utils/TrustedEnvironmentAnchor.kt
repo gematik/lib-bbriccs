@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,11 +35,9 @@ enum class TiTrustedEnvironmentAnchor(private val internet: String, private val 
   override fun getCaDownloadPath(
     type: CaType,
     algorithm: CryptographySpecification,
-  ): String {
-    return when (type) {
-      CaType.ROOT_CA -> "/${algorithm.name.uppercase()}/ROOT-CA/roots.json"
-      CaType.SUB_CA -> "/${algorithm.name.uppercase()}/SUB-CA/"
-    }
+  ): String = when (type) {
+    CaType.ROOT_CA -> "/${algorithm.name.uppercase()}/ROOT-CA/roots.json"
+    CaType.SUB_CA -> "/${algorithm.name.uppercase()}/SUB-CA/"
   }
 
   override fun getUrl(useInternet: Boolean) = when {

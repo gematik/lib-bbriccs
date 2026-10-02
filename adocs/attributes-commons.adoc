@@ -5,3 +5,13 @@
 :bbriccs-wordmark: pass:c,q[B^2^ric^2^s]
 :bbriccs-name: Bbriccs
 :app-name: {bbriccs-name}
+
+:bricks-fhir: pass:c,q[`fhir-bricks`]
+:brick-fhir-coding-system: pass:c,q[`fhir-coding-system-brick`]
+:brick-fhir-builder: pass:c,q[`fhir-builder-brick`]
+:brick-fhir-conf: pass:c,q[`fhir-configurator-brick`]
+:brick-fhir-codec: pass:c,q[`fhir-codec-brick`]
+:brick-fhir-validation: pass:c,q[`fhir-validation-brick`]
+
+:bricks-restful: pass:c,q[`restful-bricks`]
+:bricks-rest-client-api: pass:c,q[`rest-client-api-brick`]

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ public enum VsdmCheckDigitVersion {
       throw new IllegalArgumentException("Data is empty");
     }
     int firstByte = data[0] & 0xFF;
-    return firstByte > 128 ? V2 : V1;
+    return firstByte >= 128 ? V2 : V1;
   }
 
   public static VsdmCheckDigitVersion fromData(String data) {

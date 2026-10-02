@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -182,6 +182,11 @@ public class CatsClient implements CardTerminal {
 
   private String toCatsConfigurationPath(String cardType, String iccsn) {
     return format("{0}/configuration_{1}_{2}.xml", this.configPath, cardType, iccsn);
+  }
+
+  @Override
+  public String toString() {
+    return format("CATS ({0})", ctId);
   }
 
   @RequiredArgsConstructor(access = AccessLevel.PRIVATE)

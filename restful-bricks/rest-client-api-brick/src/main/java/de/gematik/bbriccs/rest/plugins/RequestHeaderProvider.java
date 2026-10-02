@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,9 @@ package de.gematik.bbriccs.rest.plugins;
 
 import de.gematik.bbriccs.rest.HttpBRequest;
 import de.gematik.bbriccs.rest.headers.HttpHeader;
-import jakarta.annotation.Nullable;
+import java.util.List;
 
 public interface RequestHeaderProvider {
 
-  @Nullable
-  HttpHeader forRequest(HttpBRequest request);
+  List<HttpHeader> forRequest(HttpBRequest request);
 }

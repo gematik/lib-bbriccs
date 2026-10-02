@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,17 +32,15 @@ import java.security.cert.X509Certificate
 
 @JsonDeserialize(using = RootCASerializer::class)
 class RootCertificateAuthorityDto(cert: X509Certificate, val nextCrossCA: X509Certificate? = null, val prevCrossCA: X509Certificate? = null) :
-  CertificateAuthorityDto(cert), Comparable<RootCertificateAuthorityDto> {
-  override fun compareTo(other: RootCertificateAuthorityDto): Int {
-    return this.getCaNumber().compareTo(other.getCaNumber())
-  }
+  CertificateAuthorityDto(cert),
+  Comparable<RootCertificateAuthorityDto> {
+  override fun compareTo(other: RootCertificateAuthorityDto): Int = this.getCaNumber().compareTo(other.getCaNumber())
 
   fun isCrossCa(): Boolean = getSubjectCN() != getIssuerCN()
 
-  fun getCaNumber(): Int =
-    getSubjectCN().filter(Char::isDigit).let {
-      if (it.isEmpty()) throw MissingRootCertificateAuthorityNumber(cert) else it.toInt()
-    }
+  fun getCaNumber(): Int = getSubjectCN().filter(Char::isDigit).let {
+    if (it.isEmpty()) throw MissingRootCertificateAuthorityNumber(cert) else it.toInt()
+  }
 
   override fun toString() = "Issuer: ${this.getIssuerCN()} -> Subject: ${this.getSubjectCN()}, Serial: ${this.cert.serialNumber}"
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,10 +55,10 @@ public class IdpTokenHeaderProvider implements RequestHeaderProvider {
   }
 
   @Override
-  public HttpHeader forRequest(HttpBRequest request) {
+  public List<HttpHeader> forRequest(HttpBRequest request) {
     this.refreshIdpToken();
     val accessKey = this.idpToken.getAccessToken().getRawString();
-    return JwtHeaderKey.AUTHORIZATION.createHeader(accessKey);
+    return List.of(JwtHeaderKey.AUTHORIZATION.createHeader(accessKey));
   }
 
   private void refreshIdpToken() {

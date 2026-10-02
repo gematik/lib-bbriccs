@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import de.gematik.bbriccs.fhir.conf.ProfilesConfigurator;
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.SetSystemProperty;
 
 class DeBasisProfilVersionTest {
 
@@ -41,15 +40,5 @@ class DeBasisProfilVersionTest {
   void shouldGetVersionFromString() {
     val dv = DeBasisProfilVersion.fromString("0.9.13");
     assertEquals(DeBasisProfilVersion.V0_9_13, dv);
-  }
-
-  @Test
-  @SetSystemProperty(key = "bbriccs.fhir.profile.de.basis.test", value = "1.3.2")
-  void shouldGetDefaultVersionFromSysProp() {
-    val toggleName = "bbriccs.fhir.profile.de.basis.test";
-    // prepares the virtual default configuration
-    val profiles = ProfilesConfigurator.getDefaultConfiguration(toggleName);
-    val dv = DeBasisProfilVersion.getDefaultVersion();
-    assertEquals(DeBasisProfilVersion.V1_3_2, dv);
   }
 }

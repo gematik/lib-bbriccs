@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,6 +57,7 @@ class CatsClientTest {
 
     preparePositiveCatsMock();
     val catsClient = CatsClient.create(url).configPath("a/b/c").withTerminalId("001").connect();
+    assertDoesNotThrow(catsClient::toString);
     assertDoesNotThrow(() -> catsClient.insertCard(sca.getEgk(0), 1));
     assertDoesNotThrow(catsClient::disconnect);
   }

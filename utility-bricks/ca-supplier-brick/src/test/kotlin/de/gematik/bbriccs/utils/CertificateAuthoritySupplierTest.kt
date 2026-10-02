@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,14 +103,12 @@ class CertificateAuthoritySupplierTest {
   // Add the testDataProvider method
   companion object {
     @JvmStatic
-    fun testDataProvider(): Stream<Arguments> {
-      return Stream.of(
-        Arguments.of("GEM.RCA3 TEST-ONLY", "GEM.RCA8 TEST-ONLY", listOf("GEM.RCA3 TEST-ONLY", "GEM.RCA4 TEST-ONLY", "GEM.RCA5 TEST-ONLY", "GEM.RCA6 TEST-ONLY", "GEM.RCA7 TEST-ONLY")),
-        Arguments.of("GEM.RCA4 TEST-ONLY", "GEM.RCA7 TEST-ONLY", listOf("GEM.RCA4 TEST-ONLY", "GEM.RCA5 TEST-ONLY", "GEM.RCA6 TEST-ONLY")),
-        Arguments.of("GEM.RCA5 TEST-ONLY", "GEM.RCA6 TEST-ONLY", listOf("GEM.RCA5 TEST-ONLY")),
-        Arguments.of("GEM.RCA7 TEST-ONLY", "GEM.RCA2 TEST-ONLY", listOf("GEM.RCA5 TEST-ONLY")),
-      )
-    }
+    fun testDataProvider(): Stream<Arguments> = Stream.of(
+      Arguments.of("GEM.RCA3 TEST-ONLY", "GEM.RCA8 TEST-ONLY", listOf("GEM.RCA3 TEST-ONLY", "GEM.RCA4 TEST-ONLY", "GEM.RCA5 TEST-ONLY", "GEM.RCA6 TEST-ONLY", "GEM.RCA7 TEST-ONLY")),
+      Arguments.of("GEM.RCA4 TEST-ONLY", "GEM.RCA7 TEST-ONLY", listOf("GEM.RCA4 TEST-ONLY", "GEM.RCA5 TEST-ONLY", "GEM.RCA6 TEST-ONLY")),
+      Arguments.of("GEM.RCA5 TEST-ONLY", "GEM.RCA6 TEST-ONLY", listOf("GEM.RCA5 TEST-ONLY")),
+      Arguments.of("GEM.RCA7 TEST-ONLY", "GEM.RCA2 TEST-ONLY", listOf("GEM.RCA5 TEST-ONLY")),
+    )
   }
 
   @Test
@@ -141,13 +139,11 @@ class CertificateAuthoritySupplierTest {
 
     val nextCrossCa: (String) -> X509Certificate? =
       if (start < target) {
-        {
-            subject ->
+        { subject ->
           rootCAs.getRootCABy(subject)?.nextCrossCA
         }
       } else {
-        {
-            subject ->
+        { subject ->
           rootCAs.getRootCABy(subject)?.prevCrossCA
         }
       }

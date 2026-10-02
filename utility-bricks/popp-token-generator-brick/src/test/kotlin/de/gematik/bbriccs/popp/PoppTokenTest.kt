@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,20 +28,19 @@ import java.security.KeyPairGenerator
 
 class PoppTokenTest {
 
-  private fun tokenWithHeader(alg: String = AlgorithmIdentifiers.ECDSA_USING_P256_CURVE_AND_SHA256): PoppToken =
-    PoppToken(
-      header = PoppToken.TokenHeader(kid = "kid-1", alg = alg),
-      claims = PoppToken.TokenClaims(
-        proofMethod = "ehc-practitioner-1a",
-        patientProofTime = 1234,
-        iat = 1234,
-        patientId = "X123456789",
-        insurerId = "109500969",
-        actorId = "1-2-3",
-        actorProfessionOid = "1.2.276.0.76.4.54",
-        iss = "https://issuer",
-      ),
-    )
+  private fun tokenWithHeader(alg: String = AlgorithmIdentifiers.ECDSA_USING_P256_CURVE_AND_SHA256): PoppToken = PoppToken(
+    header = PoppToken.TokenHeader(kid = "kid-1", alg = alg),
+    claims = PoppToken.TokenClaims(
+      proofMethod = "ehc-practitioner-1a",
+      patientProofTime = 1234,
+      iat = 1234,
+      patientId = "X123456789",
+      insurerId = "109500969",
+      actorId = "1-2-3",
+      actorProfessionOid = "1.2.276.0.76.4.54",
+      iss = "https://issuer",
+    ),
+  )
 
   @Test
   fun `toJwt should reject unsupported algorithm`() {

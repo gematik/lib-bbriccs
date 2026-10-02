@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,7 @@ import de.gematik.bbriccs.utils.dto.RootCertificateAuthorityDto
 import java.security.cert.X509Certificate
 import java.util.*
 
-class RootCertificateAuthorityList(private val internalList: Set<RootCertificateAuthorityDto>) :
-  Set<RootCertificateAuthorityDto> by internalList {
+class RootCertificateAuthorityList(private val internalList: Set<RootCertificateAuthorityDto>) : Set<RootCertificateAuthorityDto> by internalList {
   fun getRootCABy(subjectCN: String): RootCertificateAuthorityDto? = internalList.find { !it.isCrossCa() && it.getSubjectCN() == subjectCN }
 
   fun getRootCAByCompCA(crossCA: X509Certificate) = getRootCABy(crossCA.getIssuerCN())
@@ -42,13 +41,11 @@ class RootCertificateAuthorityList(private val internalList: Set<RootCertificate
 
     val nextCrossCa: (RootCertificateAuthorityDto) -> X509Certificate? =
       if (start < target) {
-        {
-            ca ->
+        { ca ->
           ca.nextCrossCA
         }
       } else {
-        {
-            ca ->
+        { ca ->
           ca.prevCrossCA
         }
       }

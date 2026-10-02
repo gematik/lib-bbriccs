@@ -6,7 +6,7 @@
   <parent>
     <groupId>de.gematik.bbriccs</groupId>
     <artifactId>auth-bricks</artifactId>
-    <version>0.11.0</version>
+    <version>0.12.1</version>
   </parent>
 
   <artifactId>idp-flow-api-brick</artifactId>
@@ -17,7 +17,7 @@
       <dependency>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>restful-bricks</artifactId>
-        <version>0.11.0</version>
+        <version>0.12.1</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -43,6 +43,12 @@
     <dependency>
       <groupId>de.gematik.idp</groupId>
       <artifactId>idp-commons</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -53,7 +59,20 @@
     <dependency>
       <groupId>de.gematik.bbriccs</groupId>
       <artifactId>softkon-service-brick</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <build>
+    <testResources>
+      <testResource>
+        <!-- test smartcards from smartcards-brick -->
+        <directory>${project.basedir}/../../perimeter-bricks/smartcards-brick/src/test/resources</directory>
+      </testResource>
+      <testResource>
+        <directory>${project.basedir}/src/test/resources</directory>
+      </testResource>
+    </testResources>
+  </build>
 
 </project>

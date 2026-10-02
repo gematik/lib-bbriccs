@@ -6,7 +6,7 @@
   <parent>
     <groupId>de.gematik.bbriccs</groupId>
     <artifactId>bbriccs-parent</artifactId>
-    <version>0.11.0</version>
+    <version>0.12.1</version>
   </parent>
 
   <artifactId>fhir-bricks</artifactId>
@@ -23,11 +23,20 @@
     <module>fhir-builder-brick</module>
     <module>fhir-hapi-fuzzing-brick</module>
     <module>fhir-vzd-brick</module>
+    <module>fhir-smaps-transformation-brick</module>
+    <module>fhir-comparator-bricks</module>
   </modules>
 
   <dependencyManagement>
     <dependencies>
       <!-- HAPI FHIR -->
+      <dependency>
+        <groupId>ca.uhn.hapi.fhir</groupId>
+        <artifactId>hapi-fhir-bom</artifactId>
+        <version>${version.hapi-fhir}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <dependency>
         <groupId>ca.uhn.hapi.fhir</groupId>
         <artifactId>hapi-fhir-structures-r4</artifactId>
@@ -140,6 +149,12 @@
         <groupId>de.gematik.refv</groupId>
         <artifactId>referencevalidator-lib</artifactId>
         <version>${version.ref-validator}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>2.22.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

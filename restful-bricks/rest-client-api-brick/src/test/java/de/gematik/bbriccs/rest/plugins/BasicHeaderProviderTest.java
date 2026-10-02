@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,14 +38,18 @@ class BasicHeaderProviderTest {
   void shouldProvideFixedValueHeader() {
     val header = HttpHeader.accept("text/plain");
     val fhvp = BasicHeaderProvider.forStaticHeader(header);
-    val header2 = fhvp.forRequest(null); // does not touch the request anyway
-    assertEquals(header, header2);
+    val headers = fhvp.forRequest(null); // does not touch the request anyway
+    assertTrue(headers.contains(header));
   }
 
   @Test
   void shouldProvideDynamicDateHeader() {
     val fhvp = BasicHeaderProvider.forDate();
-    val header1 = fhvp.forRequest(null);
+    val headers = fhvp.forRequest(null);
+    assertNotNull(headers);
+    assertFalse(headers.isEmpty());
+
+    val header1 = headers.get(0);
     assertEquals(StandardHttpHeaderKey.DATE.getKey(), header1.key());
 
     assertDoesNotThrow(
@@ -55,7 +59,12 @@ class BasicHeaderProviderTest {
   @Test
   void shouldProvideDynamicXRequestIdHeader() {
     val fhvp = BasicHeaderProvider.forXRequestId();
-    val header1 = fhvp.forRequest(null);
+    val headers = fhvp.forRequest(null);
+    assertNotNull(headers);
+    assertFalse(headers.isEmpty());
+
+    val header1 = headers.get(0);
+
     assertEquals("x-request-id", header1.key());
 
     assertDoesNotThrow(() -> UUID.fromString(header1.value()));
@@ -65,8 +74,11 @@ class BasicHeaderProviderTest {
   void shouldCalculateContentLengthHeader() {
     val fhvp = BasicHeaderProvider.forAutoContentLength();
     val request = HttpBRequest.get().withPayload("hello".getBytes(StandardCharsets.UTF_8));
-    val header1 = fhvp.forRequest(request);
-    assertNotNull(header1);
+    val headers = fhvp.forRequest(request);
+    assertNotNull(headers);
+    assertFalse(headers.isEmpty());
+
+    val header1 = headers.get(0);
     assertEquals("Content-Length", header1.key());
     assertEquals("5", header1.value());
   }
@@ -75,16 +87,19 @@ class BasicHeaderProviderTest {
   void shouldOmitContentLengthZero() {
     val fhvp = BasicHeaderProvider.forAutoContentLength();
     val request = HttpBRequest.get().withoutPayload();
-    val header1 = fhvp.forRequest(request);
-    assertNull(header1);
+    val headers = fhvp.forRequest(request);
+    assertTrue(headers.isEmpty());
   }
 
   @Test
   void shouldNotOmitContentLengthZero() {
     val fhvp = BasicHeaderProvider.forAutoContentLength(false);
     val request = HttpBRequest.get().withoutPayload();
-    val header1 = fhvp.forRequest(request);
-    assertNotNull(header1);
+    val headers = fhvp.forRequest(request);
+    assertNotNull(headers);
+    assertFalse(headers.isEmpty());
+
+    val header1 = headers.get(0);
     assertEquals("Content-Length", header1.key());
     assertEquals("0", header1.value());
   }

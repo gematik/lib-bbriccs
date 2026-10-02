@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,11 +77,15 @@ class IdpTokenHeaderProviderTest {
       val provider = assertDoesNotThrow(() -> pb.authenticateWith(egk));
 
       val request = createMockRequest();
-      val firstHeader = assertDoesNotThrow(() -> provider.forRequest(request));
+      val headers = assertDoesNotThrow(() -> provider.forRequest(request));
+      assertFalse(headers.isEmpty());
+      val firstHeader = headers.get(0);
       assertEquals(JwtHeaderKey.AUTHORIZATION.getKey(), firstHeader.key());
       assertNotNull(firstHeader.value());
 
-      val secondHeader = assertDoesNotThrow(() -> provider.forRequest(request));
+      val headers2 = assertDoesNotThrow(() -> provider.forRequest(request));
+      assertFalse(headers2.isEmpty());
+      val secondHeader = headers2.get(0);
       assertEquals(firstHeader.value(), secondHeader.value());
     }
   }
@@ -115,12 +119,18 @@ class IdpTokenHeaderProviderTest {
       val provider = assertDoesNotThrow(() -> pb.authenticateWith(egk));
 
       val request = createMockRequest();
-      val firstHeader = assertDoesNotThrow(() -> provider.forRequest(request));
+      val headers = assertDoesNotThrow(() -> provider.forRequest(request));
+      assertFalse(headers.isEmpty());
+
+      val firstHeader = headers.get(0);
       assertEquals(JwtHeaderKey.AUTHORIZATION.getKey(), firstHeader.key());
       assertNotNull(firstHeader.value());
       assertEquals("Bearer ABC", firstHeader.value());
 
-      val secondHeader = assertDoesNotThrow(() -> provider.forRequest(request));
+      val headers2 = assertDoesNotThrow(() -> provider.forRequest(request));
+      assertFalse(headers2.isEmpty());
+
+      val secondHeader = headers2.get(0);
       assertNotNull(secondHeader.value());
       assertNotEquals(firstHeader.value(), secondHeader.value());
       assertEquals("Bearer XYZ", secondHeader.value());
@@ -171,11 +181,16 @@ class IdpTokenHeaderProviderTest {
               () -> pb.authenticateWith(autCertificate.getX509Certificate(), challenge));
 
       val request = createMockRequest();
-      val firstHeader = assertDoesNotThrow(() -> provider.forRequest(request));
+      val headers = assertDoesNotThrow(() -> provider.forRequest(request));
+      assertFalse(headers.isEmpty());
+
+      val firstHeader = headers.get(0);
       assertEquals(JwtHeaderKey.AUTHORIZATION.getKey(), firstHeader.key());
       assertNotNull(firstHeader.value());
 
-      val secondHeader = assertDoesNotThrow(() -> provider.forRequest(request));
+      val headers2 = assertDoesNotThrow(() -> provider.forRequest(request));
+      assertFalse(headers2.isEmpty());
+      val secondHeader = headers2.get(0);
       assertEquals(firstHeader.value(), secondHeader.value());
     }
   }

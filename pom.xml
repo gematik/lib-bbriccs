@@ -7,7 +7,7 @@
 
     <groupId>de.gematik.bbriccs</groupId>
     <artifactId>bbriccs-parent</artifactId>
-    <version>0.11.0</version>
+    <version>0.12.1</version>
     <name>Bbriccs Parent</name>
     <description>Bbriccs provides reusable and independent building bricks for flexible and maintainable TestSuites with Clean Code Principles</description>
     <packaging>pom</packaging>
@@ -24,14 +24,15 @@
     </modules>
 
     <properties>
-        <version.java>17</version.java>
+        <version.java>21</version.java>
         <java.version>${version.java}</java.version>
         <maven.compiler.target>${version.java}</maven.compiler.target>
         <maven.compiler.source>${version.java}</maven.compiler.source>
-        <kotlin.version>2.0.0</kotlin.version>
+
+        <kotlin.version>2.4.20</kotlin.version>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
         <kotlin.code.style>official</kotlin.code.style>
-        <kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget>
+        <kotlin.compiler.jvmTarget>21</kotlin.compiler.jvmTarget>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <encoding>UTF-8</encoding>
@@ -41,23 +42,21 @@
         <snapshotDeploymentRepository/>
 
         <!-- Dependency versions -->
-        <version.lombok>1.18.46</version.lombok>
-        <version.logback>1.5.37</version.logback>
-        <version.slf4j-api>2.0.18</version.slf4j-api>
-        <version.guava>33.6.0-jre</version.guava>
-        <version.hapi-fhir>8.10.0</version.hapi-fhir>
-        <version.ref-validator>2.12.0</version.ref-validator>
-        <version.jackson>3.2.0</version.jackson>
+        <version.lombok>1.18.48</version.lombok>
+        <version.logback>1.6.3</version.logback>
+        <version.slf4j-api>2.0.20</version.slf4j-api>
+        <version.guava>33.7.1-jre</version.guava>
+        <version.hapi-fhir>8.12.1</version.hapi-fhir>
+        <version.ref-validator>2.16.6</version.ref-validator>
+        <version.jackson>3.2.3</version.jackson>
         <version.apache-commons-lang3>3.20.0</version.apache-commons-lang3>
         <version.faker>1.0.2</version.faker>
-        <version.streamex>0.8.2</version.streamex>
-        <version.junit>5.14.4</version.junit>
-        <version.mockito>5.23.0</version.mockito>
+        <version.streamex>0.9.0</version.streamex>
+        <version.junit>6.1.3</version.junit>
+        <version.mockito>5.24.0</version.mockito>
         <version.junit-pioneer>2.3.0</version.junit-pioneer>
-        <version.dss>6.0</version.dss>
-        <version.bouncycastle>1.84</version.bouncycastle>
-        <artefact.bouncycastle>jdk18on</artefact.bouncycastle>
-        <artefact.jakarta>4.0.3</artefact.jakarta>
+        <version.dss>6.4</version.dss>
+        <artefact.jakarta>4.0.5</artefact.jakarta>
 
         <skip.unittests/>
 
@@ -120,7 +119,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.2.7</version>
+                        <version>3.2.8</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -140,7 +139,7 @@
                     <plugin>
                         <groupId>org.sonatype.central</groupId>
                         <artifactId>central-publishing-maven-plugin</artifactId>
-                        <version>0.7.0</version>
+                        <version>0.11.0</version>
                         <extensions>true</extensions>
                         <configuration>
                             <publishingServerId>central</publishingServerId>
@@ -256,9 +255,14 @@
                 <version>${version.jackson}</version>
             </dependency>
             <dependency>
+                <groupId>tools.jackson.module</groupId>
+                <artifactId>jackson-module-kotlin</artifactId>
+                <version>${version.jackson}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.konghq</groupId>
                 <artifactId>unirest-java-bom</artifactId>
-                <version>4.4.5</version>
+                <version>4.10.1</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -291,13 +295,30 @@
             <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
-                <version>1.16.1</version>
+                <version>1.22.1</version>
             </dependency>
             <dependency>
                 <groupId>info.picocli</groupId>
                 <artifactId>picocli</artifactId>
-                <version>4.7.5</version>
+                <version>4.7.7</version>
             </dependency>
+            <dependency>
+                <groupId>jakarta.xml.ws</groupId>
+                <artifactId>jakarta.xml.ws-api</artifactId>
+                <version>4.0.3</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>${artefact.jakarta}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.xml.ws</groupId>
+                <artifactId>jaxws-ri</artifactId>
+                <version>${artefact.jakarta}</version>
+                <type>pom</type>
+            </dependency>
+
             <!-- Dependencies for Test-Scope -->
             <dependency>
                 <groupId>org.junit</groupId>
@@ -321,13 +342,7 @@
             <dependency>
                 <groupId>org.wiremock</groupId>
                 <artifactId>wiremock</artifactId>
-                <version>3.3.1</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.sonar-plugins.java</groupId>
-                <artifactId>sonar-jacoco-listeners</artifactId>
-                <version>3.2</version>
+                <version>3.13.2</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -395,12 +410,12 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.11</version>
+                    <version>0.8.15</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-remote-resources-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.3.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -409,7 +424,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.3.1</version>
+                <version>3.4.0</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -422,7 +437,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.6.2</version>
                 <executions>
                     <execution>
                         <phase>generate-sources</phase>
@@ -440,7 +455,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.11.2</version>
+                <version>3.12.0</version>
                 <configuration>
                     <doclint>none</doclint>
                 </configuration>
@@ -456,7 +471,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.5.1</version>
                 <configuration>
                     <excludes>
                         <exclude>**/logback.xml</exclude>
@@ -492,15 +507,9 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.2.5</version>
+                <version>3.6.0</version>
                 <configuration>
                     <argLine>@{argLine}</argLine>
-                    <properties>
-                        <property>
-                            <name>listener</name>
-                            <value>org.sonar.java.jacoco.JUnitListener</value>
-                        </property>
-                    </properties>
                     <skip>${skip.unittests}</skip>
                     <parallel>classes</parallel>
                     <runOrder>random</runOrder>
@@ -509,7 +518,7 @@
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
-                <version>2.41.1</version>
+                <version>3.10.2</version>
                 <configuration>
                     <java>
                         <includes>
@@ -556,7 +565,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.10.0</version>
+                <version>3.12.0</version>
                 <reportSets>
                     <reportSet>
                         <id>non-aggregate</id>

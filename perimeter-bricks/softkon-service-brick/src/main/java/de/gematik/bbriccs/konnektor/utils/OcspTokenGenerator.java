@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import java.security.*;
 import java.security.cert.X509Certificate;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Date;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -54,9 +55,10 @@ public class OcspTokenGenerator {
     return with(new CertificateToken(signingCert));
   }
 
-  public OCSPToken asOnlineToken() {
+  public OCSPToken asOnlineToken(String... alternativeUrls) {
     val ocspSource = new OnlineOCSPSource();
-    return ocspSource.getRevocationToken(signingCertToken, new CertificateToken(issuerCert));
+    return ocspSource.getRevocationToken(
+        signingCertToken, new CertificateToken(issuerCert), Arrays.asList(alternativeUrls));
   }
 
   public OCSPToken asSelfSignedToken(ZonedDateTime producedAt, ZonedDateTime thisUpdate) {

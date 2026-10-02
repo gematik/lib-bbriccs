@@ -6,7 +6,7 @@
     <parent>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>utility-bricks</artifactId>
-        <version>0.11.0</version>
+        <version>0.12.1</version>
     </parent>
 
     <artifactId>vsdm-check-digit-generator-brick</artifactId>
@@ -23,28 +23,33 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>de.gematik.bbriccs</groupId>
+            <artifactId>smartcards-brick</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>jakarta.xml.ws</groupId>
             <artifactId>jakarta.xml.ws-api</artifactId>
-            <version>${artefact.jakarta}</version>
         </dependency>
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>${artefact.jakarta}</version>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-ri</artifactId>
-            <version>${artefact.jakarta}</version>
             <type>pom</type>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.6.2</version>
                 <executions>
                     <execution>
                         <id>add-source</id>
@@ -63,7 +68,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jaxb2-maven-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>4.2.0</version>
                 <executions>
                     <execution>
                         <id>xjc.fa.vsds</id>

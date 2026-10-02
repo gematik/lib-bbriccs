@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,30 +56,26 @@ class PoppTokenGeneratorTest {
     keyAlias: String = firstAlias(loadTestKeyStore()),
     issuer: String = "https://test-issuer",
     kid: String = "test-kid",
-  ): PoppTokenGeneratorConfiguration =
-    PoppTokenGeneratorConfiguration(
-      keyStorePath = keyStorePath,
-      keyStorePassword = keyStorePassword,
-      keyAlias = keyAlias,
-      kid = kid,
-      iss = issuer,
-    )
+  ): PoppTokenGeneratorConfiguration = PoppTokenGeneratorConfiguration(
+    keyStorePath = keyStorePath,
+    keyStorePassword = keyStorePassword,
+    keyAlias = keyAlias,
+    kid = kid,
+    iss = issuer,
+  )
 
-  private fun request(issuer: String? = null, kid: String? = null) =
-    PoppTokenGenerator.TokenGenerationRequest(
-      patientId = "X123456789",
-      insurerId = "109500969",
-      actorId = "1-2-3",
-      actorProfessionOid = "1.2.276.0.76.4.54",
-      issuer = issuer,
-      kid = kid,
-    )
+  private fun request(issuer: String? = null, kid: String? = null) = PoppTokenGenerator.TokenGenerationRequest(
+    patientId = "X123456789",
+    insurerId = "109500969",
+    actorId = "1-2-3",
+    actorProfessionOid = "1.2.276.0.76.4.54",
+    issuer = issuer,
+    kid = kid,
+  )
 
-  private fun decodeHeader(jwt: String): String =
-    String(Base64.getUrlDecoder().decode(jwt.split('.')[0]))
+  private fun decodeHeader(jwt: String): String = String(Base64.getUrlDecoder().decode(jwt.split('.')[0]))
 
-  private fun decodeClaims(jwt: String): String =
-    String(Base64.getUrlDecoder().decode(jwt.split('.')[1]))
+  private fun decodeClaims(jwt: String): String = String(Base64.getUrlDecoder().decode(jwt.split('.')[1]))
 
   @Test
   fun `from should throw meaningful error when configuration is null`() {
