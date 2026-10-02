@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,14 @@
 
 package de.gematik.bbriccs.smartcards;
 
+import static java.text.MessageFormat.format;
+
 import de.gematik.bbriccs.crypto.CryptoSystem;
 import de.gematik.bbriccs.crypto.certificate.ProfessionOid;
 import de.gematik.bbriccs.smartcards.cfg.SmartcardConfigDto;
 import de.gematik.bbriccs.smartcards.exceptions.SmartCardKeyNotFoundException;
 import java.util.List;
+import java.util.Optional;
 import lombok.val;
 
 public abstract class InstituteSmartcardP12 extends SmartcardP12 implements InstituteSmartcard {
@@ -55,5 +58,14 @@ public abstract class InstituteSmartcardP12 extends SmartcardP12 implements Inst
     val oid = getEncOid();
     return getKey(oid, cryptoSystem)
         .orElseThrow(() -> new SmartCardKeyNotFoundException(this, oid, cryptoSystem));
+  }
+
+  @Override
+  public String toString() {
+    val id =
+        Optional.ofNullable(this.getTelematikId())
+            .map(it -> "tid=" + it)
+            .orElseGet(() -> "iccsn=" + this.getIccsn());
+    return format("Smartcard {0} [{1}]", this.getType(), id);
   }
 }

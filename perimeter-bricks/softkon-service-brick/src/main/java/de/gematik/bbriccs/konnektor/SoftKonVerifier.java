@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ import eu.europa.esig.dss.enumerations.Indication;
 import eu.europa.esig.dss.model.DSSDocument;
 import eu.europa.esig.dss.model.InMemoryDocument;
 import eu.europa.esig.dss.model.x509.CertificateToken;
-import eu.europa.esig.dss.service.ocsp.OnlineOCSPSource;
-import eu.europa.esig.dss.spi.client.http.NativeHTTPDataLoader;
+import eu.europa.esig.dss.spi.signature.AdvancedSignature;
+import eu.europa.esig.dss.spi.validation.CommonCertificateVerifier;
 import eu.europa.esig.dss.spi.x509.CommonTrustedCertificateSource;
 import eu.europa.esig.dss.spi.x509.revocation.ocsp.OCSPToken;
 import eu.europa.esig.dss.validation.*;
@@ -49,15 +49,7 @@ public class SoftKonVerifier {
       trustedCertSource.addCertificate(new CertificateToken(ca.getCertificate()));
     }
 
-    val httpDataLoader = new NativeHTTPDataLoader();
-    httpDataLoader.setReadTimeout(5000);
-    httpDataLoader.setConnectTimeout(5000);
-
-    val ocspSource = new OnlineOCSPSource();
-    ocspSource.setDataLoader(httpDataLoader);
-
     val cv = new CommonCertificateVerifier();
-    cv.setOcspSource(ocspSource);
     cv.setTrustedCertSources(trustedCertSource);
     documentValidator = SignedDocumentValidator.fromDocument(new InMemoryDocument(input));
     documentValidator.setCertificateVerifier(cv);
@@ -149,11 +141,6 @@ public class SoftKonVerifier {
   private Optional<OCSPToken> getOcspToken(AdvancedSignature signature) {
     val signingCertToken = signature.getSigningCertificateToken();
     val caToken = new CertificateToken(BNetzAVLCa.getCA(signingCertToken.getCertificate()));
-
-    val httpDataLoader = new NativeHTTPDataLoader();
-    httpDataLoader.setConnectTimeout(5000);
-    httpDataLoader.setReadTimeout(5000);
-
     val revocationToken = signature.getOCSPSource().getRevocationToken(signingCertToken, caToken);
     return revocationToken == null ? Optional.empty() : Optional.of((OCSPToken) revocationToken);
   }

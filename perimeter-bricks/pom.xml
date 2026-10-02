@@ -4,7 +4,7 @@
     <parent>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>bbriccs-parent</artifactId>
-        <version>0.11.0</version>
+        <version>0.12.1</version>
     </parent>
 
     <artifactId>perimeter-bricks</artifactId>
@@ -79,37 +79,6 @@
                 <groupId>de.gematik.bbriccs</groupId>
                 <artifactId>rest-client-brick</artifactId>
                 <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
-                <artifactId>dss-cades</artifactId>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.bouncycastle</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                </exclusions>
-                <version>${version.dss}</version>
-            </dependency>
-            <dependency>
-                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
-                <artifactId>dss-token</artifactId>
-                <version>${version.dss}</version>
-            </dependency>
-            <dependency>
-                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
-                <artifactId>dss-service</artifactId>
-                <version>${version.dss}</version>
-            </dependency>
-            <dependency>
-                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
-                <artifactId>dss-enumerations</artifactId>
-                <version>${version.dss}</version>
-            </dependency>
-            <dependency>
-                <groupId>eu.europa.ec.joinup.sd-dss</groupId>
-                <artifactId>dss-utils-apache-commons</artifactId>
-                <version>${version.dss}</version>
             </dependency>
             <dependency>
                 <groupId>de.gematik.bbriccs</groupId>

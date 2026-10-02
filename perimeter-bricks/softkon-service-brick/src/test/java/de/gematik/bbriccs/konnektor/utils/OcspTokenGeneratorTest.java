@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,5 +111,37 @@ class OcspTokenGeneratorTest {
     val token = OcspTokenGenerator.with(cert).asSelfSignedRevokedToken(now, now);
 
     assertNotNull(token.getRelatedCertificate());
+  }
+
+  @ParameterizedTest
+  @EnumSource(value = CryptoSystem.class, mode = Mode.EXCLUDE, names = "RSA_PSS_2048")
+  void shouldCallAsOnlineTokenWithoutAlternativeUrls(CryptoSystem cryptoSystem) {
+    val cert = sca.getHba(0).getQesCertificate(cryptoSystem).getX509Certificate();
+    val generator = OcspTokenGenerator.with(cert);
+
+    assertDoesNotThrow(() -> generator.asOnlineToken());
+  }
+
+  @ParameterizedTest
+  @EnumSource(value = CryptoSystem.class, mode = Mode.EXCLUDE, names = "RSA_PSS_2048")
+  void shouldCallAsOnlineTokenWithAlternativeUrls(CryptoSystem cryptoSystem) {
+    val cert = sca.getHba(0).getQesCertificate(cryptoSystem).getX509Certificate();
+    val generator = OcspTokenGenerator.with(cert);
+
+    assertDoesNotThrow(
+        () -> generator.asOnlineToken("http://localhost/ocsp", "http://example.invalid/ocsp"));
+  }
+
+  @ParameterizedTest
+  @EnumSource(value = CryptoSystem.class, mode = Mode.EXCLUDE, names = "RSA_PSS_2048")
+  void shouldReturnNullOrOcspTokenForOnlineToken(CryptoSystem cryptoSystem) {
+    val cert = sca.getHba(0).getQesCertificate(cryptoSystem).getX509Certificate();
+    val generator = OcspTokenGenerator.with(cert);
+
+    val token = assertDoesNotThrow(() -> generator.asOnlineToken());
+
+    if (token != null) {
+      assertNotNull(token.getRelatedCertificate());
+    }
   }
 }

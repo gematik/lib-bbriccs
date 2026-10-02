@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import static java.text.MessageFormat.format;
 import de.gematik.bbriccs.rest.HttpBRequest;
 import de.gematik.bbriccs.rest.headers.HttpHeader;
 import de.gematik.bbriccs.rest.plugins.RequestHeaderProvider;
+import java.util.List;
 import javax.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +46,7 @@ public class FixedBearerTokenHeaderProvider implements RequestHeaderProvider {
 
   @Nullable
   @Override
-  public HttpHeader forRequest(HttpBRequest request) {
-    return new HttpHeader("Authorization", token);
+  public List<HttpHeader> forRequest(HttpBRequest request) {
+    return List.of(new HttpHeader("Authorization", token));
   }
 }

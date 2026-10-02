@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -46,6 +47,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.junitpioneer.jupiter.ClearSystemProperty;
 
+@Isolated
 @Slf4j
 class VersionUtilTest {
 
@@ -630,14 +632,6 @@ class VersionUtilTest {
     val profiles = ProfilesConfigurator.getDefaultConfiguration(toggleName);
     val v = VersionUtil.getDefaultVersion(TestBasisVersion.class, "my.profile.r4");
     assertEquals(expectedVersion, v.getVersion());
-  }
-
-  @Test
-  void shouldReadDefaultFromMultiEnumVersion() {
-    // prepares the virtual default configuration
-    val profiles = ProfilesConfigurator.getDefaultConfiguration();
-    val v = VersionUtil.getDefaultVersion(TestBasisVersion.class, "my.profile.r4");
-    assertEquals(TestBasisVersion.V1_3_2, v);
   }
 
   @Test

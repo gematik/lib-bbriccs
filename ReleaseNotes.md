@@ -1,5 +1,22 @@
 # Release Notes $B^2riC^2s$
 
+
+## Release 0.12.1
+
+### FHIR-Bricks
+- Implement `fhir-smaps-transformation-brick` for automatic transformation of FHIR resources based on StructureMap rulesets
+- Implement `fhir-comparator-bricks` for comparing FHIR resources automatically based on FHIR rules
+  - `fhir-comparator-api-brick` providing a common API for comparing FHIR resources
+  - `fhir-comparator-fhirpatch-brick` providing a default implementation based on HAPI's FHIR Patch capability
+  - `fhir-comparator-jsondiff-brick` providing an alternative lightweight implementation based on JSON-Patch and Jackson libraries
+
+### RESTful-Bricks
+- Extend `RequestHeaderProvider` to allow request plugins to provide multiple request headers for outgoing requests
+
+### Build
+- Update Dependencies
+- Upgrade to Java 21
+
 ## Release 0.11.0
 - Update from Jackson 2 to Jackson 3
 - Update more critical dependencies to latest versions

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ package de.gematik.bbriccs.rest.plugins;
 import de.gematik.bbriccs.rest.HttpBRequest;
 import de.gematik.bbriccs.rest.headers.HttpHeader;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
@@ -35,8 +36,8 @@ public class BasicHeaderProvider implements RequestHeaderProvider {
   private final Function<HttpBRequest, HttpHeader> httpHeaderSupplier;
 
   @Override
-  public HttpHeader forRequest(HttpBRequest request) {
-    return httpHeaderSupplier.apply(request);
+  public List<HttpHeader> forRequest(HttpBRequest request) {
+    return Optional.ofNullable(httpHeaderSupplier.apply(request)).map(List::of).orElse(List.of());
   }
 
   public static BasicHeaderProvider forStaticHeader(HttpHeader header) {

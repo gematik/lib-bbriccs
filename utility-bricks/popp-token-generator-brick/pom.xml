@@ -6,10 +6,11 @@
     <parent>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>utility-bricks</artifactId>
-        <version>0.11.0</version>
+        <version>0.12.1</version>
     </parent>
 
     <artifactId>popp-token-generator-brick</artifactId>
+    <name>PoPP Token Generator Brick</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -23,8 +24,8 @@
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-test</artifactId>
-            <version>${kotlin.version}</version>
+            <artifactId>kotlin-test-junit5</artifactId>
+            <version>2.4.20</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -78,5 +79,36 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>publish</id>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <!-- maven-javadoc-plugin doesn't support kotlin code -->
+                        <groupId>org.jetbrains.dokka</groupId>
+                        <artifactId>dokka-maven-plugin</artifactId>
+                        <version>2.2.0</version>
+                        <executions>
+                            <execution>
+                                <id>javadocJar</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>javadocJar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <sourceDirectories>
+                                <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+                            </sourceDirectories>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

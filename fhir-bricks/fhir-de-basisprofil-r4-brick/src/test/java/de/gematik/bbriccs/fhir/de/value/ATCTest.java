@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,5 +52,14 @@ class ATCTest {
     assertTrue(atc.getSystem().matches(DeBasisProfilCodeSystem.ATC));
     assertTrue(atc.getVersion().isEmpty());
     assertTrue(atc.getDisplay().isEmpty());
+  }
+
+  @Test
+  void shouldGetAsCoding() {
+    val atc = ATC.from("M01AE01", "Ibuprofen", "2022");
+    val coding = atc.asCoding();
+    assertEquals("M01AE01", coding.getCode());
+    assertEquals("Ibuprofen", coding.getDisplay());
+    assertEquals("2022", coding.getVersion());
   }
 }

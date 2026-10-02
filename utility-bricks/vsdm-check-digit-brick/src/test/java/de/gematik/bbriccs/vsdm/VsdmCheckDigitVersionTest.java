@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ class VsdmCheckDigitVersionTest {
     assertEquals(
         VsdmCheckDigitVersion.V1, VsdmCheckDigitVersion.fromData(new byte[] {(byte) 0x01}));
     assertEquals(
-        VsdmCheckDigitVersion.V1, VsdmCheckDigitVersion.fromData(new byte[] {(byte) 0x80}));
+        VsdmCheckDigitVersion.V2, VsdmCheckDigitVersion.fromData(new byte[] {(byte) 0x80}));
     assertEquals(
         VsdmCheckDigitVersion.V2, VsdmCheckDigitVersion.fromData(new byte[] {(byte) 0x81}));
     assertEquals(

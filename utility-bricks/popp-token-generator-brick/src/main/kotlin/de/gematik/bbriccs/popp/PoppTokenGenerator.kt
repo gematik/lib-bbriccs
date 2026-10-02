@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,9 +40,7 @@ class PoppTokenGenerator private constructor(
     return token.toJwt(key, signingMaterial.certificateChain)
   }
 
-  fun sign(request: TokenGenerationRequest): String {
-    return sign(request = request, key = signingMaterial.privateKey)
-  }
+  fun sign(request: TokenGenerationRequest): String = sign(request = request, key = signingMaterial.privateKey)
 
   fun signExpiredToken(request: TokenGenerationRequest): String {
     val expiredIat = Instant.now().minus(30, ChronoUnit.MINUTES)
@@ -56,20 +54,19 @@ class PoppTokenGenerator private constructor(
     return sign(request, key = wrongPrivateKey)
   }
 
-  private fun createToken(request: TokenGenerationRequest, kid: String, issuer: String, iat: Long): PoppToken =
-    PoppToken(
-      header = PoppToken.TokenHeader(kid = kid),
-      claims = PoppToken.TokenClaims(
-        proofMethod = request.proofMethod,
-        patientProofTime = iat,
-        iat = iat,
-        patientId = request.patientId,
-        insurerId = request.insurerId,
-        actorId = request.actorId,
-        actorProfessionOid = request.actorProfessionOid,
-        iss = issuer,
-      ),
-    )
+  private fun createToken(request: TokenGenerationRequest, kid: String, issuer: String, iat: Long): PoppToken = PoppToken(
+    header = PoppToken.TokenHeader(kid = kid),
+    claims = PoppToken.TokenClaims(
+      proofMethod = request.proofMethod,
+      patientProofTime = iat,
+      iat = iat,
+      patientId = request.patientId,
+      insurerId = request.insurerId,
+      actorId = request.actorId,
+      actorProfessionOid = request.actorProfessionOid,
+      iss = issuer,
+    ),
+  )
 
   private fun loadSigningMaterial(): SigningMaterial {
     val keyStore = keyStoreLoader()

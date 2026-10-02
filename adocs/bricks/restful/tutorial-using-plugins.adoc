@@ -18,9 +18,9 @@ The `RequestHeaderProvider` is pretty much self-explanatory, it generates per ea
 ----
 public class XRequestIdProvider implements RequestHeaderProvider {
   @Override
-  public HttpHeader forRequest(HttpBRequest request) {
+  public List<HttpHeader> forRequest(HttpBRequest request) {
     val xReqId = UUID.randomUUID().toString();
-    return new HttpHeader("x-request-id", xReqId);
+    return List.of(new HttpHeader("x-request-id", xReqId));
   }
 }
 ----

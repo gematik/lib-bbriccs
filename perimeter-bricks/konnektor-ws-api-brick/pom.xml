@@ -4,7 +4,7 @@
     <parent>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>perimeter-bricks</artifactId>
-        <version>0.11.0</version>
+        <version>0.12.1</version>
     </parent>
 
     <artifactId>konnektor-ws-api-brick</artifactId>
@@ -14,37 +14,34 @@
         <dependency>
             <groupId>jakarta.xml.ws</groupId>
             <artifactId>jakarta.xml.ws-api</artifactId>
-            <version>${artefact.jakarta}</version>
         </dependency>
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>${artefact.jakarta}</version>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-ri</artifactId>
-            <version>${artefact.jakarta}</version>
             <type>pom</type>
         </dependency>
     </dependencies>
 
     <build>
-      <resources>
-        <resource>
-          <directory>src/main/resources/gematik_schemes</directory>
-          <targetPath>gematik_schemes</targetPath>
-          <includes>
-            <include>**/*.wsdl</include>
-          </includes>
-        </resource>
-      </resources>
+        <resources>
+            <resource>
+              <directory>src/main/resources/gematik_schemes</directory>
+              <targetPath>gematik_schemes</targetPath>
+              <includes>
+                <include>**/*.wsdl</include>
+              </includes>
+            </resource>
+        </resources>
 
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.6.2</version>
                 <executions>
                     <execution>
                         <id>add-source</id>
@@ -63,7 +60,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jaxb2-maven-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>4.2.0</version>
                 <executions>
                     <execution>
                         <id>xjc</id>
@@ -86,7 +83,7 @@
             <plugin>
                 <groupId>com.sun.xml.ws</groupId>
                 <artifactId>jaxws-maven-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>4.0.5</version>
                 <executions>
                     <execution>
                         <id>general</id>

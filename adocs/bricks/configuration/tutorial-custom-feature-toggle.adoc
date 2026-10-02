@@ -9,7 +9,7 @@ Although this allows us to ensure a consistent nomenclature of feature toggles, 
 
 This is the ideal use case for a user-defined feature toggle.
 
-*Step 1:* implement an enumaration `MyFeatureState` to represent the states of the feature toggle.
+*Step 1:* implement an enumeration `MyFeatureState` to represent the states of the feature toggle.
 
 [source,java]
 ----

@@ -1,0 +1,35 @@
+@startuml
+
+class StructureMapsTransformerFactory <<Factory>> {
+  + buildFor(name: String): StructureMapsTransformer
+}
+
+class StructureMapsConfiguration {
+  ----
+  + name: String
+  + version: String
+  + corePackage: String
+  + igResourcePath: String
+  + url: String
+}
+
+class StructureMapsTransformer {
+  + <T : Resource> transform(sources: List<Resource>, expectedClass: Class<T>): T
+  + <T : Resource> transform(sources: List<Resource>, expectedClass: Class<T>, patch: Parameters?): T
+}
+
+object config as "Configuration" {
+  YAML configuration file
+}
+
+object smap as "StructureMap" {
+  FHIR StructureMap resources
+  as NPM package
+}
+
+StructureMapsTransformerFactory *--> StructureMapsConfiguration : <<use>>
+StructureMapsTransformerFactory -r-> StructureMapsTransformer : <<create>>
+StructureMapsConfiguration -d-> config
+StructureMapsConfiguration -d-> smap
+
+@enduml

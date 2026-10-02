@@ -4,7 +4,7 @@
     <parent>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>perimeter-bricks</artifactId>
-        <version>0.11.0</version>
+        <version>0.12.1</version>
     </parent>
 
     <artifactId>cats-client-brick</artifactId>
@@ -32,6 +32,16 @@
     </dependencies>
 
     <build>
+        <testResources>
+            <testResource>
+                <!-- test smartcards from smartcards-brick -->
+                <directory>${project.basedir}/../smartcards-brick/src/test/resources</directory>
+            </testResource>
+            <testResource>
+                <directory>${project.basedir}/src/test/resources</directory>
+            </testResource>
+        </testResources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

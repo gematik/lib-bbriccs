@@ -1,0 +1,21 @@
+[
+  {
+    "op": "replace",
+    "path": "/parameter/0/valueString",
+    "value": "newValue"
+  },
+  {
+    "op": "move",
+    "from": "/parameter/1",
+    "path": "/parameter/2"
+  },
+  {
+    "op": "add",
+    "path": "/parameter/1/part/-",
+    "value": {
+      "name": "prescriptionSignatureDate",
+      "valueInstant": "2026-04-01T08:23:12Z"
+    }
+  },
+  {}
+]

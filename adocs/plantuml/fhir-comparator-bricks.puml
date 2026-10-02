@@ -1,0 +1,33 @@
+@startuml
+
+
+
+interface ResourceComparator {
+  + compare(actual: Resource, expected: Resource): Parameters
+}
+
+abstract class AbstractResourceComparator implements ResourceComparator {
+  - fhirJsonParser : IParser
+  + compare(actual: Resource, expected: Resource): Parameters
+}
+
+class HapiPatchComparator extends AbstractResourceComparator {
+  - context : FhirContext
+  - patch : FhirPatch
+  ----
+  + compare(actual: Resource, expected: Resource): Parameters
+}
+
+class JsonPatchComparator extends AbstractResourceComparator {
+  - mapper : JacksonV3ObjectMapper
+  ----
+  + compare(actual: Resource, expected: Resource): Parameters
+}
+
+object JsonDiffToParameterBuilder {
+  + build(diff: JsonNode): Parameters
+}
+
+JsonPatchComparator -l-> JsonDiffToParameterBuilder : <<use>>
+
+@enduml

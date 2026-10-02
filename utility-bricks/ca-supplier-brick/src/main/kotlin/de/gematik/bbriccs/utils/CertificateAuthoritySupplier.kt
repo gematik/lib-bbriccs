@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,18 +50,16 @@ class CertificateAuthoritySupplier private constructor(private val environmentAn
       .toSet()
   }
 
-  private fun downloadElementsFromBackend(path: String): Set<String> =
-    httpClient.send(HttpBRequest.get().urlPath(path).withoutPayload()).let {
-      """<a href="([^"]*)">""".toRegex().findAll(String(it.body(), Charset.defaultCharset()))
-        .map { matchResult -> matchResult.groupValues[1] }
-        .filter { name -> name.endsWith(".der") }
-        .toSet()
-    }
+  private fun downloadElementsFromBackend(path: String): Set<String> = httpClient.send(HttpBRequest.get().urlPath(path).withoutPayload()).let {
+    """<a href="([^"]*)">""".toRegex().findAll(String(it.body(), Charset.defaultCharset()))
+      .map { matchResult -> matchResult.groupValues[1] }
+      .filter { name -> name.endsWith(".der") }
+      .toSet()
+  }
 
-  private fun get(path: String): CertificateAuthorityDto =
-    httpClient.send(HttpBRequest.get().urlPath(path).withoutPayload()).let {
-      return CertificateAuthorityDto(it.body().inputStream().toCertificate())
-    }
+  private fun get(path: String): CertificateAuthorityDto = httpClient.send(HttpBRequest.get().urlPath(path).withoutPayload()).let {
+    return CertificateAuthorityDto(it.body().inputStream().toCertificate())
+  }
 
   companion object {
     @JvmStatic

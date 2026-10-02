@@ -1,12 +1,5 @@
 include::../attributes-sections.adoc[]
 
-:bricks-fhir: pass:c,q[`fhir-bricks`]
-:brick-fhir-coding-system: pass:c,q[`fhir-coding-system-brick`]
-:brick-fhir-builder: pass:c,q[`fhir-builder-brick`]
-:brick-fhir-conf: pass:c,q[`fhir-configurator-brick`]
-:brick-fhir-codec: pass:c,q[`fhir-codec-brick`]
-:brick-fhir-validation: pass:c,q[`fhir-validation-brick`]
-
 :module-basis-de: pass:c,q[`fhir-de-basisprofil-r4-brick`]
 :package-basis-de: Basisprofil DE (R4)
 :package-kbv-erp: KBV E-Rezept

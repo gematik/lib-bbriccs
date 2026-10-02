@@ -1,0 +1,42 @@
+include::fhir-commons.adoc[]
+
+[#fhir-smaps-transformation-brick]
+== FHIR StructureMaps Transformation Brick
+
+The FHIR StructureMaps Transformation Brick provides a mechanism to:
+
+* Parse rulesets defined in FHIR StructureMaps and convert them into executable transformation rules
+* Expose a simple, user-friendly API for transforming FHIR resources from one structure to another using the generated rules
+
+=== Key Concepts
+
+Understanding FHIR StructureMaps requires familiarity with the following core concepts. For comprehensive details, refer to the link:https://hl7.org/fhir/R4/structuremap.html[HL7 FHIR StructureMap specification].
+
+**Unidirectional Mapping**::
+Maps strictly from a source structure to a target structure. Note that a reverse mapping is not automatically implied; separate StructureMaps would be needed for bidirectional transformations.
+
+**StructureDefinition Base**::
+The transformation assumes both source and target models are fully and formally defined using FHIR StructureDefinition resources or logical models. These definitions serve as the contract between input and output.
+
+=== Architecture Overview
+
+[plantuml, "{pumldir}/fhir-smap-transformer-brick", svg]
+.FHIR-StructureMap-Transformer-Brick
+----
+include::{pumldir}/common-style.iuml[]
+include::{pumldir}/fhir-bricks.iuml[]
+include::{pumldir}/fhir-smap-transformer-brick.puml[]
+----
+
+=== Use Cases
+
+The FHIR StructureMaps Transformation Brick is designed for the following scenarios:
+
+* **E-Rezept to ePA Transformation**: Converting E-Rezept FHIR resources to ePA FHIR resources and vice versa
+* **E-Rezept to T-Prescription Transformation**: Converting E-Rezept FHIR resources to T-Prescription FHIR resources required by the BfArM T-Register as specified by the https://gemspec.gematik.de/ig/fhir/tiflow-bfarm/2.0.0-ballot.1/StructureMap-ERPTPrescriptionStructureMapCarbonCopy.html[E-T-Rezept Structure Map for Carbon Copy]
+* **Future Mappings**: Any future use cases where formal mappings between different FHIR resource structures are required and defined by StructureMaps
+
+
+=== Further Reading
+
+* link:https://hl7.org/fhir/R4/structuremap.html[HL7 FHIR StructureMap Specification] - Official FHIR specification for the StructureMap resource, including detailed semantics of the FHIR Mapping Language (FML)

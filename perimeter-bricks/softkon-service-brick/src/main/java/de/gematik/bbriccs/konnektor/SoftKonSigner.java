@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,14 +28,15 @@ import de.gematik.bbriccs.konnektor.utils.OcspTokenGenerator;
 import de.gematik.bbriccs.smartcards.*;
 import eu.europa.esig.dss.cades.CAdESSignatureParameters;
 import eu.europa.esig.dss.cades.signature.CAdESService;
-import eu.europa.esig.dss.cades.signature.CMSSignedDocument;
+import eu.europa.esig.dss.cms.CMSBuilder;
+import eu.europa.esig.dss.cms.CMSSignedDocument;
+import eu.europa.esig.dss.cms.CMSUtils;
 import eu.europa.esig.dss.enumerations.*;
 import eu.europa.esig.dss.model.InMemoryDocument;
-import eu.europa.esig.dss.spi.x509.CMSSignedDataBuilder;
+import eu.europa.esig.dss.spi.validation.CommonCertificateVerifier;
 import eu.europa.esig.dss.spi.x509.revocation.ocsp.OCSPToken;
 import eu.europa.esig.dss.token.DSSPrivateKeyEntry;
 import eu.europa.esig.dss.token.Pkcs12SignatureToken;
-import eu.europa.esig.dss.validation.CommonCertificateVerifier;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.Collections;
@@ -99,8 +100,9 @@ public class SoftKonSigner {
     val signedDocument =
         (CMSSignedDocument) cades.signDocument(inMemDocument, signParams, signatureValue);
     if (!ocspTokens.isEmpty()) {
-      val cmsSignedDataBuilder = new CMSSignedDataBuilder();
-      cmsSignedDataBuilder.setOriginalCMSSignedData(signedDocument.getCMSSignedData());
+      val cmsSignedDataBuilder = new CMSBuilder();
+      val originalCms = CMSUtils.parseToCMS(signedDocument.getCMSSignedData().getEncoded());
+      cmsSignedDataBuilder.setOriginalCMS(originalCms);
       val cms =
           cmsSignedDataBuilder.extendCMSSignedData(
               Collections.emptyList(), Collections.emptyList(), ocspTokens);

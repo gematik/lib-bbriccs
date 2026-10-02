@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,6 +58,11 @@ public class ATC extends SemanticValue<String, DeBasisProfilCodeSystem> {
 
   public static ATC from(String code) {
     return from(code, null);
+  }
+
+  @Override
+  public Coding asCoding() {
+    return super.asCoding().setVersion(version).setDisplay(display);
   }
 
   public Optional<String> getDisplay() {

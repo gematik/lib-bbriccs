@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,10 +38,9 @@ data class PoppTokenGeneratorConfiguration @JsonCreator constructor(
   @JsonProperty("iss")
   val iss: String,
 ) : BaseConfigurationDto {
-  fun loadKeyStore(type: String = KeyStore.getDefaultType()): KeyStore =
-    KeyStore.getInstance(type).apply {
-      ResourceLoader.getFileFromResourceAsStream(keyStorePath).use { input ->
-        load(input, keyStorePassword)
-      }
+  fun loadKeyStore(type: String = KeyStore.getDefaultType()): KeyStore = KeyStore.getInstance(type).apply {
+    ResourceLoader.getFileFromResourceAsStream(keyStorePath).use { input ->
+      load(input, keyStorePassword)
     }
+  }
 }

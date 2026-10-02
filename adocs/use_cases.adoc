@@ -1,0 +1,38 @@
+[#section_bricks_use_cases]
+== Use Cases
+
+The core objective of {bbriccs-wordmark} is to create a modular toolkit for more efficient development of applications for the German healthcare system.
+
+image::bricks_overview.png[align=center]
+
+Within {bbriccs-wordmark}, the core modules are referred to as a `brick`. Each `brick` is a small, reusable component that solves a common problem. A group of such components, which together can solve a larger problem, are simply called `bricks`. This documentation follows this pattern and presents each group of `bricks` individually.
+
+This section demonstrates how the {bbriccs-wordmark} components work together to solve real-world challenges in the German healthcare landscape. Rather than looking at modules in isolation, these scenarios show the "architectural recipes" for building standardized, reusable software components.
+
+=== Scenario: Developing a Unified Service Client for FHIR-based REST APIs
+
+This is the most common use case for {bbriccs-wordmark}, specifically when developers need to interact with healthcare services that use the FHIR (Fast Healthcare Interoperability Resources) standard over RESTful interfaces.
+
+==== The Objective
+To create a reusable, domain-specific client that encapsulates complex FHIR data models and HTTP communication logic. The goal is to provide a clean, high-level API for test suites or other applications, hiding the underlying technical complexity of REST/FHIR.
+
+==== The Brick Stack
+To implement this pattern, the following modules are used in tandem:
+
+* {bricks-restful}
+* {bricks-fhir}
+
+==== The Workflow
+The implementation follows a layered architectural approach:
+
+1.  **Domain Modeling:** Use {bricks-fhir} to define the specific healthcare resources and data structures required by the service's domain logic.
+2.  **Abstraction Layer Implementation:** Leverage {bricks-restful} to implement the transport layer. This involves using the `{bricks-rest-client-api}` to handle HTTP methods, headers, and request/response lifecycles.
+3.  **Encapsulation:** Wrap the technical details (URL construction, JSON parsing, FHIR resource serialization) inside a domain-specific Client class. 
+4.  **Consumption:** The end-user (e.g., a developer writing a test suite) interacts only with the high-level Client API, passing simple parameters and receiving strongly-typed domain objects.
+
+==== Challenges Overcome
+By adopting this pattern, developers avoid the following historical "pain points":
+
+* **Elimination of Library Fragmentation:** Developers no longer need to manage multiple, competing REST or FHIR libraries across different projects.
+* **Reduction of Redundant Effort:** Common challenges such as error handling, and resource parsing and validation are solved once within the `bricks` architecture and reused everywhere.
+* **Standardized Implementation:** Every new service client follows a predictable, concise pattern, making it easy for engineers to move between different healthcare projects within {orgname} without retraining.

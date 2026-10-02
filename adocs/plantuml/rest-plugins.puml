@@ -3,7 +3,7 @@ interface HttpBClient
 class BasicHttpClient
 
 interface RequestHeaderProvider {
-  + forRequest(HttpBRequest request): HttpHeader
+  + forRequest(HttpBRequest request): List<HttpHeader>
 }
 
 interface HttpBObserver {
@@ -11,7 +11,12 @@ interface HttpBObserver {
   + onResponse(HttpBResponse response)
 }
 
-BasicHttpClient -u-|> HttpBClient
+class XRequestIdProvider {
+  + forRequest(HttpBRequest request): List<HttpHeader>
+}
+
+BasicHttpClient .u.|> HttpBClient
 BasicHttpClient *-l-> RequestHeaderProvider
 BasicHttpClient *-r-> HttpBObserver
+XRequestIdProvider .u.|> RequestHeaderProvider
 @enduml

@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 gematik GmbH
+ * Copyright (Change Date see Readme) gematik GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@
  */
 
 package de.gematik.bbriccs.smartcards;
+
+import static java.text.MessageFormat.format;
 
 import de.gematik.bbriccs.crypto.CryptoSystem;
 import de.gematik.bbriccs.crypto.certificate.CertificateTypeOid;
@@ -111,5 +113,14 @@ public class DummyEgk implements Egk {
   @Override
   public LocalDate getInsuranceStartDate() {
     return LocalDate.now();
+  }
+
+  @Override
+  public String toString() {
+    val id =
+        Optional.ofNullable(this.getKvnr())
+            .map(it -> "kvnr=" + it)
+            .orElseGet(() -> "iccsn=" + this.getIccsn());
+    return format("Smartcard {0} [{1}]", this.getType(), id);
   }
 }
