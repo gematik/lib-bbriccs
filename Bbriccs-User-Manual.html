@@ -8,7 +8,7 @@
 <meta name="application-name" content="Bbriccs">
 <meta name="description" content="Bbriccs provides reusable and independent building blocks for flexible, clean and maintainable test suites.">
 <meta name="author" content="gematik GmbH">
-<meta name="copyright" content="2025 by gematik GmbH, Berlin">
+<meta name="copyright" content="2026 by gematik GmbH, Berlin">
 <title>Bbriccs</title>
 <style>
 /*
@@ -314,16 +314,27 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 <h1>B<sup>2</sup>ric<sup>2</sup>s</h1>
 <div class="details">
 <span id="author" class="author">gematik GmbH</span><br>
-<span id="revnumber">version 0.7.0,</span>
-<span id="revdate">2025-07-07</span>
+<span id="revnumber">version 0.12.1,</span>
+<span id="revdate">2026-10-02</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Contents</div>
 <ul class="sectlevel1">
 <li><a href="#_scope">Scope</a>
 <ul class="sectlevel2">
+<li><a href="#_strategic_impact_roi">Strategic Impact &amp; ROI</a>
+<ul class="sectlevel3">
+<li><a href="#_reduction_in_total_cost_of_ownership_tco">Reduction in Total Cost of Ownership (TCO)</a></li>
+<li><a href="#_risk_mitigation_compliance">Risk Mitigation &amp; Compliance</a></li>
+<li><a href="#_sustainable_testsuite_development">Sustainable Testsuite Development</a></li>
+</ul>
+</li>
 <li><a href="#_acronym">Acronym</a></li>
-<li><a href="#_bricks">Bricks</a></li>
+<li><a href="#section_bricks_use_cases">Use Cases</a>
+<ul class="sectlevel3">
+<li><a href="#_scenario_developing_a_unified_service_client_for_fhir_based_rest_apis">Scenario: Developing a Unified Service Client for FHIR-based REST APIs</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#_restful_bricks">RESTful-Bricks</a>
@@ -367,6 +378,21 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 <li><a href="#tutorial_validation_disabled">Disable FHIR Validation</a></li>
 </ul>
 </li>
+<li><a href="#fhir-smaps-transformation-brick">FHIR StructureMaps Transformation Brick</a>
+<ul class="sectlevel3">
+<li><a href="#_key_concepts">Key Concepts</a></li>
+<li><a href="#_architecture_overview">Architecture Overview</a></li>
+<li><a href="#_use_cases">Use Cases</a></li>
+<li><a href="#_further_reading">Further Reading</a></li>
+</ul>
+</li>
+<li><a href="#fhir-comparator-bricks">FHIR Comparator Bricks</a>
+<ul class="sectlevel3">
+<li><a href="#_design_and_behavior">Design and Behavior</a></li>
+<li><a href="#_architecture_overview_2">Architecture Overview</a></li>
+<li><a href="#_use_cases_2">Use Cases</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#_perimeter_bricks">Perimeter-Bricks</a>
@@ -407,6 +433,30 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 <p>Many products are built for TI, both inside and outside gematik GmbH. Redundant development is hard to avoid. However, the B<sup>2</sup>ric<sup>2</sup>s (<code>briks</code>) is trying to bundle many of the common solutions into a reusable SDK, which promises to significantly reduce development time and costs.</p>
 </div>
 <div class="sect2">
+<h3 id="_strategic_impact_roi"><a class="anchor" href="#_strategic_impact_roi"></a>Strategic Impact &amp; ROI</h3>
+<div class="paragraph">
+<p>The B<sup>2</sup>ric<sup>2</sup>s architecture is designed to move development from a fragmented "silos" model to a unified "platform" model, directly impacting the efficiency of out testsuite development.</p>
+</div>
+<div class="sect3">
+<h4 id="_reduction_in_total_cost_of_ownership_tco"><a class="anchor" href="#_reduction_in_total_cost_of_ownership_tco"></a>Reduction in Total Cost of Ownership (TCO)</h4>
+<div class="paragraph">
+<p>Historically, each new testsuite implementation required a bespoke approach to REST and FHIR integration, leading to significant redundant engineering effort across different teams. B<sup>2</sup>ric<sup>2</sup>s eliminates this "redundancy tax" by providing pre-verified, reusable components. Developers focus on domain logic rather than re-implementing transport layers.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_risk_mitigation_compliance"><a class="anchor" href="#_risk_mitigation_compliance"></a>Risk Mitigation &amp; Compliance</h4>
+<div class="paragraph">
+<p>In the regulated landscape of German healthcare, security and protocol compliance are paramount. By centralizing the implementation of critical communication patterns (e.g., authentication, FHIR resource handling) within verified bricks, we reduce the risk of implementation errors and ensure that security improvements applied to a single brick automatically benefit all downstream services.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_sustainable_testsuite_development"><a class="anchor" href="#_sustainable_testsuite_development"></a>Sustainable Testsuite Development</h4>
+<div class="paragraph">
+<p>The use of "Architectural Recipes" (as detailed in the <a href="#section_bricks_use_cases">Use Cases section</a>) establishes a foundation for long-term reusability and maintainability in testsuite design. By composing testsuites from proven, modular bricks, teams create robust testing frameworks that are easier to sustain and extend over time, reducing technical debt and supporting consistent quality assurance practices across the platform.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_acronym"><a class="anchor" href="#_acronym"></a>Acronym</h3>
 <div class="paragraph">
 <p>While B<sup>2</sup>ric<sup>2</sup>s is just the word mark and is rather cumbersome in everyday use,
@@ -427,7 +477,7 @@ the following uses are recommended depending on the situation:</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_bricks"><a class="anchor" href="#_bricks"></a>Bricks</h3>
+<h3 id="section_bricks_use_cases"><a class="anchor" href="#section_bricks_use_cases"></a>Use Cases</h3>
 <div class="paragraph">
 <p>The core objective of B<sup>2</sup>ric<sup>2</sup>s is to create a modular toolkit for more efficient development of applications for the German healthcare system.</p>
 </div>
@@ -438,6 +488,78 @@ the following uses are recommended depending on the situation:</p>
 </div>
 <div class="paragraph">
 <p>Within B<sup>2</sup>ric<sup>2</sup>s, the core modules are referred to as a <code>brick</code>. Each <code>brick</code> is a small, reusable component that solves a common problem. A group of such components, which together can solve a larger problem, are simply called <code>bricks</code>. This documentation follows this pattern and presents each group of <code>bricks</code> individually.</p>
+</div>
+<div class="paragraph">
+<p>This section demonstrates how the B<sup>2</sup>ric<sup>2</sup>s components work together to solve real-world challenges in the German healthcare landscape. Rather than looking at modules in isolation, these scenarios show the "architectural recipes" for building standardized, reusable software components.</p>
+</div>
+<div class="sect3">
+<h4 id="_scenario_developing_a_unified_service_client_for_fhir_based_rest_apis"><a class="anchor" href="#_scenario_developing_a_unified_service_client_for_fhir_based_rest_apis"></a>Scenario: Developing a Unified Service Client for FHIR-based REST APIs</h4>
+<div class="paragraph">
+<p>This is the most common use case for B<sup>2</sup>ric<sup>2</sup>s, specifically when developers need to interact with healthcare services that use the FHIR (Fast Healthcare Interoperability Resources) standard over RESTful interfaces.</p>
+</div>
+<div class="sect4">
+<h5 id="_the_objective"><a class="anchor" href="#_the_objective"></a>The Objective</h5>
+<div class="paragraph">
+<p>To create a reusable, domain-specific client that encapsulates complex FHIR data models and HTTP communication logic. The goal is to provide a clean, high-level API for test suites or other applications, hiding the underlying technical complexity of REST/FHIR.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_the_brick_stack"><a class="anchor" href="#_the_brick_stack"></a>The Brick Stack</h5>
+<div class="paragraph">
+<p>To implement this pattern, the following modules are used in tandem:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>restful-bricks</code></p>
+</li>
+<li>
+<p><code>fhir-bricks</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_the_workflow"><a class="anchor" href="#_the_workflow"></a>The Workflow</h5>
+<div class="paragraph">
+<p>The implementation follows a layered architectural approach:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Domain Modeling:</strong> Use <code>fhir-bricks</code> to define the specific healthcare resources and data structures required by the service&#8217;s domain logic.</p>
+</li>
+<li>
+<p><strong>Abstraction Layer Implementation:</strong> Leverage <code>restful-bricks</code> to implement the transport layer. This involves using the <code><code>rest-client-api-brick</code></code> to handle HTTP methods, headers, and request/response lifecycles.</p>
+</li>
+<li>
+<p><strong>Encapsulation:</strong> Wrap the technical details (URL construction, JSON parsing, FHIR resource serialization) inside a domain-specific Client class.</p>
+</li>
+<li>
+<p><strong>Consumption:</strong> The end-user (e.g., a developer writing a test suite) interacts only with the high-level Client API, passing simple parameters and receiving strongly-typed domain objects.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_challenges_overcome"><a class="anchor" href="#_challenges_overcome"></a>Challenges Overcome</h5>
+<div class="paragraph">
+<p>By adopting this pattern, developers avoid the following historical "pain points":</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Elimination of Library Fragmentation:</strong> Developers no longer need to manage multiple, competing REST or FHIR libraries across different projects.</p>
+</li>
+<li>
+<p><strong>Reduction of Redundant Effort:</strong> Common challenges such as error handling, and resource parsing and validation are solved once within the <code>bricks</code> architecture and reused everywhere.</p>
+</li>
+<li>
+<p><strong>Standardized Implementation:</strong> Every new service client follows a predictable, concise pattern, making it easy for engineers to move between different healthcare projects within gematik GmbH without retraining.</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -619,7 +741,7 @@ Notice how we created two separate clients (<code>assertNotEquals(client1, clien
 <div class="paragraph">
 <p>The <code>rest-client-api-brick</code> defines two different types of plugins following the <a href="https://en.wikipedia.org/wiki/Interface_segregation_principle">Interface Segregation Principle</a>.</p>
 </div>
-<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9oLaTzAmp0Knk_p50UySKfd5PInZZAs2tSXAFe4MNewmjAadgHJqRwxQPkDTLR1X99_NtxV-PgPTHyAKmR0YSmRVFePm3X3OOWx36k01wdnfP5EuJgERfEZxQLHXgPmTfV7ldKdTOUfxFy8STDx15cK2WlKhiVPNuZZlcNpZKjLRQIsuSAWxOABxJsPIcTxKXutFM4_7IQJpg5buxj3qbm5-00d7-OWtlYM_5PIpMPNuINiLkgI4oz0cA8qscTlnK0e7DSRXMnk7ITN5Of9xUl9kK1OELSkbafwEHEAM-kBir8qss7tIFoChnLQjqAU8JsHsKa_jfak8JSKZizRPbXu-tOSJLkhxYghsMa9ZskBj3lGZFuJTj1OdzJYNjIjlAgRZ1gVapWGLT5NsejzghY8L9GEPntGKfJs4x0vwip_v6zOFVg_" /></div></div>
+<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9ojabrBmp0KXk_pAmBUEAMp2ihOHXdRXHC4HM-yZUdf24kJUf9EHVVVJPjih3KAWWabNs-UzvoJJerzbv0HIXcYVgKVRaRfC0UkaLa8QqflXOB7HZgcvsboEJdONcYfSKoFhehKDN-ozPZQ_8sGDhr346KbeGHbEvpTXJJjMZRVi9BrIYWJBaHjvuolhr7NAj-HYhJf4_BTOJJo3YqRtYoWOZB08vmYpW6uS6toKqXRCZqBBs7MGbKCMKcvBYkjNEwjc29mozHA0faPoz3MfIH2kNWAne4khQtc2ocSd739Z7716S6RxR1x87w0bngCNGBB0UzHRuGRsvnEQQ4n71-tpB1mzkqu6BluZPqsP_v-HhQa7yZTim7Sx9bQ_OhSQupBry1Ev5TEvIU3niUdzXG8D_c_1D-hbFjlXvzPfw9znKaYaonUneWMawnR5X99m9l6aJDGkNlkBzWgB7a0" /></div></div>
 <div class="paragraph">
 <p>The <code>RequestHeaderProvider</code> is pretty much self-explanatory, it generates per each single request a dynamic <code>HttpHeader</code>. To demonstrate this kind of plugin, let&#8217;s implement a simple <code>XRequestIdProvider</code>:</p>
 </div>
@@ -627,9 +749,9 @@ Notice how we created two separate clients (<code>assertNotEquals(client1, clien
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> <span class="type">class</span> <span class="class">XRequestIdProvider</span> <span class="directive">implements</span> RequestHeaderProvider {
   <span class="annotation">@Override</span>
-  <span class="directive">public</span> HttpHeader forRequest(HttpBRequest request) {
+  <span class="directive">public</span> <span class="predefined-type">List</span>&lt;HttpHeader&gt; forRequest(HttpBRequest request) {
     val xReqId = <span class="predefined-type">UUID</span>.randomUUID().toString();
-    <span class="keyword">return</span> <span class="keyword">new</span> HttpHeader(<span class="string"><span class="delimiter">&quot;</span><span class="content">x-request-id</span><span class="delimiter">&quot;</span></span>, xReqId);
+    <span class="keyword">return</span> <span class="predefined-type">List</span>.of(<span class="keyword">new</span> HttpHeader(<span class="string"><span class="delimiter">&quot;</span><span class="content">x-request-id</span><span class="delimiter">&quot;</span></span>, xReqId));
   }
 }</code></pre>
 </div>
@@ -1684,7 +1806,7 @@ Instantiating with <code>MedicationBuilder.builder()</code> is just a convention
 <div class="sect2">
 <h3 id="fhir-codec-brick"><a class="anchor" href="#fhir-codec-brick"></a>FHIR Codec Brick</h3>
 <div class="paragraph">
-<p>So far we have only covered the creation and handling of FHIR objects. We have deliberately left out the aspect of serialisation. This is where the <code>fhir-codec-brick</code> comes into action.</p>
+<p>So far we have only covered the creation and handling of FHIR objects. We have deliberately left out the aspect of serialization. This is where the <code>fhir-codec-brick</code> comes into action.</p>
 </div>
 <div class="paragraph">
 <p>A <a href="https://en.wikipedia.org/wiki/Codec">codec</a> is a component that encodes and decodes a data stream or signal. And a <code>FhirCodec</code> in the <code>fhir-bricks</code> ecosystem is a component that can encode and decode FHIR objects.</p>
@@ -2082,6 +2204,136 @@ INFORMATION: Information provided by DummyValidator</code></pre>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="fhir-smaps-transformation-brick"><a class="anchor" href="#fhir-smaps-transformation-brick"></a>FHIR StructureMaps Transformation Brick</h3>
+<div class="paragraph">
+<p>The FHIR StructureMaps Transformation Brick provides a mechanism to:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Parse rulesets defined in FHIR StructureMaps and convert them into executable transformation rules</p>
+</li>
+<li>
+<p>Expose a simple, user-friendly API for transforming FHIR resources from one structure to another using the generated rules</p>
+</li>
+</ul>
+</div>
+<div class="sect3">
+<h4 id="_key_concepts"><a class="anchor" href="#_key_concepts"></a>Key Concepts</h4>
+<div class="paragraph">
+<p>Understanding FHIR StructureMaps requires familiarity with the following core concepts. For comprehensive details, refer to the <a href="https://hl7.org/fhir/R4/structuremap.html">HL7 FHIR StructureMap specification</a>.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Unidirectional Mapping</strong></dt>
+<dd>
+<p>Maps strictly from a source structure to a target structure. Note that a reverse mapping is not automatically implied; separate StructureMaps would be needed for bidirectional transformations.</p>
+</dd>
+<dt class="hdlist1"><strong>StructureDefinition Base</strong></dt>
+<dd>
+<p>The transformation assumes both source and target models are fully and formally defined using FHIR StructureDefinition resources or logical models. These definitions serve as the contract between input and output.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_architecture_overview"><a class="anchor" href="#_architecture_overview"></a>Architecture Overview</h4>
+<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9ojb55lqp0Gnz_pAKxZPS1IqacCaKPXK0WWhQZQ-iAZcrn2M697jZCseNvtpaxI9YMb8E6eQcBV_SxtlxC3fHyB31q09gNu0J_f3M2IO2maqzX-0rpd76-DgGzJptqvwqtFHI6a3qykKez6ix9fCBNwDu9ddW4XBwi2I-HwmEaSF6yOqlmcLL5dELUjmsZOToo--oX5pPEEb7hccJc_HxYyR29ODZveb9mLBNo4auvp4Czfp0vjQUC4BzfAgBkSLqoo4c9HLe9JxjOO9CQQyQn09zWMZOkaKtX25TkfFPfXYZZKQXlXBnaN7dizVRMdDq5AmGygCbspAPxFTjOypRE3rb7qVlfXNv8hfPdKTLauJbmmfU1MophMjSG5gzHACgvI8KkK4Okra8yG1ErR6Df8ps5TvqKI2NdAMKcw4o3dsLF_8CdPZCQQsztNT3JoDcMNXetG1zk9UvIAh0PpHjyb9SsoeMsUtQ0IjOnfLNyRBDMos7wFRwgtxJRRO0K-TCGGT6TmsimedtfGwM1hSGRuK55xOJ8tU1_iNx0AIQ7L_oMUGSLqJ2akJOyZ7IVrnaQXtCJwExb0so9CmSb0xnERtTUtY-lMfAj3cjEXsFchabNMkwzIunnz-dmp48zELPk1kG8LV5akQ8EsG8PuhD6UkMxufmxngHNf4Wp3eoHNxfFwPJMSM2BToFkeOJmt8KeZpb4p8vFZN25Fw6Jz0jP6wF00" /></div></div>
+</div>
+<div class="sect3">
+<h4 id="_use_cases"><a class="anchor" href="#_use_cases"></a>Use Cases</h4>
+<div class="paragraph">
+<p>The FHIR StructureMaps Transformation Brick is designed for the following scenarios:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>E-Rezept to ePA Transformation</strong>: Converting E-Rezept FHIR resources to ePA FHIR resources and vice versa</p>
+</li>
+<li>
+<p><strong>E-Rezept to T-Prescription Transformation</strong>: Converting E-Rezept FHIR resources to T-Prescription FHIR resources required by the BfArM T-Register as specified by the <a href="https://gemspec.gematik.de/ig/fhir/tiflow-bfarm/2.0.0-ballot.1/StructureMap-ERPTPrescriptionStructureMapCarbonCopy.html">E-T-Rezept Structure Map for Carbon Copy</a></p>
+</li>
+<li>
+<p><strong>Future Mappings</strong>: Any future use cases where formal mappings between different FHIR resource structures are required and defined by StructureMaps</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_further_reading"><a class="anchor" href="#_further_reading"></a>Further Reading</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://hl7.org/fhir/R4/structuremap.html">HL7 FHIR StructureMap Specification</a> - Official FHIR specification for the StructureMap resource, including detailed semantics of the FHIR Mapping Language (FML)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="fhir-comparator-bricks"><a class="anchor" href="#fhir-comparator-bricks"></a>FHIR Comparator Bricks</h3>
+<div class="paragraph">
+<p>The FHIR Comparator Bricks provide a mechanism to compare FHIR resources and identify differences between them. This is especially useful when comparing transformations, ensuring data integrity, or finding changes of different transformation engines.</p>
+</div>
+<div class="paragraph">
+<p>Manual comparison is tedious and error-prone, particularly for complex FHIR resources with deeply nested structures. Automated comparison helps reduce this effort and improves consistency.</p>
+</div>
+<div class="sect3">
+<h4 id="_design_and_behavior"><a class="anchor" href="#_design_and_behavior"></a>Design and Behavior</h4>
+<div class="paragraph">
+<p>The comparator is designed to be extensible so that additional comparison strategies can be introduced when needed.</p>
+</div>
+<div class="paragraph">
+<p>The brick set currently consists of the following modules:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>fhir-comparator-api-brick</code> defines the core interfaces and contracts for comparison operations</p>
+</li>
+<li>
+<p><code>fhir-comparator-fhirpatch-brick</code> implements comparison logic based on the FHIR Patch standard and enables detailed, structured comparison of FHIR resources</p>
+</li>
+<li>
+<p><code>fhir-comparator-jsondiff-brick</code> implements comparison logic based on JSON Diff and provides a lighter-weight comparison approach for FHIR resources in JSON format</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In most cases, the consumer decides beforehand which comparison strategy to use. As long as the selected strategy is accessed only through the shared interface, the implementation can be exchanged later without requiring changes in the consumer code. This makes it easier to compare strategies during testing and experimentation.</p>
+</div>
+<div class="paragraph">
+<p>The comparison result is represented as a <a href="https://build.fhir.org/parameters-definitions.html">FHIR Parameters resource</a> containing the list of differences between the source and target resources. This output format is identical to the FHIR Patch standard implemented by HAPI. An empty <code>Parameters</code> resource indicates that the compared resources are identical. If the <code>Parameters</code> resource contains entries, differences were detected and can be analyzed by the consumer.</p>
+</div>
+<div class="paragraph">
+<p>The two implementations, <code>fhir-comparator-fhirpatch-brick</code> and <code>fhir-comparator-jsondiff-brick</code>, may produce different results for the same source and target resources because they use different algorithms and heuristics to identify differences. However, if both compared resources are identical, both implementations produce an empty <code>Parameters</code> resource.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_architecture_overview_2"><a class="anchor" href="#_architecture_overview_2"></a>Architecture Overview</h4>
+<div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9ojb6rlqp0Gnz_xKvp4co5eIOSO8usgiOq24myJ8DvVaqjdvjYHxMX3gD-TivEcwvPEFCnHfTW-_-xl_rsQEVzJqKm0eBNc2dxn6y2ueDnOzDJD0Jv8JLz3Q0gJPFHYUcFvn2XZKtXqK2OysfrLYsdStn6Iy6mHP5KhgaZxBSxwG99ifmo_SQsQfTIkEp2OzXZpoxVMDBfOayeaF5DnDyFXOPiXikdQazMeElW0fnpc4EtpcEwIj1BPiwuIxbBg6YrMa9kgDfhl7eF1KkvHBnM9h2-QDiNQuJ5NREFsu0rBecsl-Wn_o3X8yDNavIs_6L8PlTEHoG8dj3_THEjIBdT6p-UdapUtBJbo7grlAYLuICqbA34d-4BED3PdZwjWc3SsOf_4Qw6bFSnzWohj0vy2NTVi8XMRjSSfd0UtYQbEh8J0XVEMJqAkq3butKq7alMzwNP96K5v8UsPCvfpEBAGmllsxVzrjlBUOItFqUSNDpA79jN5lT9RSLmBpy6iQiuoJzfPtAa3ibkF-B3Auw5ajvRye-mAwpfwUSRjmw3lppylVd3UZt7zmPIQ28rIJsLPVZFzzd4ZLK7hRbk4sLx18MaC_iJVv1tOq8L7QZIx3vz2bl4_w6mcn14xm_t_6zmaoZ00" /></div></div>
+</div>
+<div class="sect3">
+<h4 id="_use_cases_2"><a class="anchor" href="#_use_cases_2"></a>Use Cases</h4>
+<div class="paragraph">
+<p>The FHIR Comparator Bricks are intended for scenarios such as:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Transformation Validation</strong>: A resource is transformed into another representation and the result needs to be checked for correctness</p>
+</li>
+<li>
+<p><strong>Reference Comparison</strong>: A resource is built from scratch and needs to be compared against a reference resource</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>One real project use case is the validation of a carbon copy generated in the context of <a href="https://www.bfarm.de/DE/Bundesopiumstelle/T-Register/_node.html">BfArM T-Register</a>. In parallel, the same input resource can be transformed locally using the same <a href="#fhir-smaps-transformation-brick">FHIR StructureMaps Transformation Brick</a> to create an expected carbon copy resource. In a final step, the Comparator Brick is used to compare the carbon copy generated by the E-Rezept Fachdienst with the locally generated carbon copy. This makes it possible to verify that both transformation results are equivalent and to analyze any detected differences.</p>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -2276,7 +2528,7 @@ Optional&lt;Smartcard&gt; opt = sca.getByICCSN(<span class="string"><span class=
 <h2 id="_configuration_bricks"><a class="anchor" href="#_configuration_bricks"></a>Configuration-Bricks</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Configuration is crucial for most types of software, including test suites. It is a way of adapting the behaviour of the software to different environments, or changing the behaviour of the software without changing the code. Configuration can be done in many ways, for example using environment variables, system properties or configuration files. The <code>configuration-bricks</code> are designed to help you deal with common problems.</p>
+<p>Configuration is crucial for most types of software, including test suites. It is a way of adapting the behavior of the software to different environments, or changing the behavior of the software without changing the code. Configuration can be done in many ways, for example using environment variables, system properties or configuration files. The <code>configuration-bricks</code> are designed to help you deal with common problems.</p>
 </div>
 <div class="sect2">
 <h3 id="conf-feature-toggle-brick"><a class="anchor" href="#conf-feature-toggle-brick"></a>Feature-Toggle</h3>
@@ -2414,7 +2666,7 @@ java -DmyFeature.isActive=false MyApplication
 <p>This is the ideal use case for a user-defined feature toggle.</p>
 </div>
 <div class="paragraph">
-<p><strong>Step 1:</strong> implement an enumaration <code>MyFeatureState</code> to represent the states of the feature toggle.</p>
+<p><strong>Step 1:</strong> implement an enumeration <code>MyFeatureState</code> to represent the states of the feature toggle.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2567,8 +2819,68 @@ java -DmyFeature.state=42 MyApplication
 <div class="sect1">
 <h2 id="_release_notes"><a class="anchor" href="#_release_notes"></a>Appendix A: Release Notes</h2>
 <div class="sectionbody">
-<h3 id="_release_0_5_0" class="discrete">Release 0.5.0</h3>
+<h3 id="_release_0_12_1" class="discrete">Release 0.12.1</h3>
+<h4 id="_fhir_bricks_2" class="discrete">FHIR-Bricks</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Implement <code>fhir-smaps-transformation-brick</code> for automatic transformation of FHIR resources based on StructureMap rulesets</p>
+</li>
+<li>
+<p>Implement <code>fhir-comparator-bricks</code> for comparing FHIR resources automatically based on FHIR rules</p>
+</li>
+<li>
+<p><code>fhir-comparator-api-brick</code> providing a common API for comparing FHIR resources</p>
+</li>
+<li>
+<p><code>fhir-comparator-fhirpatch-brick</code> providing a default implementation based on HAPI&#8217;s FHIR Patch capability</p>
+</li>
+<li>
+<p><code>fhir-comparator-jsondiff-brick</code> providing an alternative lightweight implementation based on JSON-Patch and Jackson libraries</p>
+</li>
+</ul>
+</div>
 <h4 id="_restful_bricks_2" class="discrete">RESTful-Bricks</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Extend <code>RequestHeaderProvider</code> to allow request plugins to provide multiple request headers for outgoing requests</p>
+</li>
+</ul>
+</div>
+<h4 id="_build" class="discrete">Build</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Update Dependencies</p>
+</li>
+<li>
+<p>Upgrade to Java 21</p>
+</li>
+</ul>
+</div>
+<h3 id="_release_0_11_0" class="discrete">Release 0.11.0</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Update from Jackson 2 to Jackson 3</p>
+</li>
+<li>
+<p>Update more critical dependencies to latest versions</p>
+</li>
+</ul>
+</div>
+<h3 id="_release_0_9_0" class="discrete">Release 0.9.0</h3>
+<h4 id="_fhir_bricks_3" class="discrete">FHIR-Bricks</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>Implement <code>PrePopulatedValidationSupportBrick</code> to enable FHIR validation with pre-populated profiles loaded from <code>.tgz</code>-Files.</p>
+</li>
+</ul>
+</div>
+<h3 id="_release_0_5_0" class="discrete">Release 0.5.0</h3>
+<h4 id="_restful_bricks_3" class="discrete">RESTful-Bricks</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -2577,7 +2889,7 @@ java -DmyFeature.state=42 MyApplication
 </ul>
 </div>
 <h3 id="_release_0_4_0" class="discrete">Release 0.4.0</h3>
-<h4 id="_fhir_bricks_2" class="discrete">FHIR-Bricks</h4>
+<h4 id="_fhir_bricks_4" class="discrete">FHIR-Bricks</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -2586,7 +2898,7 @@ java -DmyFeature.state=42 MyApplication
 </ul>
 </div>
 <h3 id="_release_0_2_0" class="discrete">Release 0.2.0</h3>
-<h4 id="_fhir_bricks_3" class="discrete">FHIR-Bricks</h4>
+<h4 id="_fhir_bricks_5" class="discrete">FHIR-Bricks</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -2603,7 +2915,7 @@ java -DmyFeature.state=42 MyApplication
 </ul>
 </div>
 <h3 id="_release_0_1_10" class="discrete">Release 0.1.10</h3>
-<h4 id="_fhir_bricks_4" class="discrete">FHIR-Bricks</h4>
+<h4 id="_fhir_bricks_6" class="discrete">FHIR-Bricks</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -2611,7 +2923,7 @@ java -DmyFeature.state=42 MyApplication
 </li>
 </ul>
 </div>
-<h4 id="_restful_bricks_3" class="discrete">RESTful-Bricks</h4>
+<h4 id="_restful_bricks_4" class="discrete">RESTful-Bricks</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -2640,7 +2952,7 @@ java -DmyFeature.state=42 MyApplication
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.7.0<br>
+Version 0.12.1<br>
 </div>
 </div>
 </body>
