@@ -50,13 +50,13 @@ de.gematik.bbriccs.idp.data
 de.gematik.bbriccs.idp.exception
 de.gematik.bbriccs.idp.factory
 de.gematik.bbriccs.idp.request
+de.gematik.bbriccs.jwt
 de.gematik.bbriccs.konnektor
 de.gematik.bbriccs.konnektor.cfg
 de.gematik.bbriccs.konnektor.exceptions
 de.gematik.bbriccs.konnektor.requests
 de.gematik.bbriccs.konnektor.requests.options
 de.gematik.bbriccs.konnektor.utils
-de.gematik.bbriccs.konnektor.vsdm
 de.gematik.bbriccs.rest
 de.gematik.bbriccs.rest.exceptions
 de.gematik.bbriccs.rest.fd
@@ -81,5 +81,9 @@ de.gematik.bbriccs.smartcards.exceptions
 de.gematik.bbriccs.toggle
 de.gematik.bbriccs.utils
 de.gematik.bbriccs.vsdm
+de.gematik.bbriccs.vsdm.cfg
 de.gematik.bbriccs.vsdm.exceptions
 de.gematik.bbriccs.vsdm.types
+de.gematik.bbriccs.vsdm.utils
+de.gematik.ws.fa.vsds
+de.gematik.ws.fa.vsds.runtime
