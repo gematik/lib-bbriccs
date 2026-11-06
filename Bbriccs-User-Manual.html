@@ -314,8 +314,8 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 <h1>B<sup>2</sup>ric<sup>2</sup>s</h1>
 <div class="details">
 <span id="author" class="author">gematik GmbH</span><br>
-<span id="revnumber">version 0.12.1,</span>
-<span id="revdate">2026-10-02</span>
+<span id="revnumber">version 0.13.0,</span>
+<span id="revdate">2026-11-06</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Contents</div>
@@ -743,7 +743,7 @@ Notice how we created two separate clients (<code>assertNotEquals(client1, clien
 </div>
 <div class="imageblock"><div class="content"><img class="plantuml" src="https://plantuml.gematik.solutions/plantuml/png/U9ojabrBmp0KXk_pAmBUEAMp2ihOHXdRXHC4HM-yZUdf24kJUf9EHVVVJPjih3KAWWabNs-UzvoJJerzbv0HIXcYVgKVRaRfC0UkaLa8QqflXOB7HZgcvsboEJdONcYfSKoFhehKDN-ozPZQ_8sGDhr346KbeGHbEvpTXJJjMZRVi9BrIYWJBaHjvuolhr7NAj-HYhJf4_BTOJJo3YqRtYoWOZB08vmYpW6uS6toKqXRCZqBBs7MGbKCMKcvBYkjNEwjc29mozHA0faPoz3MfIH2kNWAne4khQtc2ocSd739Z7716S6RxR1x87w0bngCNGBB0UzHRuGRsvnEQQ4n71-tpB1mzkqu6BluZPqsP_v-HhQa7yZTim7Sx9bQ_OhSQupBry1Ev5TEvIU3niUdzXG8D_c_1D-hbFjlXvzPfw9znKaYaonUneWMawnR5X99m9l6aJDGkNlkBzWgB7a0" /></div></div>
 <div class="paragraph">
-<p>The <code>RequestHeaderProvider</code> is pretty much self-explanatory, it generates per each single request a dynamic <code>HttpHeader</code>. To demonstrate this kind of plugin, let&#8217;s implement a simple <code>XRequestIdProvider</code>:</p>
+<p>The <code>HttpBRequestCustomizer</code> is pretty much self-explanatory, it generates per each single request a dynamic <code>HttpHeader</code>. To demonstrate this kind of plugin, let&#8217;s implement a simple <code>XRequestIdProvider</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -757,7 +757,7 @@ Notice how we created two separate clients (<code>assertNotEquals(client1, clien
 </div>
 </div>
 <div class="paragraph">
-<p>A slightly more complex example of a useful <code>RequestHeaderProvider</code> is the <code>smartcard-idp-plugin-brick</code> which can provide dynamic Header for the JWT Bearer Token from the smartcard IDP.</p>
+<p>A slightly more complex example of a useful <code>HttpBRequestCustomizer</code> is the <code>smartcard-idp-plugin-brick</code> which can provide dynamic Header for the JWT Bearer Token from the smartcard IDP.</p>
 </div>
 <div class="paragraph">
 <p>The other type of plugin is the <code>HttpBObserver</code>, which is heavily inspired by the <a href="https://en.wikipedia.org/wiki/Observer_pattern">Observer Pattern</a>. This type of plugin is particularly useful when it comes to analysing or reporting on http traffic. To demonstrate this kind of plugin, let&#8217;s implement a simple <code>HttpRecorder</code>:</p>
@@ -2844,7 +2844,7 @@ java -DmyFeature.state=42 MyApplication
 <div class="ulist">
 <ul>
 <li>
-<p>Extend <code>RequestHeaderProvider</code> to allow request plugins to provide multiple request headers for outgoing requests</p>
+<p>Extend <code>HttpBRequestCustomizer</code> to allow request plugins to provide multiple request headers for outgoing requests</p>
 </li>
 </ul>
 </div>
@@ -2952,7 +2952,7 @@ java -DmyFeature.state=42 MyApplication
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.12.1<br>
+Version 0.13.0<br>
 </div>
 </div>
 </body>
