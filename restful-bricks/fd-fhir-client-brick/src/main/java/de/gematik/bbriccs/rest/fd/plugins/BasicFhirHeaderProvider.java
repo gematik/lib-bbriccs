@@ -22,13 +22,14 @@ package de.gematik.bbriccs.rest.fd.plugins;
 
 import de.gematik.bbriccs.rest.fd.FhirBRequest;
 import de.gematik.bbriccs.rest.headers.HttpHeader;
+import de.gematik.bbriccs.rest.plugins.HttpBRequestCustomizer;
 import java.util.function.Supplier;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.hl7.fhir.r4.model.Resource;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class BasicFhirHeaderProvider implements FhirRequestHeaderProvider {
+public class BasicFhirHeaderProvider implements FhirRequestHeaderCustomizer {
 
   private final Supplier<HttpHeader> httpHeaderSupplier;
 
@@ -42,8 +43,7 @@ public class BasicFhirHeaderProvider implements FhirRequestHeaderProvider {
    * HttpHeader>} to be able to generate dynamic HttpHeaders depending on the FhirRequest.
    *
    * <p>Attention: if you are trying to set some sort of generic HttpHeader not related to FHIR, you
-   * should consider using the {@link de.gematik.bbriccs.rest.plugins.RequestHeaderProvider} on the
-   * underlying REST transport.
+   * should consider using the {@link HttpBRequestCustomizer} on the underlying REST transport.
    *
    * @param httpHeaderSupplier to be performed
    * @return an HttpHeader

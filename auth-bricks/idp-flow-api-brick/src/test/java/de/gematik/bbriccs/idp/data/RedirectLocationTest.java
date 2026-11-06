@@ -23,6 +23,7 @@ package de.gematik.bbriccs.idp.data;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.google.common.base.Strings;
+import de.gematik.bbriccs.idp.exception.AuthException;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
@@ -41,7 +42,8 @@ class RedirectLocationTest {
             &code_challenge=68ZyxMleyK0WroN7IbS91B07kKc1IhLonk1_C5AbSLU\
             &code_challenge_method=S256\
             &state=bYvbvd5qFYUHPwBotBXGslFPWy1uAwVpt54bgEHTZDZ8isj4rVh9eL2nVfcxp7Im
-            """;
+            """
+            .trim();
 
     val redirect = assertDoesNotThrow(() -> SmartcardIdpRedirect.from(input));
     assertDoesNotThrow(redirect::getBaseUrl);
@@ -70,16 +72,19 @@ class RedirectLocationTest {
             ?client_id=https%3A%2F%2Fe4a-ru.deine-epa.de\
             &request_uri=urn%3Ahttps%3A%2F%2Fe4a-ru.deine-epa.de%3Aebafa5847adfd7b3\
             &state=c2VTWGNDb3VxRFB0NG5ZenY5VEFKdWlPUkNiTFZRNEdmVnd5WkZqejAwUmhpQ1ljN0FOYW1yZmh5WDNPQlFtNw\
-            """;
+            """
+            .trim();
 
     val redirect = assertDoesNotThrow(() -> AuthRequestRedirect.from(input));
     assertDoesNotThrow(redirect::getBaseUrl);
     assertDoesNotThrow(redirect::getRelativePath);
 
     assertEquals("https://e4a-ru.deine-epa.de", redirect.getClientId().value());
+
+    assertTrue(redirect.getState().isPresent());
     assertEquals(
         "c2VTWGNDb3VxRFB0NG5ZenY5VEFKdWlPUkNiTFZRNEdmVnd5WkZqejAwUmhpQ1ljN0FOYW1yZmh5WDNPQlFtNw",
-        redirect.getState().value());
+        redirect.getState().get().value());
     assertEquals(
         "urn:https://e4a-ru.deine-epa.de:ebafa5847adfd7b3", redirect.getRequestUri().value());
   }
@@ -94,12 +99,35 @@ class RedirectLocationTest {
             &amr_value=urn%3Atelematik%3Aauth%3AeGK\
             &acr_value=gematik-ehealth-loa-high\
             &selected_claims=urn%3Atelematik%3Aclaims%3Aprofession+urn%3Atelematik%3Aclaims%3Aid+urn%3Atelematik%3Aclaims%3Aorganization+urn%3Atelematik%3Aclaims%3Adisplay_name
-            """;
+            """
+            .trim();
 
     val redirect = assertDoesNotThrow(() -> RedirectLocation.asGenericRedirect(input));
     val url = assertDoesNotThrow(redirect::getBaseUrl);
     val path = assertDoesNotThrow(redirect::getRelativePath);
+    val toString = assertDoesNotThrow(redirect::toString);
     assertFalse(Strings.isNullOrEmpty(url));
     assertFalse(Strings.isNullOrEmpty(path));
+    assertFalse(Strings.isNullOrEmpty(toString));
+  }
+
+  @Test
+  void shouldThrowOnMissingQueryParam() {
+    val input =
+        """
+            https://gsi-ref.dev.gematik.solutions/auth\
+            ?error_id=some_custom_error_id
+            """
+            .trim();
+    val redirect = assertDoesNotThrow(() -> RedirectLocation.asGenericRedirect(input));
+    val ex = assertThrows(AuthException.class, () -> redirect.getQueryParamOrThrow("request_uri"));
+    assertTrue(ex.getMessage().contains("some_custom_error_id"));
+  }
+
+  @Test
+  void shouldThrowOnInvalidUrl() {
+    val input = "gsi-ref.dev.gematik.solutions/auth";
+    val ex = assertThrows(AuthException.class, () -> RedirectLocation.asGenericRedirect(input));
+    assertTrue(ex.getMessage().contains("Invalid URL"));
   }
 }

@@ -22,7 +22,7 @@ package de.gematik.bbriccs.rest;
 
 import de.gematik.bbriccs.rest.headers.HttpHeader;
 import de.gematik.bbriccs.rest.headers.StandardHttpHeaderKey;
-import de.gematik.bbriccs.rest.plugins.RequestHeaderProvider;
+import de.gematik.bbriccs.rest.plugins.HttpBRequestCustomizer;
 import de.gematik.bbriccs.rest.plugins.RestObserverManager;
 import jakarta.annotation.Nullable;
 import java.net.InetSocketAddress;
@@ -50,7 +50,7 @@ public class BasicHttpClient implements HttpBClient {
   private final HttpClient httpClient;
 
   private final List<HttpHeader> headers;
-  private final List<RequestHeaderProvider> dynamicHeaders;
+  private final List<HttpBRequestCustomizer> dynamicHeaders;
   private final RestObserverManager restObserver;
 
   private BasicHttpClient(BasicHttpClientBuilder builder, HttpClient httpClient) {

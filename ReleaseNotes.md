@@ -11,7 +11,7 @@
   - `fhir-comparator-jsondiff-brick` providing an alternative lightweight implementation based on JSON-Patch and Jackson libraries
 
 ### RESTful-Bricks
-- Extend `RequestHeaderProvider` to allow request plugins to provide multiple request headers for outgoing requests
+- Extend `HttpBRequestCustomizer` to allow request plugins to provide multiple request headers for outgoing requests
 
 ### Build
 - Update Dependencies

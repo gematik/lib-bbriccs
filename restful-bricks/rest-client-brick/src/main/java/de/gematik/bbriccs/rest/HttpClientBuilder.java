@@ -24,9 +24,9 @@ import de.gematik.bbriccs.rest.headers.AuthHttpHeaderKey;
 import de.gematik.bbriccs.rest.headers.HttpHeader;
 import de.gematik.bbriccs.rest.headers.StandardHttpHeaderKey;
 import de.gematik.bbriccs.rest.plugins.HttpBObserver;
+import de.gematik.bbriccs.rest.plugins.HttpBRequestCustomizer;
 import de.gematik.bbriccs.rest.plugins.HttpBRequestObserver;
 import de.gematik.bbriccs.rest.plugins.HttpBResponseObserver;
-import de.gematik.bbriccs.rest.plugins.RequestHeaderProvider;
 import de.gematik.bbriccs.rest.plugins.RestObserverManager;
 import de.gematik.bbriccs.rest.tls.EmptyTrustManager;
 import java.security.SecureRandom;
@@ -42,7 +42,7 @@ public abstract class HttpClientBuilder<B extends HttpClientBuilder<B>> {
 
   protected final String url;
   protected final List<HttpHeader> headers;
-  protected final List<RequestHeaderProvider> dynamicHeaders;
+  protected final List<HttpBRequestCustomizer> dynamicHeaders;
   protected final RestObserverManager.RestObserverBuilder observerBuilder =
       new RestObserverManager.RestObserverBuilder();
   protected boolean followRedirects = false;
@@ -89,7 +89,7 @@ public abstract class HttpClientBuilder<B extends HttpClientBuilder<B>> {
     return self();
   }
 
-  public B header(RequestHeaderProvider... dynamicHeader) {
+  public B header(HttpBRequestCustomizer... dynamicHeader) {
     this.dynamicHeaders.addAll(List.of(dynamicHeader));
     return self();
   }

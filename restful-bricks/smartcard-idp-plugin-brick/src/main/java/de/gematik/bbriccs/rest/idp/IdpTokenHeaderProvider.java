@@ -23,15 +23,15 @@ package de.gematik.bbriccs.rest.idp;
 import de.gematik.bbriccs.rest.HttpBRequest;
 import de.gematik.bbriccs.rest.headers.HttpHeader;
 import de.gematik.bbriccs.rest.headers.JwtHeaderKey;
-import de.gematik.bbriccs.rest.plugins.RequestHeaderProvider;
+import de.gematik.bbriccs.rest.plugins.HttpBRequestCustomizer;
 import de.gematik.bbriccs.smartcards.Smartcard;
 import de.gematik.idp.client.IdpClient;
 import de.gematik.idp.client.IdpClientRuntimeException;
 import de.gematik.idp.client.IdpTokenResult;
 import de.gematik.idp.crypto.model.PkiIdentity;
 import java.security.cert.X509Certificate;
-import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -43,12 +43,13 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 @Slf4j
-public class IdpTokenHeaderProvider implements RequestHeaderProvider {
+public class IdpTokenHeaderProvider implements HttpBRequestCustomizer {
 
   private final Supplier<IdpTokenResult> authentication;
 
   private IdpTokenResult idpToken;
-  private Instant idpTokenUpdated; // point in time when the IDP token was updated
+  private Instant idpTokenValidUntil =
+      Instant.now(); // point in time when the IDP token needs to be updated
 
   private IdpTokenHeaderProvider(Supplier<IdpTokenResult> authentication) {
     this.authentication = authentication;
@@ -57,18 +58,19 @@ public class IdpTokenHeaderProvider implements RequestHeaderProvider {
   @Override
   public List<HttpHeader> forRequest(HttpBRequest request) {
     this.refreshIdpToken();
-    val accessKey = this.idpToken.getAccessToken().getRawString();
-    return List.of(JwtHeaderKey.AUTHORIZATION.createHeader(accessKey));
+    val accessToken = this.idpToken.getAccessToken().getRawString();
+    return List.of(JwtHeaderKey.AUTHORIZATION.createHeader(accessToken));
   }
 
-  private void refreshIdpToken() {
-    if (idpTokenExpired()) {
+  public void refreshIdpToken() {
+    if (needsIdpTokenRefresh()) {
       log.info("Refresh the IDP Token");
       try {
-        this.idpToken = this.authentication.get();
-        this.idpTokenUpdated = Instant.now();
+        idpToken = authentication.get();
+        idpTokenValidUntil = Instant.now().plus(idpToken.getExpiresIn(), ChronoUnit.SECONDS);
       } catch (NullPointerException npe) {
-        // rewrap the NPE to an IdpClientRuntimeException
+        // rewrap the NPE to an IdpClientRuntimeException will show tests as compromised instead of
+        // broken!
         log.warn("Something went wrong during authentication on IDP");
         throw new IdpClientRuntimeException("Caught NullPointer from IDP-Client", npe);
       }
@@ -77,16 +79,13 @@ public class IdpTokenHeaderProvider implements RequestHeaderProvider {
     }
   }
 
-  private boolean idpTokenExpired() {
-    boolean ret;
-    if (this.idpToken == null) {
-      ret = true; // actually not expired but hasn't been fetched yet
-    } else {
-      val now = Instant.now();
-      val diff = Duration.between(this.idpTokenUpdated, now).getSeconds();
-      ret = diff >= this.idpToken.getExpiresIn();
-    }
-    return ret;
+  private boolean needsIdpTokenRefresh() {
+    val refreshInstant = idpTokenValidUntil.minus(120, ChronoUnit.SECONDS);
+    return Instant.now().isAfter(refreshInstant);
+  }
+
+  public static IdpTokenHeaderProvider using(Supplier<IdpTokenResult> authentication) {
+    return new IdpTokenHeaderProvider(authentication);
   }
 
   public static JwtHeaderProviderBuilder withDiscoveryDocumentUrl(String url) {
@@ -132,14 +131,14 @@ public class IdpTokenHeaderProvider implements RequestHeaderProvider {
     public IdpTokenHeaderProvider authenticateWith(PkiIdentity pki) {
       val idpClient = this.initIdpClient();
       Supplier<IdpTokenResult> authentication = () -> idpClient.login(pki);
-      return new IdpTokenHeaderProvider(authentication);
+      return using(authentication);
     }
 
     public IdpTokenHeaderProvider authenticateWith(
         X509Certificate authPubCert, UnaryOperator<byte[]> challenge) {
       val idpClient = this.initIdpClient();
       Supplier<IdpTokenResult> authentication = () -> idpClient.login(authPubCert, challenge);
-      return new IdpTokenHeaderProvider(authentication);
+      return using(authentication);
     }
 
     private IdpClient initIdpClient() {

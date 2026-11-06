@@ -20,7 +20,7 @@
 
 package de.gematik.bbriccs.crypto.encryption;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import de.gematik.bbriccs.crypto.BC;
 import de.gematik.bbriccs.crypto.exceptions.EncryptionException;
@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class EciesTest {
+class EciesTest {
 
   private static KeyPair keyPair;
   private static Ecies ecies;
@@ -66,7 +66,7 @@ public class EciesTest {
     val thrown =
         Assertions.assertThrows(
             EncryptionException.class, () -> ecies.decrypt(privateKey, encrypt));
-    Assertions.assertEquals("Invalid version byte", thrown.getMessage());
+    assertEquals("Invalid version byte", thrown.getMessage());
   }
 
   @Test
@@ -77,6 +77,6 @@ public class EciesTest {
     val thrown =
         Assertions.assertThrows(
             EncryptionException.class, () -> ecies.decrypt(privateKey, encrypt));
-    Assertions.assertEquals("Ciphertext too small!", thrown.getMessage());
+    assertEquals("Ciphertext too small!", thrown.getMessage());
   }
 }

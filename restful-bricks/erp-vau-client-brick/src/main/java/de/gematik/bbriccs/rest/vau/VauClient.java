@@ -27,6 +27,7 @@ import de.gematik.bbriccs.rest.headers.AuthHttpHeaderKey;
 import de.gematik.bbriccs.rest.headers.HttpHeader;
 import de.gematik.bbriccs.rest.headers.StandardHttpHeaderKey;
 import de.gematik.bbriccs.rest.plugins.HttpBObserver;
+import de.gematik.bbriccs.rest.plugins.HttpBRequestCustomizer;
 import de.gematik.bbriccs.rest.plugins.HttpBRequestObserver;
 import de.gematik.bbriccs.rest.plugins.HttpBResponseObserver;
 import de.gematik.bbriccs.rest.tls.EmptyTrustManager;
@@ -228,6 +229,7 @@ public class VauClient implements HttpBClient {
     private final String url;
     private final List<HttpHeader> headers;
     private final VauObserverManager.VauObserverBuilder observerBuilder;
+    private final List<HttpBRequestCustomizer> requestCustomizers = new LinkedList<>();
     private RawHttpCodec codec;
     private UnirestInstance unirest;
 
@@ -268,6 +270,11 @@ public class VauClient implements HttpBClient {
 
     public VauClientBuilder withHttpCodec(RawHttpCodec codec) {
       this.codec = codec;
+      return this;
+    }
+
+    public VauClientBuilder withCustomizer(HttpBRequestCustomizer... customizer) {
+      this.requestCustomizers.addAll(List.of(customizer));
       return this;
     }
 

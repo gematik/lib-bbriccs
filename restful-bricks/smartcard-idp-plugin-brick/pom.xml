@@ -4,7 +4,7 @@
     <parent>
         <groupId>de.gematik.bbriccs</groupId>
         <artifactId>restful-bricks</artifactId>
-        <version>0.12.1</version>
+        <version>0.13.0</version>
     </parent>
 
     <artifactId>smartcard-idp-plugin-brick</artifactId>
@@ -18,7 +18,7 @@
         <dependency>
             <groupId>de.gematik.idp</groupId>
             <artifactId>idp-client</artifactId>
-            <version>30.1.0</version>
+            <version>30.1.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework</groupId>

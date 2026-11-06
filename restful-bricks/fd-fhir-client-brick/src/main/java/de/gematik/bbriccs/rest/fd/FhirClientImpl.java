@@ -46,7 +46,7 @@ public class FhirClientImpl implements FhirClient {
   private final HttpBClient httpClient;
   @Getter private final FhirCodec fhir;
   private final FhirBResponseCreator responseCreator;
-  private final List<FhirRequestHeaderProvider> headerProviders;
+  private final List<FhirRequestHeaderCustomizer> headerProviders;
   private final String acceptCharset;
   private final MediaType acceptMime;
   private final MediaType sendMime;
@@ -138,7 +138,7 @@ public class FhirClientImpl implements FhirClient {
 
   public static class FdClientBuilder {
     private final HttpBClient httpClient;
-    private final List<FhirRequestHeaderProvider> headerProviders = new LinkedList<>();
+    private final List<FhirRequestHeaderCustomizer> headerProviders = new LinkedList<>();
     private final FhirCodecObserverManager.FhirObserverBuilder fhirObserverBuilder =
         new FhirCodecObserverManager.FhirObserverBuilder();
     private FhirCodec fhir;
@@ -198,7 +198,7 @@ public class FhirClientImpl implements FhirClient {
       };
     }
 
-    public FdClientBuilder withHeaderProvider(FhirRequestHeaderProvider provider) {
+    public FdClientBuilder withHeaderProvider(FhirRequestHeaderCustomizer provider) {
       this.headerProviders.add(provider);
       return this;
     }

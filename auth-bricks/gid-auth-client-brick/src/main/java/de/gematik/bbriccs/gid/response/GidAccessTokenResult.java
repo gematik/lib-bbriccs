@@ -18,13 +18,19 @@
  * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-package de.gematik.bbriccs.rest.plugins;
+package de.gematik.bbriccs.gid.response;
 
-import de.gematik.bbriccs.rest.HttpBRequest;
-import de.gematik.bbriccs.rest.headers.HttpHeader;
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
-public interface RequestHeaderProvider {
+@Getter
+@Builder
+@AllArgsConstructor
+public class GidAccessTokenResult {
 
-  List<HttpHeader> forRequest(HttpBRequest request);
+  private final String encryptedAccessToken;
+  private final String decryptedPayload;
+  // TODO: providing additionally an encoded JWT object would be more convenient
+  private final String nestedJwt;
 }

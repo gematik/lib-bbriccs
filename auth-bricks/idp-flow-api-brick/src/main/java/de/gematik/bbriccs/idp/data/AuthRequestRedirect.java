@@ -20,36 +20,39 @@
 
 package de.gematik.bbriccs.idp.data;
 
+import jakarta.annotation.Nullable;
+import java.net.URI;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.Optional;
+import lombok.Getter;
+import lombok.val;
 
+@Getter
 public class AuthRequestRedirect extends RedirectLocation {
+
+  private final ClientId clientId;
+  @Nullable private final State state;
+  private final RequestUri requestUri;
 
   private AuthRequestRedirect(URL original) {
     super(original);
+    this.clientId = this.getQueryParamOrThrow("client_id", ClientId::from);
+    this.requestUri = this.getQueryParamOrThrow("request_uri", RequestUri::from);
+    this.state = this.getQueryParam("state", State::from).orElse(null);
   }
 
-  public ClientId getClientId() {
-    return this.getQueryParam("client_id")
-        .map(it -> URLDecoder.decode(it, StandardCharsets.UTF_8))
-        .map(ClientId::from)
-        .orElseThrow();
+  public Optional<State> getState() {
+    return Optional.ofNullable(this.state);
   }
 
-  public State getState() {
-    return this.getQueryParam("state").map(State::from).orElseThrow();
-  }
-
-  public RequestUri getRequestUri() {
-    return this.getQueryParam("request_uri")
-        .map(it -> URLDecoder.decode(it, StandardCharsets.UTF_8))
-        .map(RequestUri::from)
-        .orElseThrow();
+  public URI getAuthorizationUriFor(String userId) {
+    val queryParams = Map.of("request_uri", this.requestUri.value(), "user_id", userId);
+    return FormUrlEncoding.appendQuery(this.withoutQuery(), queryParams);
   }
 
   public static AuthRequestRedirect from(String location) {
-    return RedirectLocation.from(location, AuthRequestRedirect::new);
+    return RedirectLocation.from(location, AuthRequestRedirect::from);
   }
 
   public static AuthRequestRedirect from(URL location) {

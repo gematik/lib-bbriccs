@@ -24,68 +24,53 @@ import static java.text.MessageFormat.format;
 
 import de.gematik.bbriccs.idp.exception.AuthException;
 import de.gematik.bbriccs.rest.ApplicationData;
+import java.net.URI;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import lombok.experimental.Delegate;
 import lombok.val;
-import org.apache.commons.lang3.tuple.Pair;
 
 public class RedirectLocation implements ApplicationData {
 
   // keep the original to delegate URL methods
   @Delegate protected final URL original;
-  protected final Map<String, String> queryParams;
+  private final Map<String, String> queryParams;
 
   protected RedirectLocation(URL original) {
     this.original = original;
-    this.queryParams = RedirectLocation.parseQuery(original.getQuery());
-  }
-
-  protected static Map<String, String> parseQuery(String query) {
-    return Arrays.stream(query.split("&"))
-        .map(
-            kv -> {
-              val tokens = kv.split("=");
-              val key = tokens[0];
-              val value = URLDecoder.decode(tokens[1], StandardCharsets.UTF_8);
-              return Pair.of(key, value);
-            })
-        .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+    this.queryParams = FormUrlEncoding.decode(original.getQuery());
   }
 
   public Optional<String> getQueryParam(String key) {
     return Optional.ofNullable(queryParams.get(key));
   }
 
+  public <T> Optional<T> getQueryParam(String key, Function<String, T> converter) {
+    return getQueryParam(key).map(converter);
+  }
+
+  public String getQueryParamOrThrow(String key) {
+    return this.getQueryParamOrThrow(key, value -> value);
+  }
+
+  public <T> T getQueryParamOrThrow(String key, Function<String, T> converter) {
+    return this.getQueryParam(key, converter)
+        .orElseThrow(
+            () ->
+                new AuthException(
+                    "Missing query parameter: "
+                        + key
+                        + " / "
+                        + findFirstErrorIn(queryParams).orElse("No error text available")));
+  }
+
   public String getBaseUrl() {
+    //    return format("{0}://{1}", original.getScheme(), original.getAuthority());  // drop in
+    // once moved to URI
     return format("{0}://{1}", original.getProtocol(), original.getHost());
-  }
-
-  @SneakyThrows
-  public static RedirectLocation asGenericRedirect(String location) {
-    val url = new URL(location);
-    return new RedirectLocation(url);
-  }
-
-  protected static <R extends RedirectLocation> R from(
-      String location, Function<URL, R> constructor) {
-    try {
-      val url = new URL(location);
-      return from(url, constructor);
-    } catch (Exception e) {
-      throw new AuthException("Invalid URL: " + location, e);
-    }
-  }
-
-  protected static <R extends RedirectLocation> R from(URL location, Function<URL, R> constructor) {
-    return constructor.apply(location);
   }
 
   /**
@@ -102,5 +87,31 @@ public class RedirectLocation implements ApplicationData {
   @Override
   public String toString() {
     return original.toString();
+  }
+
+  @SneakyThrows
+  public static RedirectLocation asGenericRedirect(String location) {
+    return from(location, RedirectLocation::new);
+  }
+
+  protected static Optional<String> findFirstErrorIn(Map<String, String> queryParams) {
+    return queryParams.entrySet().stream()
+        .filter(entry -> entry.getKey().toLowerCase().contains("error"))
+        .map(Map.Entry::getValue)
+        .findFirst();
+  }
+
+  protected static <R extends RedirectLocation> R from(
+      String location, Function<URL, R> constructor) {
+    try {
+      val url = URI.create(location).toURL();
+      return from(url, constructor);
+    } catch (Exception e) {
+      throw new AuthException("Invalid URL: " + location, e);
+    }
+  }
+
+  protected static <R extends RedirectLocation> R from(URL location, Function<URL, R> constructor) {
+    return constructor.apply(location);
   }
 }

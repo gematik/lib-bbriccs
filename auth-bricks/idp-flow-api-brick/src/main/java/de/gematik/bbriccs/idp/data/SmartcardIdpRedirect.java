@@ -21,19 +21,33 @@
 package de.gematik.bbriccs.idp.data;
 
 import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import lombok.Getter;
 
 // TODO: check if there's a more generic term for this
 // TODO: check which of these fields are required/optional
+@Getter
 public class SmartcardIdpRedirect extends RedirectLocation {
+
+  private final Nonce nonce;
+  private final State state;
+  private final ClientId clientId;
+  private final RedirectUri redirectUri;
+  private final CodeChallenge codeChallenge;
+  private final CodeChallengeMethod codeChallengeMethod;
 
   private SmartcardIdpRedirect(URL original) {
     super(original);
+    this.nonce = this.getQueryParamOrThrow("nonce", Nonce::from);
+    this.state = this.getQueryParamOrThrow("state", State::from);
+    this.clientId = this.getQueryParamOrThrow("client_id", ClientId::from);
+    this.redirectUri = this.getQueryParamOrThrow("redirect_uri", RedirectUri::from);
+    this.codeChallenge = this.getQueryParamOrThrow("code_challenge", CodeChallenge::from);
+    this.codeChallengeMethod =
+        this.getQueryParamOrThrow("code_challenge_method", CodeChallengeMethod::from);
   }
 
   public List<String> getScopes() {
@@ -49,33 +63,6 @@ public class SmartcardIdpRedirect extends RedirectLocation {
    */
   public Set<String> getScopesSet() {
     return new HashSet<>(this.getScopes());
-  }
-
-  public Nonce getNonce() {
-    return this.getQueryParam("nonce").map(Nonce::from).orElseThrow();
-  }
-
-  public ClientId getClientId() {
-    return this.getQueryParam("client_id").map(ClientId::from).orElseThrow();
-  }
-
-  public RedirectUri getRedirectUri() {
-    return this.getQueryParam("redirect_uri")
-        .map(it -> URLDecoder.decode(it, StandardCharsets.UTF_8))
-        .map(RedirectUri::from)
-        .orElseThrow();
-  }
-
-  public CodeChallenge getCodeChallenge() {
-    return this.getQueryParam("code_challenge").map(CodeChallenge::from).orElseThrow();
-  }
-
-  public CodeChallengeMethod getCodeChallengeMethod() {
-    return this.getQueryParam("code_challenge_method").map(CodeChallengeMethod::from).orElseThrow();
-  }
-
-  public State getState() {
-    return this.getQueryParam("state").map(State::from).orElseThrow();
   }
 
   public static SmartcardIdpRedirect from(String location) {

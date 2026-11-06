@@ -21,17 +21,18 @@
 package de.gematik.bbriccs.fhir.validation.utils;
 
 import static java.text.MessageFormat.format;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ca.uhn.fhir.validation.ResultSeverityEnum;
 import ca.uhn.fhir.validation.SingleValidationMessage;
 import ca.uhn.fhir.validation.ValidationResult;
 import de.gematik.bbriccs.fhir.validation.ValidatorFhir;
+import java.util.Arrays;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.runners.model.InitializationError;
 
 @Slf4j
 public abstract class FhirValidatingTest {
@@ -39,11 +40,11 @@ public abstract class FhirValidatingTest {
   protected ValidatorFhir fhirValidator;
 
   @BeforeEach
-  void beforeEach() throws InitializationError {
+  void beforeEach() {
     this.initialize();
 
     if (fhirValidator == null) {
-      throw new InitializationError("FhirValidator was not set during initialization");
+      throw new IllegalStateException("FhirValidator was not set during initialization");
     }
   }
 
@@ -74,5 +75,19 @@ public abstract class FhirValidatingTest {
           result.getMessages().stream().filter(messageFilter).count(),
           r);
     }
+  }
+
+  /**
+   * Asserts that {@code actual} equals one of the {@code expected} values.
+   *
+   * @param actual the value under test
+   * @param expected the accepted values
+   */
+  @SafeVarargs
+  protected static <T> void assertIsOneOf(T actual, T... expected) {
+    val accepted = Arrays.asList(expected);
+    assertTrue(
+        accepted.contains(actual),
+        () -> format("Expected one of {0} but was <{1}>", accepted, actual));
   }
 }

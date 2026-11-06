@@ -21,9 +21,6 @@
 package de.gematik.bbriccs.fhir.validation;
 
 import static java.text.MessageFormat.format;
-import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 import ca.uhn.fhir.validation.ResultSeverityEnum;
@@ -91,8 +88,8 @@ class ValidatorFhirTest extends FhirValidatingTest {
     val vr = assertDoesNotThrow(() -> this.fhirValidator.validate(content));
     assertFalse(vr.isSuccessful());
     assertFalse(vr.getMessages().isEmpty());
-    val severity = vr.getMessages().get(0).getSeverity();
-    assertThat(severity, anyOf(is(ResultSeverityEnum.ERROR), is(ResultSeverityEnum.FATAL)));
+    val severity = vr.getMessages().getFirst().getSeverity();
+    assertIsOneOf(severity, ResultSeverityEnum.ERROR, ResultSeverityEnum.FATAL);
   }
 
   static Stream<Arguments> shouldFailOnValidateGarbage() {

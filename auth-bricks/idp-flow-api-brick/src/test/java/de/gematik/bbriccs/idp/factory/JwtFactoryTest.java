@@ -33,6 +33,7 @@ import de.gematik.bbriccs.vsdm.VsdmService;
 import java.util.List;
 import java.util.function.UnaryOperator;
 import lombok.val;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class JwtFactoryTest {
@@ -48,7 +49,8 @@ class JwtFactoryTest {
     UnaryOperator<byte[]> signer =
         challenge -> softKon.externalAuthenticate(smartcard, challenge).getPayload();
 
-    val signedJwt = assertDoesNotThrow(() -> JwtFactory.signJwt(smartcard, signer, nonce));
+    val signedJwt =
+        Assertions.assertDoesNotThrow(() -> JwtFactory.signJwt(smartcard, signer, nonce));
     assertNotNull(signedJwt);
     // TODO: how to verify the signed JWT?
   }

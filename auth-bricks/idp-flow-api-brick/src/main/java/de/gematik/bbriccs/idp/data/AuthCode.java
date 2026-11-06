@@ -20,53 +20,46 @@
 
 package de.gematik.bbriccs.idp.data;
 
-import de.gematik.bbriccs.idp.exception.AuthException;
 import java.net.URL;
-import java.util.Map;
+import java.util.LinkedHashMap;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 import lombok.val;
 
 @Getter
 public class AuthCode extends RedirectLocation {
 
+  // Question: why does the code not have a wrapper class for type safety? (like ClientId, State,
+  // etc.)
   private final String code;
-  private final String state;
+  private final State state;
 
-  private AuthCode(AuthCodeBuilder b) {
-    super(b.original);
-    this.code = this.queryParams.get("code");
-    this.state = this.queryParams.get("state");
+  private AuthCode(URL original) {
+    super(original);
+    this.code = this.getQueryParamOrThrow("code");
+
+    // Note: state is optional/conditionally required, throwing an exception if not present might
+    // not be ideal in all cases
+    this.state = this.getQueryParamOrThrow("state", State::from);
   }
 
-  public static AuthCodeBuilder from(String location) {
-    try {
-      val url = new URL(location);
-      return from(url);
-    } catch (Exception e) {
-      throw new AuthException("Invalid URL: " + location, e);
-    }
+  public String asFormBody(ClientId clientId, RedirectUri redirectUri, String keyVerifier) {
+    val grantType = GrantType.AUTHORIZATION_CODE;
+
+    val params = new LinkedHashMap<String, String>();
+    params.put("code", code);
+    params.put("grant_type", grantType.value());
+    params.put("client_id", clientId.value());
+    params.put("redirect_uri", redirectUri.value());
+    params.put("key_verifier", keyVerifier);
+
+    return FormUrlEncoding.encode(params);
   }
 
-  public static AuthCodeBuilder from(URL location) {
-    return new AuthCodeBuilder(location);
+  public static AuthCode from(String location) {
+    return from(location, AuthCode::from);
   }
 
-  @Setter
-  @Accessors(fluent = true)
-  public static class AuthCodeBuilder {
-
-    private URL original;
-    private Map<String, String> queryParams;
-
-    private AuthCodeBuilder(URL original) {
-      this.original = original;
-      this.queryParams = RedirectLocation.parseQuery(original.getQuery());
-    }
-
-    public AuthCode build() {
-      return new AuthCode(this);
-    }
+  public static AuthCode from(URL location) {
+    return from(location, AuthCode::new);
   }
 }

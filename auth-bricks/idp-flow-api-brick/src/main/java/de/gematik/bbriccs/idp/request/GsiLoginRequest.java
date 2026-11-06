@@ -42,7 +42,7 @@ public class GsiLoginRequest extends ApplicationGetRequest<AuthCode, ErrorDataDe
     return Optional.of(
         response -> {
           // the redirect uri transported in the Location header
-          return AuthCode.from(response.headerValue("Location")).build();
+          return AuthCode.from(response.headerValue("Location"));
         });
   }
 }

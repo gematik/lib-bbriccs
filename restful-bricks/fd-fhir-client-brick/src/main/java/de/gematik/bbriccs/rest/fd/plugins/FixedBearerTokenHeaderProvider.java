@@ -24,7 +24,7 @@ import static java.text.MessageFormat.format;
 
 import de.gematik.bbriccs.rest.HttpBRequest;
 import de.gematik.bbriccs.rest.headers.HttpHeader;
-import de.gematik.bbriccs.rest.plugins.RequestHeaderProvider;
+import de.gematik.bbriccs.rest.plugins.HttpBRequestCustomizer;
 import java.util.List;
 import javax.annotation.Nullable;
 import lombok.AccessLevel;
@@ -36,7 +36,7 @@ import lombok.RequiredArgsConstructor;
  * already can fetch a JWT token from somewhere else
  */
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class FixedBearerTokenHeaderProvider implements RequestHeaderProvider {
+public class FixedBearerTokenHeaderProvider implements HttpBRequestCustomizer {
 
   private final String token;
 

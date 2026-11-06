@@ -23,10 +23,8 @@ package de.gematik.bbriccs.idp.data;
 import static java.text.MessageFormat.format;
 
 import de.gematik.bbriccs.idp.exception.AuthException;
+import java.net.URI;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -39,7 +37,6 @@ import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import lombok.experimental.Delegate;
 import lombok.val;
-import org.apache.commons.lang3.tuple.Pair;
 
 @Getter
 public class GsiLoginData {
@@ -81,7 +78,7 @@ public class GsiLoginData {
 
   public static GsiLoginBuilder from(String location) {
     try {
-      val url = new URL(location);
+      val url = URI.create(location).toURL();
       return from(url);
     } catch (Exception e) {
       throw new AuthException("Invalid URL: " + location, e);
@@ -137,46 +134,26 @@ public class GsiLoginData {
                       "selected_claims",
                       it.stream().map(Claim::value).collect(Collectors.joining(" "))));
 
-      val qs =
-          query.entrySet().stream()
-              .map(
-                  e ->
-                      format(
-                          "{0}={1}",
-                          e.getKey(), URLEncoder.encode(e.getValue(), StandardCharsets.UTF_8)))
-              .collect(Collectors.joining("&"));
+      val qs = FormUrlEncoding.encode(query);
 
-      this.original = new URL(format("{0}?{1}", this.original, qs));
+      this.original = URI.create(format("{0}?{1}", this.original, qs)).toURL();
       return qs;
     }
 
     public GsiLoginData build() {
       // split and parse the location into tokens of key value pairs
       val query = Optional.ofNullable(this.original.getQuery()).orElseGet(this::buildQueryString);
-      val redirectTokens =
-          Arrays.stream(query.split("&"))
-              .map(
-                  kv -> {
-                    val tokens = kv.split("=");
-                    return Pair.of(tokens[0], tokens[1]);
-                  })
-              .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+      val redirectTokens = FormUrlEncoding.decode(query);
 
       val scopeTokens =
           Optional.ofNullable(redirectTokens.get("selected_claims"))
-              .map(it -> it.split("(%20|\\+| )"))
+              .map(it -> it.trim().split("\\s+"))
               .orElse(new String[0]);
       this.selectedClaims =
-          Arrays.stream(scopeTokens)
-              .map(it -> URLDecoder.decode(it, StandardCharsets.UTF_8))
-              .map(Claim::from)
-              .collect(Collectors.toList());
+          Arrays.stream(scopeTokens).map(Claim::from).collect(Collectors.toList());
 
       this.requestUri =
-          Optional.ofNullable(redirectTokens.get("request_uri"))
-              .map(it -> URLDecoder.decode(it, StandardCharsets.UTF_8))
-              .map(RequestUri::from)
-              .orElse(null);
+          Optional.ofNullable(redirectTokens.get("request_uri")).map(RequestUri::from).orElse(null);
 
       this.userId = redirectTokens.get("user_id");
       this.amrValue = AmrValue.from(redirectTokens.get("amr_value"));
