@@ -45,6 +45,10 @@ de.gematik.bbriccs.fhir.vzd
 de.gematik.bbriccs.fhir.vzd.r4
 de.gematik.bbriccs.fhir.vzd.util
 de.gematik.bbriccs.fhir.vzd.valueset
+de.gematik.bbriccs.gid
+de.gematik.bbriccs.gid.config
+de.gematik.bbriccs.gid.exception
+de.gematik.bbriccs.gid.response
 de.gematik.bbriccs.idp
 de.gematik.bbriccs.idp.data
 de.gematik.bbriccs.idp.exception
@@ -63,6 +67,7 @@ de.gematik.bbriccs.rest.fd
 de.gematik.bbriccs.rest.fd.exceptions
 de.gematik.bbriccs.rest.fd.plugins
 de.gematik.bbriccs.rest.fd.query
+de.gematik.bbriccs.rest.gid
 de.gematik.bbriccs.rest.headers
 de.gematik.bbriccs.rest.idp
 de.gematik.bbriccs.rest.plugins
@@ -71,6 +76,7 @@ de.gematik.bbriccs.rest.vau
 de.gematik.bbriccs.rest.vau.exceptions
 de.gematik.bbriccs.rest.vau.plugins
 de.gematik.bbriccs.rest.vzd
+de.gematik.bbriccs.rest.vzd.auth
 de.gematik.bbriccs.rest.vzd.request
 de.gematik.bbriccs.rest.vzd.search
 de.gematik.bbriccs.smartcards
