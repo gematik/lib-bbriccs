@@ -18,13 +18,18 @@
  * For additional notes and disclaimer from gematik and in case of changes by gematik find details in the "Readme" file.
  */
 
-package de.gematik.bbriccs.rest.fd.plugins;
+package de.gematik.bbriccs.gid;
 
-import de.gematik.bbriccs.rest.fd.FhirBRequest;
-import de.gematik.bbriccs.rest.headers.HttpHeader;
-import org.hl7.fhir.r4.model.Resource;
+import de.gematik.bbriccs.idp.data.Scope;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 
-public interface FhirRequestHeaderProvider {
+@Getter
+@Accessors(fluent = true)
+@RequiredArgsConstructor
+public enum GidScopeErp implements Scope {
+  E_REZEPT("e-rezept");
 
-  HttpHeader forRequest(FhirBRequest<? extends Resource, ? extends Resource> request);
+  private final String value;
 }

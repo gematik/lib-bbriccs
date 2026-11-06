@@ -6,7 +6,7 @@
   <parent>
     <groupId>de.gematik.bbriccs</groupId>
     <artifactId>bbriccs-parent</artifactId>
-    <version>0.12.1</version>
+    <version>0.13.0</version>
   </parent>
 
   <artifactId>auth-bricks</artifactId>
@@ -17,6 +17,7 @@
   <modules>
     <module>idp-flow-api-brick</module>
     <module>jwt-brick</module>
+    <module>gid-auth-client-brick</module>
   </modules>
 
   <dependencyManagement>
@@ -44,7 +45,7 @@
       <dependency>
         <groupId>de.gematik.idp</groupId>
         <artifactId>idp-commons</artifactId>
-        <version>30.1.0</version>
+        <version>30.1.1</version>
         <exclusions>
           <exclusion>
             <groupId>org.bouncycastle</groupId>
@@ -64,7 +65,7 @@
       <dependency>
         <groupId>de.gematik.idp</groupId>
         <artifactId>idp-crypto</artifactId>
-        <version>30.1.0</version>
+        <version>30.1.1</version>
         <exclusions>
           <exclusion>
             <groupId>org.bouncycastle</groupId>
@@ -79,7 +80,7 @@
       <dependency>
         <groupId>de.gematik.idp</groupId>
         <artifactId>idp-test</artifactId>
-        <version>30.1.0</version>
+        <version>30.1.1</version>
         <scope>test</scope>
       </dependency>
     </dependencies>

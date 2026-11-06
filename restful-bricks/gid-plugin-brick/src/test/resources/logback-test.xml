@@ -14,11 +14,11 @@
         </encoder>
     </appender>
 
-    <logger name="de.gematik.bbriccs" level="WARN">
+    <logger name="de.gematik" level="TRACE" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <logger name="ch.qos.logback" level="WARN">
+    <root level="WARN">
         <appender-ref ref="STDOUT"/>
-    </logger>
+    </root>
 </configuration>

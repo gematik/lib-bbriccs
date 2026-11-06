@@ -29,6 +29,20 @@ import de.gematik.bbriccs.rest.plugins.HttpBObserver;
 import lombok.experimental.Delegate;
 import lombok.val;
 
+/**
+ * HTTP client for the GSI (gematik sektoraler IdP), gematik's reference implementation of the
+ * sektorale IdP used for Gesundheits-ID authentication.
+ *
+ * <p>The client is a thin wrapper around an {@link ApplicationClient} that is bound to the base URL
+ * of the {@link RedirectLocation} the Fachdienst redirected to. It does not perform any
+ * authentication itself; callers issue the authorization requests to the sektorale IdP through this
+ * client. This setup is used e.g. in the ePA flows with eGK.
+ *
+ * @apiNote This class is still under development, probably not yet fully functional, and may change
+ *     or get deprecated in the future. It overlaps with {@code
+ *     de.gematik.bbriccs.gid.GidClientImpl} from the {@code gid-auth-brick}; these functionalities
+ *     need to be merged in the future.
+ */
 public class GsiClient implements ApplicationClient {
 
   @Delegate private final ApplicationClient applicationClient;

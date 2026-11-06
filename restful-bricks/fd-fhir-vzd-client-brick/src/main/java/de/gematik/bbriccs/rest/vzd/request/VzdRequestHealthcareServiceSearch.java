@@ -33,11 +33,12 @@ public class VzdRequestHealthcareServiceSearch
     extends FhirGetBRequest<VzdHealthcareServiceSearchSet> {
 
   public VzdRequestHealthcareServiceSearch(List<QueryParameter> queryParameter) {
-    super(VzdHealthcareServiceSearchSet.class, "/HealthcareService");
+    super(VzdHealthcareServiceSearchSet.class, "/search/HealthcareService");
     this.queryParameters.addAll(queryParameter);
   }
 
   public VzdRequestHealthcareServiceSearch(String queryString) {
-    super(VzdHealthcareServiceSearchSet.class, format("/HealthcareService?{0}", queryString));
+    super(
+        VzdHealthcareServiceSearchSet.class, format("/search/HealthcareService?{0}", queryString));
   }
 }

@@ -24,7 +24,7 @@ import static java.text.MessageFormat.format;
 
 import de.gematik.bbriccs.rest.headers.HttpHeader;
 import de.gematik.bbriccs.rest.headers.StandardHttpHeaderKey;
-import de.gematik.bbriccs.rest.plugins.RequestHeaderProvider;
+import de.gematik.bbriccs.rest.plugins.HttpBRequestCustomizer;
 import de.gematik.bbriccs.rest.plugins.RestObserverManager;
 import jakarta.annotation.Nullable;
 import java.net.http.HttpClient.Version;
@@ -47,7 +47,7 @@ public class UnirestHttpClient implements HttpBClient {
   private final UnirestInstance unirest;
   private final String url;
   private final List<HttpHeader> staticHeaders;
-  private final List<RequestHeaderProvider> dynamicHeaders;
+  private final List<HttpBRequestCustomizer> dynamicHeaders;
   private final RestObserverManager restObserver;
 
   private UnirestHttpClient(UniRestHttpClientBuilder builder) {

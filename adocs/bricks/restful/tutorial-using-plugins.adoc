@@ -12,7 +12,7 @@ include::{pumldir}/rest-api-brick.iuml[]
 include::{pumldir}/rest-plugins.puml[]
 ----
 
-The `RequestHeaderProvider` is pretty much self-explanatory, it generates per each single request a dynamic `HttpHeader`. To demonstrate this kind of plugin, let's implement a simple `XRequestIdProvider`:
+The `HttpBRequestCustomizer` is pretty much self-explanatory, it generates per each single request a dynamic `HttpHeader`. To demonstrate this kind of plugin, let's implement a simple `XRequestIdProvider`:
 
 [source,java]
 ----
@@ -25,7 +25,7 @@ public class XRequestIdProvider implements RequestHeaderProvider {
 }
 ----
 
-A slightly more complex example of a useful `RequestHeaderProvider` is the {brick-smartcard-idp-plugin} which can provide dynamic Header for the JWT Bearer Token from the smartcard IDP.
+A slightly more complex example of a useful `HttpBRequestCustomizer` is the {brick-smartcard-idp-plugin} which can provide dynamic Header for the JWT Bearer Token from the smartcard IDP.
 
 The other type of plugin is the `HttpBObserver`, which is heavily inspired by the {link-pattern-observer}. This type of plugin is particularly useful when it comes to analysing or reporting on http traffic. To demonstrate this kind of plugin, let's implement a simple `HttpRecorder`:
 

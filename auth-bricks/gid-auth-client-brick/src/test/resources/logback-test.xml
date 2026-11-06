@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE configuration>
+
+<configuration>
+    <import class="ch.qos.logback.classic.encoder.PatternLayoutEncoder"/>
+    <import class="ch.qos.logback.core.ConsoleAppender"/>
+    <import class="ch.qos.logback.core.FileAppender"/>
+
+    <variable name="date_format" value="%d{HH:mm:ss.SSS}"/>
+
+    <appender name="STDOUT" class="ConsoleAppender">
+        <encoder class="PatternLayoutEncoder">
+            <pattern>${date_format} [%thread] %highlight(%-5level) %logger{6} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Request/response traffic between the client under test and WireMock, one entry per hop -->
+    <appender name="WIREMOCK_TRAFFIC" class="FileAppender">
+        <file>target/wiremock-traffic.log</file>
+        <append>false</append>
+        <encoder class="PatternLayoutEncoder">
+            <pattern>${date_format} [%thread] %-5level %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="de.gematik" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <logger name="WireMock" level="INFO" additivity="false">
+        <appender-ref ref="WIREMOCK_TRAFFIC"/>
+    </logger>
+
+    <root level="WARN">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

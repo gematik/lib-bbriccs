@@ -31,7 +31,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class BasicHeaderProvider implements RequestHeaderProvider {
+public class BasicHeaderProvider implements HttpBRequestCustomizer {
 
   private final Function<HttpBRequest, HttpHeader> httpHeaderSupplier;
 
@@ -45,7 +45,7 @@ public class BasicHeaderProvider implements RequestHeaderProvider {
   }
 
   /**
-   * creates a {@link RequestHeaderProvider} which will dynamically add a <a
+   * creates a {@link HttpBRequestCustomizer} which will dynamically add a <a
    * href="https://developer.mozilla.org/de/docs/Web/HTTP/Reference/Headers/Date">Date Header</a> to
    * each request as {@link ZonedDateTime}
    *

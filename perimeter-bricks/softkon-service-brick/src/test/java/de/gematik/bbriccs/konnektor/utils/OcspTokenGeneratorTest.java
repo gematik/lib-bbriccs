@@ -29,6 +29,7 @@ import eu.europa.esig.dss.model.x509.CertificateToken;
 import java.time.ZonedDateTime;
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -113,6 +114,7 @@ class OcspTokenGeneratorTest {
     assertNotNull(token.getRelatedCertificate());
   }
 
+  @Disabled("This test requires a running OCSP responder at the specified URL")
   @ParameterizedTest
   @EnumSource(value = CryptoSystem.class, mode = Mode.EXCLUDE, names = "RSA_PSS_2048")
   void shouldCallAsOnlineTokenWithoutAlternativeUrls(CryptoSystem cryptoSystem) {
@@ -122,6 +124,7 @@ class OcspTokenGeneratorTest {
     assertDoesNotThrow(() -> generator.asOnlineToken());
   }
 
+  @Disabled("This test requires a running OCSP responder at the specified URL")
   @ParameterizedTest
   @EnumSource(value = CryptoSystem.class, mode = Mode.EXCLUDE, names = "RSA_PSS_2048")
   void shouldCallAsOnlineTokenWithAlternativeUrls(CryptoSystem cryptoSystem) {
@@ -132,6 +135,7 @@ class OcspTokenGeneratorTest {
         () -> generator.asOnlineToken("http://localhost/ocsp", "http://example.invalid/ocsp"));
   }
 
+  @Disabled("This test requires a running OCSP responder at the specified URL")
   @ParameterizedTest
   @EnumSource(value = CryptoSystem.class, mode = Mode.EXCLUDE, names = "RSA_PSS_2048")
   void shouldReturnNullOrOcspTokenForOnlineToken(CryptoSystem cryptoSystem) {

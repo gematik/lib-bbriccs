@@ -22,15 +22,15 @@ package de.gematik.bbriccs.idp.data;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import lombok.val;
 import org.junit.jupiter.api.Test;
 
 class AuthCodeTest {
 
   @Test
   void shouldParseSimpleAuthCode() {
-    var authCode = AuthCode.from("https://example.com?code=123&state=456").build();
-    System.out.println(authCode);
-    //    assertEquals("123", authCode.getQueryParams().get("code"));
-    //    assertEquals("456", authCode.getQueryParams().get("state"));
+    val authCode = AuthCode.from("https://example.com?code=123&state=456");
+    assertEquals("123", authCode.getCode());
+    assertEquals("456", authCode.getState().value());
   }
 }

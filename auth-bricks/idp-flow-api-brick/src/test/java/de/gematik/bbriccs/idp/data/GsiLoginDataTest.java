@@ -36,13 +36,16 @@ https://gsi-ref.dev.gematik.solutions/auth\
 &user_id=X110411675\
 &amr_value=urn:telematik:auth:eGK\
 &acr_value=gematik-ehealth-loa-high\
-&selected_claims=urn:telematik:claims:profession urn:telematik:claims:id urn:telematik:claims:organization urn:telematik:claims:display_name\
-  """
-            .replaceAll(System.lineSeparator(), " ");
+&selected_claims=urn:telematik:claims:profession+urn:telematik:claims:id+urn:telematik:claims:organization+urn:telematik:claims:display_name\
+  """;
 
     val lb = assertDoesNotThrow(() -> GsiLoginData.from(input));
     val login = lb.build();
     val output = assertDoesNotThrow(login::toString);
+    assertNotNull(output);
+    assertFalse(output.isBlank());
+
+    assertEquals(4, login.getSelectedClaims().size());
   }
 
   @Test

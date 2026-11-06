@@ -43,7 +43,7 @@ class VzdSearchTest {
 
     assertNotNull(req.getRequestBody());
     assertEquals(HttpRequestMethod.GET, req.getMethod());
-    assertEquals("/HealthcareService", req.getFhirResource());
+    assertEquals("/search/HealthcareService", req.getFhirResource());
     assertTrue(req.getRequestLocator().contains(ProfessionOID.APOTHEKE_OEFFENTLICH.getCode()));
     assertTrue(req.getRequestLocator().contains(ProfessionOID.APOTHEKE_KRANKENHAUS.getCode()));
     assertTrue(req.getRequestLocator().contains(ProfessionOID.APOTHEKE_BW.getCode()));
